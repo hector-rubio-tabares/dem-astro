@@ -1,5 +1,15 @@
-import { Component, computed, signal, OnInit, OnDestroy } from '@angular/core';
-import { angularBus } from '../lib/bus';
+import { Component, computed, signal, OnInit, OnDestroy, ElementRef, inject } from '@angular/core';
+import {
+  getMicrofrontendBus,
+  getMicrofrontendTabId,
+  getMicrofrontendChannel,
+  validateTabMessage,
+  validateMultiTabMessage,
+  sanitizeDisplayString,
+  MF_CONFIG,
+  type TabMessage,
+  type MultiTabMessage,
+} from '@mf/shared';
 
 interface Message {
   id: number;
@@ -7,21 +17,6 @@ interface Message {
   scope: 'tab' | 'multi-tab';
   count: number;
   timestamp: string;
-}
-
-// Función helper para obtener el bus (compartido o local)
-function getBus() {
-  return (window as any).__SHARED_BUS__ || angularBus;
-}
-
-// Función helper para obtener el TAB_ID
-function getTabId() {
-  return (window as any).__TAB_ID__ || 'unknown';
-}
-
-// Función helper para obtener el BroadcastChannel
-function getBroadcastChannel() {
-  return (window as any).__BROADCAST_CHANNEL__ || null;
 }
 
 @Component({
@@ -59,7 +54,7 @@ function getBroadcastChannel() {
         <div class="messages-log">
           <h4>Mensajes recibidos:</h4>
           <ul>
-            @for (msg of messages().slice(-5).reverse(); track msg.id) {
+            @for (msg of messages().slice(-MF_CONFIG.MAX_MESSAGES_IN_LOG).reverse(); track msg.id) {
               <li>
                 <strong>{{ msg.scope }}</strong> de <em>{{ msg.from }}</em>: count={{ msg.count }} ({{ msg.timestamp }})
               </li>
@@ -72,11 +67,17 @@ function getBroadcastChannel() {
   styleUrl: './app.css'
 })
 export class App implements OnInit, OnDestroy {
+  private elementRef = inject(ElementRef);
+  private instanceId: string = '';
+
   clicks = signal(0);
   externalClicks = signal(0);
   messages = signal<Message[]>([]);
 
   private bus: any;
+
+  // Expose MF_CONFIG to template
+  readonly MF_CONFIG = MF_CONFIG;
 
   level = computed(() => {
     const value = this.clicks();
@@ -85,44 +86,66 @@ export class App implements OnInit, OnDestroy {
     return 'inicial';
   });
 
-  private tabHandler = (payload: { source: string; count: number }) => {
-    console.log('🟠 Angular recibió de tab:', payload);
-    if (payload.source !== 'angular') {
-      this.externalClicks.set(payload.count);
-      this.messages.update(prev => [...prev, {
-        id: Date.now(),
-        from: payload.source,
-        scope: 'tab',
-        count: payload.count,
-        timestamp: new Date().toLocaleTimeString()
-      }]);
+  private tabHandler = (payload: TabMessage) => {
+    try {
+      validateTabMessage(payload);
+      // Filtrar mensajes de esta misma instancia
+      if (payload.instanceId !== this.instanceId) {
+        // Solo actualizar externalClicks si viene del mismo framework pero diferente instancia
+        if (payload.source === 'angular') {
+          this.externalClicks.set(payload.count);
+        }
+        this.messages.update(prev => [...prev, {
+          id: Date.now(),
+          from: sanitizeDisplayString(payload.source),
+          scope: 'tab',
+          count: payload.count,
+          timestamp: new Date().toLocaleTimeString()
+        }]);
+      }
+    } catch (error) {
+      console.warn('[Angular] Invalid tab message:', error);
     }
   };
 
   private multiTabHandler = (event: MessageEvent) => {
-    const payload = event.data;
-    // Filtrar mensajes de la misma tab (solo mostrar los de otras tabs)
-    if (payload.tabId !== getTabId()) {
-      this.messages.update(prev => [...prev, {
-        id: Date.now() + 1,
-        from: payload.source,
-        scope: 'multi-tab',
-        count: payload.count,
-        timestamp: new Date().toLocaleTimeString()
-      }]);
+    try {
+      const payload = event.data;
+      validateMultiTabMessage(payload);
+      // Filtrar mensajes de la misma tab (solo mostrar los de otras tabs)
+      const tabId = getMicrofrontendTabId();
+      if (payload.tabId !== tabId) {
+        this.messages.update(prev => [...prev, {
+          id: Date.now() + 1,
+          from: sanitizeDisplayString(payload.source),
+          scope: 'multi-tab',
+          count: payload.count,
+          timestamp: new Date().toLocaleTimeString()
+        }]);
+      }
+    } catch (error) {
+      console.warn('[Angular] Invalid multi-tab message:', error);
     }
   };
 
   private channel: BroadcastChannel | null = null;
 
   ngOnInit() {
-    this.bus = getBus();
-    this.channel = getBroadcastChannel();
+    try {
+      // Obtener instanceId del elemento host
+      const hostElement = this.elementRef.nativeElement as HTMLElement;
+      this.instanceId = hostElement.getAttribute('data-instance-id') || crypto.randomUUID();
 
-    this.bus.on('click-count', this.tabHandler);
+      this.bus = getMicrofrontendBus();
+      this.channel = getMicrofrontendChannel();
 
-    if (this.channel) {
-      this.channel.addEventListener('message', this.multiTabHandler);
+      this.bus.on('click-count', this.tabHandler);
+
+      if (this.channel) {
+        this.channel.addEventListener('message', this.multiTabHandler);
+      }
+    } catch (error) {
+      console.error('[Angular] Error in ngOnInit:', error);
     }
   }
 
@@ -136,21 +159,40 @@ export class App implements OnInit, OnDestroy {
   }
 
   increment() {
-    const newCount = this.clicks() + 1;
-    this.clicks.update((value) => value + 1);
-    this.bus.emit('click-count', { source: 'angular', count: newCount });
+    try {
+      const newCount = this.clicks() + 1;
+      this.clicks.update((value) => value + 1);
+      const payload: TabMessage = { source: 'angular', count: newCount, instanceId: this.instanceId };
+      validateTabMessage(payload);
+      this.bus.emit('click-count', payload);
+    } catch (error) {
+      console.error('[Angular] Failed to increment:', error);
+    }
   }
 
   sendToTab() {
-    const payload = { source: 'angular', count: this.clicks() };
-    console.log('🟠 Angular enviando a tab:', payload);
-    this.bus.emit('click-count', payload);
+    try {
+      const payload: TabMessage = { source: 'angular', count: this.clicks(), instanceId: this.instanceId };
+      validateTabMessage(payload);
+      this.bus.emit('click-count', payload);
+    } catch (error) {
+      console.error('[Angular] Failed to send tab message:', error);
+    }
   }
 
   sendToMultiTab() {
-    const channel = getBroadcastChannel();
-    if (channel) {
-      channel.postMessage({ source: 'angular', count: this.clicks(), tabId: getTabId() });
+    try {
+      const channel = getMicrofrontendChannel();
+      if (!channel) {
+        console.warn('[Angular] BroadcastChannel not available');
+        return;
+      }
+      const tabId = getMicrofrontendTabId();
+      const payload: MultiTabMessage = { source: 'angular', count: this.clicks(), tabId, instanceId: this.instanceId };
+      validateMultiTabMessage(payload);
+      channel.postMessage(payload);
+    } catch (error) {
+      console.error('[Angular] Failed to send multi-tab message:', error);
     }
   }
 }

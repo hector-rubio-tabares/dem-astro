@@ -1,5 +1,5 @@
 ---
-import demoStaticScriptUrl from '../scripts/demo-static.ts?url';
+import demoScriptUrl from '../scripts/demo-hot.ts?url'; // Script universal (dev + prod)
 ---
 
 <html lang="es">
@@ -113,6 +113,6 @@ import demoStaticScriptUrl from '../scripts/demo-static.ts?url';
       </div>
     </main>
 
-    <script type="module" src={demoStaticScriptUrl}></script>
+    <script type="module" src={demoScriptUrl}></script>
   </body>
 </html>

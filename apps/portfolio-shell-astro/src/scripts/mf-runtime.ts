@@ -37,7 +37,7 @@ export async function importRemoteWithTimeout<T = unknown>(
   assertAllowedRemoteOrigin(specifier, allowedOrigins)
 
   return await Promise.race([
-    import(specifier) as Promise<T>,
+    import(/* @vite-ignore */ specifier) as Promise<T>,
     new Promise<T>((_, reject) => {
       setTimeout(() => {
         reject(new Error(`Timeout cargando modulo remoto: ${specifier}`))

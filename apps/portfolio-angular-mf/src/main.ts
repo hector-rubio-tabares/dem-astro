@@ -2,7 +2,6 @@ import { createApplication } from '@angular/platform-browser';
 import { createCustomElement } from '@angular/elements';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
-import { angularBus } from './lib/bus';
 
 const ELEMENT_TAG = 'portfolio-angular-mf';
 
@@ -17,5 +16,3 @@ async function registerElement() {
 }
 
 registerElement().catch((err) => console.error(err));
-
-export { angularBus };

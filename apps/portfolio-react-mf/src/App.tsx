@@ -1,6 +1,16 @@
 import { useMemo, useState, useEffect } from 'react'
 import './App.css'
-import { reactBus } from './bus'
+import {
+  getMicrofrontendBus,
+  getMicrofrontendTabId,
+  getMicrofrontendChannel,
+  validateTabMessage,
+  validateMultiTabMessage,
+  sanitizeDisplayString,
+  MF_CONFIG,
+  type TabMessage,
+  type MultiTabMessage,
+} from '@mf/shared'
 
 type Message = {
   id: number
@@ -10,25 +20,19 @@ type Message = {
   timestamp: string
 }
 
-function getBus() {
+function getInstanceId(container?: HTMLElement): string {
+  if (!container) return crypto.randomUUID()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (window as any).__SHARED_BUS__ || reactBus
+  const instances = (window as any).__MF_INSTANCES__
+  return instances?.get(container) || crypto.randomUUID()
 }
 
-function getTabId() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (window as any).__TAB_ID__ || 'unknown'
-}
-
-function getBroadcastChannel() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (window as any).__BROADCAST_CHANNEL__ || null
-}
-
-function App() {
+function App({ container }: { container?: HTMLElement }) {
   const [clicks, setClicks] = useState(0)
   const [externalClicks, setExternalClicks] = useState(0)
   const [messages, setMessages] = useState<Message[]>([])
+
+  const instanceId = useMemo(() => getInstanceId(container), [container])
 
   const level = useMemo(() => {
     if (clicks >= 8) return 'alto'
@@ -40,34 +44,52 @@ function App() {
 
   useEffect(() => {
     try {
-      const bus = getBus()
-      const channel = getBroadcastChannel()
+      const bus = getMicrofrontendBus()
+      const channel = getMicrofrontendChannel()
+      const tabId = getMicrofrontendTabId()
       
-      const tabHandler = (payload: { source: string; count: number }) => {
-        console.log('🔵 React recibió de tab:', payload)
-        if (payload.source !== 'react') {
-          setExternalClicks(payload.count)
-          setMessages(prev => [...prev, {
-            id: Date.now(),
-            from: payload.source,
-            scope: 'tab',
-            count: payload.count,
-            timestamp: new Date().toLocaleTimeString()
-          }])
+      const tabHandler = (payload: TabMessage) => {
+        try {
+          validateTabMessage(payload)
+          // Filtrar mensajes de esta misma instancia
+          if (payload.instanceId !== instanceId) {
+            // Solo actualizar externalClicks si viene del mismo framework pero diferente instancia
+            if (payload.source === 'react') {
+              setExternalClicks(payload.count)
+            }
+            setMessages(prev => [...prev, {
+              id: Date.now(),
+              from: sanitizeDisplayString(payload.source),
+              scope: 'tab',
+              count: payload.count,
+              timestamp: new Date().toLocaleTimeString()
+            }])
+          }
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.warn('[React] Invalid tab message:', error)
+          }
         }
       }
 
       // Escuchar multi-tab DIRECTAMENTE del BroadcastChannel 
       const multiTabHandler = (event: MessageEvent) => {
-        const payload = event.data
-        if (payload.tabId !== getTabId()) {
-          setMessages(prev => [...prev, {
-            id: Date.now() + 1,
-            from: payload.source,
-            scope: 'multi-tab',
-            count: payload.count,
-            timestamp: new Date().toLocaleTimeString()
-          }])
+        try {
+          const payload = event.data
+          validateMultiTabMessage(payload)
+          if (payload.tabId !== tabId) {
+            setMessages(prev => [...prev, {
+              id: Date.now() + 1,
+              from: sanitizeDisplayString(payload.source),
+              scope: 'multi-tab',
+              count: payload.count,
+              timestamp: new Date().toLocaleTimeString()
+            }])
+          }
+        } catch (error) {
+          if (import.meta.env.DEV) {
+            console.warn('[React] Invalid multi-tab message:', error)
+          }
         }
       }
 
@@ -90,38 +112,47 @@ function App() {
     } catch (err) {
       console.error('Error configurando event bus:', err)
     }
-  }, [])
+  }, [instanceId])
 
   const handleClick = () => {
     try {
-      const bus = getBus()
+      const bus = getMicrofrontendBus()
       const newCount = clicks + 1
       setClicks(newCount)
-      bus.emit('click-count', { source: 'react', count: newCount })
+      const payload: TabMessage = { source: 'react', count: newCount, instanceId }
+      validateTabMessage(payload)
+      bus.emit('click-count', payload)
     } catch (err) {
-      console.error('Error en handleClick:', err)
+      console.error('[React] Failed to handle click:', err)
     }
   }
 
   const sendToTab = () => {
     try {
-      const bus = getBus()
-      const payload = { source: 'react', count: clicks }
-      console.log('🔵 React enviando a tab:', payload)
+      const bus = getMicrofrontendBus()
+      const payload: TabMessage = { source: 'react', count: clicks, instanceId }
+      validateTabMessage(payload)
       bus.emit('click-count', payload)
     } catch (err) {
-      console.error('Error enviando a tab:', err)
+      console.error('[React] Failed to send tab message:', err)
     }
   }
 
   const sendToMultiTab = () => {
     try {
-      const channel = getBroadcastChannel()
-      if (channel) {
-        channel.postMessage({ source: 'react', count: clicks, tabId: getTabId() })
+      const channel = getMicrofrontendChannel()
+      if (!channel) {
+        if (import.meta.env.DEV) {
+          console.warn('[React] BroadcastChannel not available')
+        }
+        return
       }
+      const tabId = getMicrofrontendTabId()
+      const payload: MultiTabMessage = { source: 'react', count: clicks, tabId, instanceId }
+      validateMultiTabMessage(payload)
+      channel.postMessage(payload)
     } catch (err) {
-      console.error('Error enviando multi-tab:', err)
+      console.error('[React] Failed to send multi-tab message:', err)
     }
   }
 
@@ -153,7 +184,7 @@ function App() {
         <div className="messages-log">
           <h4>Mensajes recibidos:</h4>
           <ul>
-            {messages.slice(-5).reverse().map(msg => (
+            {messages.slice(-MF_CONFIG.MAX_MESSAGES_IN_LOG).reverse().map(msg => (
               <li key={msg.id}>
                 <strong>{msg.scope}</strong> de <em>{msg.from}</em>: count={msg.count} ({msg.timestamp})
               </li>

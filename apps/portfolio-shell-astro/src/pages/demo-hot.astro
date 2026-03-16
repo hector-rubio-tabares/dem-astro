@@ -319,40 +319,75 @@ const angularPortLabel = import.meta.env.PUBLIC_ANGULAR_MF_DEV_URL ?? 'http://12
       <div class="grid">
         <section class="slot react">
           <h2>React MF ({reactPortLabel})</h2>
-          <div id="react-slot"></div>
+          <div class="mf-slot" data-mf="react"></div>
         </section>
 
         <section class="slot angular">
           <h2>Angular MF ({angularPortLabel})</h2>
-          <div id="angular-slot"></div>
+          <div class="mf-slot" data-mf="angular"></div>
         </section>
 
         <section class="slot astro">
           <h2>Astro Shell</h2>
-          <div class="astro-controls">
+          <div class="astro-controls astro-control-instance">
             <h3>Astro puede comunicarse también</h3>
-            <p>Contador local: <strong id="astro-clicks">0</strong></p>
-            <button class="astro-btn" type="button" id="astro-increment">
+            <p>Contador local: <strong class="astro-clicks">0</strong></p>
+            <button class="astro-btn astro-increment" type="button">
               Incrementar en Astro
             </button>
             
             <div class="event-controls">
-              <button class="astro-btn-secondary" type="button" id="astro-send-tab">
+              <button class="astro-btn-secondary astro-send-tab" type="button">
                 📤 Enviar a Tab (EventBus)
               </button>
-              <button class="astro-btn-secondary" type="button" id="astro-send-multitab">
+              <button class="astro-btn-secondary astro-send-multitab" type="button">
                 🌐 Multi-tab (BroadcastChannel)
               </button>
             </div>
 
-            <div class="messages-log" id="astro-messages" style="display: none;">
+            <div class="messages-log astro-messages" style="display: none;">
               <h4>Mensajes recibidos:</h4>
-              <ul id="astro-messages-list"></ul>
+              <ul class="astro-messages-list"></ul>
             </div>
           </div>
         </section>
       </div>
+      <div class="grid">
+        <section class="slot react">
+          <h2>React MF ({reactPortLabel})</h2>
+          <div class="mf-slot" data-mf="react"></div>
+        </section>
 
+        <section class="slot angular">
+          <h2>Angular MF ({angularPortLabel})</h2>
+          <div class="mf-slot" data-mf="angular"></div>
+        </section>
+
+        <section class="slot astro">
+          <h2>Astro Shell</h2>
+          <div class="astro-controls astro-control-instance">
+            <h3>Astro puede comunicarse también</h3>
+            <p>Contador local: <strong class="astro-clicks">0</strong></p>
+            <button class="astro-btn astro-increment" type="button">
+              Incrementar en Astro
+            </button>
+            
+            <div class="event-controls">
+              <button class="astro-btn-secondary astro-send-tab" type="button">
+                📤 Enviar a Tab (EventBus)
+              </button>
+              <button class="astro-btn-secondary astro-send-multitab" type="button">
+                🌐 Multi-tab (BroadcastChannel)
+              </button>
+            </div>
+
+            <div class="messages-log astro-messages" style="display: none;">
+              <h4>Mensajes recibidos:</h4>
+              <ul class="astro-messages-list"></ul>
+            </div>
+          </div>
+        </section>
+      </div>
       <section class="health">
         <h3>Estado de Endpoints HOT</h3>
         <p id="react-endpoint">React: {reactPortLabel} <span class="status-badge" id="react-health">pendiente</span></p>
