@@ -1,0 +1,27 @@
+{
+  "name": "portfolio-mfe-pilot",
+  "private": true,
+  "scripts": {
+    "install:all": "pnpm install -r",
+    "run:shell": "pnpm dev:shell:hot",
+    "run:react": "pnpm dev:react-mf:hot",
+    "run:angular": "pnpm dev:angular-mf:hot",
+    "run:3": "pnpm dev:hot",
+    "run:all": "pnpm dev:hot",
+    "build:react-mf": "pnpm --filter portfolio-react-mf build:mf",
+    "build:angular-mf": "pnpm --filter portfolio-angular-mf build:mf",
+    "sync:mf": "node scripts/sync-remotes.mjs",
+    "build:mf": "pnpm build:react-mf && pnpm build:angular-mf && pnpm sync:mf",
+    "demo:local": "pnpm build:mf && pnpm dev:shell",
+    "dev:shell": "pnpm --filter portfolio-shell-astro dev",
+    "dev:shell:hot": "pnpm --filter portfolio-shell-astro dev:mf",
+    "dev:react-mf": "pnpm --filter portfolio-react-mf dev",
+    "dev:react-mf:hot": "pnpm --filter portfolio-react-mf dev:mf",
+    "dev:angular-mf": "pnpm --filter portfolio-angular-mf start",
+    "dev:angular-mf:hot": "pnpm --filter portfolio-angular-mf start:mf",
+    "dev:hot": "concurrently -n SHELL,REACT,ANGULAR -c cyan,green,yellow \"pnpm dev:shell:hot\" \"pnpm dev:react-mf:hot\" \"pnpm dev:angular-mf:hot\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
