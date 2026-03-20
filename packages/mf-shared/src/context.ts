@@ -4,20 +4,28 @@ import type { EventBus } from './event-bus.js'
   * Context singleton para compartir estado entre microfrontends
  * Reemplaza (window as any).__SHARED_BUS__, __TAB_ID__, __BROADCAST_CHANNEL__
  */
-export class MicrofrontendContext {
-  private static instance: MicrofrontendContext | null = null
+export class MicrofrontendContext<TEvents extends Record<string, unknown> = Record<string, unknown>> {
+  private static instance: MicrofrontendContext<any> | null = null
+
+  private readonly bus: EventBus<TEvents>;
+  private readonly tabId: string;
+  private readonly channel: BroadcastChannel | null;
 
   private constructor(
-    private readonly bus: EventBus<any>,
-    private readonly tabId: string,
-    private readonly channel: BroadcastChannel | null
-  ) {}
+    bus: EventBus<TEvents>,
+    tabId: string,
+    channel: BroadcastChannel | null
+  ) {
+    this.bus = bus;
+    this.tabId = tabId;
+    this.channel = channel;
+  }
 
   /**
    * Inicializar contexto (llamar una sola vez desde el shell)
    */
-  static initialize(config: {
-    bus: EventBus<any>
+  static initialize<TEvents extends Record<string, unknown>>(config: {
+    bus: EventBus<TEvents>
     tabId: string
     channel: BroadcastChannel | null
   }): void {
@@ -31,11 +39,11 @@ export class MicrofrontendContext {
   /**
    * Obtener instancia del contexto
    */
-  static getInstance(): MicrofrontendContext {
+  static getInstance<TEvents extends Record<string, unknown> = Record<string, unknown>>(): MicrofrontendContext<TEvents> {
     if (!this.instance) {
       throw new Error('[MFContext] Not initialized. Call MicrofrontendContext.initialize() first')
     }
-    return this.instance
+    return this.instance as MicrofrontendContext<TEvents>
   }
 
   /**
@@ -63,17 +71,29 @@ export class MicrofrontendContext {
  * Helper para usar en microfrontends
  * Retorna el bus compartido, con fallback a window.__SHARED_BUS__
  */
-export function getMicrofrontendBus(): EventBus<any> {
+export function getMicrofrontendBus<TEvents extends Record<string, unknown> = Record<string, unknown>>(): EventBus<TEvents> {
+  // PRIMERO: Intentar window.__SHARED_BUS__ (inicializado por script inline)
+  const win = window as any;
+  if (win.__SHARED_BUS__) {
+    console.log('[MFContext] ✅ Usando bus desde window.__SHARED_BUS__');
+    return win.__SHARED_BUS__;
+  }
+
+  // SEGUNDO: Intentar contexto MicrofrontendContext
   try {
-    const ctx = MicrofrontendContext.getInstance()
-    return ctx.getBus()
+    const ctx = MicrofrontendContext.getInstance<TEvents>();
+    console.log('[MFContext] ✅ Usando bus desde MicrofrontendContext');
+    return ctx.getBus();
   } catch {
-    // Fallback: usar window.__SHARED_BUS__ si el contexto no está inicializado
-    const win = window as any
-    if (win.__SHARED_BUS__) {
-      return win.__SHARED_BUS__
-    }
-    throw new Error('[MFContext] Bus not found. Call MicrofrontendContext.initialize() from shell first.')
+    // No hay contexto inicializado
+    const availableGlobals = {
+      __MFE_CONTEXT_INITIALIZED__: win.__MFE_CONTEXT_INITIALIZED__,
+      __MFE_CONTEXT_READY__: win.__MFE_CONTEXT_READY__,
+      __SHARED_BUS__: !!win.__SHARED_BUS__,
+      __TAB_ID__: !!win.__TAB_ID__
+    };
+    console.error('[MFContext] Estado de variables globales:', availableGlobals);
+    throw new Error('[MFContext] Bus not found. Call MicrofrontendContext.initialize() from shell first.');
   }
 }
 

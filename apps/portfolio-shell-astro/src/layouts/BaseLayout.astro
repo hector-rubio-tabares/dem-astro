@@ -1,0 +1,233 @@
+---
+/**
+ * Layout Base
+ * Estructura compartida por todas las páginas
+ * 
+ * ✅ Refactorizado: Usa MainNav.astro para navegación (encapsulado)
+ */
+import '@mf/shared/styles/global.css';
+import '@mf/shared/styles/mfe-integration.css';
+import '@mf/shared/styles/loading.css';
+import '@mf/shared/styles/layout.css'; // Estilos de header, footer, auth
+import MainNav from '../components/MainNav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  requiresAuth?: boolean;
+  loadsMFEs?: boolean; // Nueva prop para indicar si la página carga MFEs
+}
+
+const { 
+  title = 'Portfolio Shell', 
+  description = 'Arquitectura Micro-Frontend con Module Federation',
+  requiresAuth = false,
+  loadsMFEs = false  // Por defecto NO muestra loading screen
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+      CRITICAL: Theme Initialization (BLOCKING SCRIPT)
+      Este script debe ejecutarse SÍNCRONAMENTE antes del render para evitar flash
+    ═══════════════════════════════════════════════════════════════════════════ -->
+    <script is:inline>
+      // Leer tema de localStorage (o default 'dark')
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } catch (e) {
+          // Fallback si localStorage no está disponible
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    
+    <!-- Preload de fuentes para performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+    
+    <!--
+      ═══════════════════════════════════════════════════════════════════════════
+      IMPORTANTE: Este script DEBE ser inline (no se puede mover a archivo .ts)
+      ═══════════════════════════════════════════════════════════════════════════
+      
+      RAZÓN: Prevención de Race Condition Crítica
+      
+      Este script usa `is:inline` para ejecutarse SÍNCRONAMENTE antes de cualquier
+      módulo ESM. Si se mueve a un archivo externo, los MFEs (React/Angular) pueden
+      cargar ANTES de que window.__SHARED_BUS__ esté disponible, causando:
+      
+        ❌ Error: "[MFContext] Bus not found"
+        ❌ EventBus undefined en getMicrofrontendBus()
+        ❌ Crash de toda la aplicación
+      
+      ORDEN DE EJECUCIÓN CORRECTO:
+        1. ✅ Este script inline (síncrono, bloquea parsing)
+        2. ✅ window.__SHARED_BUS__ disponible globalmente
+        3. ✅ Los MFEs cargan y encuentran el contexto
+      
+      ALTERNATIVAS INTENTADAS (todas fallan):
+        ❌ Script externo con type="module" → Race condition persiste
+        ❌ waitForContext() con polling → Delay adicional, complejidad
+        ❌ Promise.resolve() en módulos → Los MFEs cargan primero igual
+      
+      🔧 MODO DESARROLLO: Código legible con comentarios y console.log para debugging
+      🔒 MODO PRODUCCIÓN: Minificado/ofuscado automáticamente (Terser ~750 bytes)
+      
+      Este es el ÚNICO código inline justificado en toda la aplicación.
+      Todo lo demás (CSS, lógica de negocio) está externalizado correctamente.
+    -->
+    <script is:inline>
+      // Inicialización mínima de contexto MFE (60 líneas, crítico para sincronización)
+      if (typeof window !== 'undefined' && !window.__MFE_CONTEXT_INITIALIZED__) {
+        window.__MFE_CONTEXT_INITIALIZED__ = true;
+        
+        console.log('[BaseLayout] 🔧 Inicializando contexto MFE...');
+        
+        try {
+          // 1. Crear BroadcastChannel
+          let channel = null;
+          try {
+            channel = new BroadcastChannel('mfe-broadcast-channel');
+          } catch (error) {
+            console.warn('[BaseLayout] ⚠️ BroadcastChannel no soportado');
+          }
+
+          // 2. EventBus minimal
+          class SimpleEventBus {
+            constructor() { this.handlers = new Map(); }
+            on(event, handler) {
+              const current = this.handlers.get(event) || new Set();
+              current.add(handler);
+              this.handlers.set(event, current);
+              return () => current.delete(handler);
+            }
+            emit(event, payload) {
+              const handlers = this.handlers.get(event);
+              if (handlers) handlers.forEach(h => h(payload));
+            }
+            off(event, handler) {
+              const handlers = this.handlers.get(event);
+              if (handlers) handlers.delete(handler);
+            }
+          }
+
+          // 3. MicrofrontendContext minimal
+          class SimpleMicrofrontendContext {
+            constructor(bus, tabId, channel) {
+              this.bus = bus;
+              this.tabId = tabId;
+              this.channel = channel;
+            }
+            getBus() { return this.bus; }
+            getTabId() { return this.tabId; }
+            getChannel() { return this.channel; }
+            static initialize(config) {
+              if (this.instance) return;
+              this.instance = new this(config.bus, config.tabId, config.channel);
+            }
+            static getInstance() {
+              if (!this.instance) throw new Error('[MFContext] Not initialized');
+              return this.instance;
+            }
+          }
+          SimpleMicrofrontendContext.instance = null;
+
+          // 4. Inicializar
+          const tabId = crypto.randomUUID();
+          const sharedBus = new SimpleEventBus();
+          SimpleMicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
+
+          // 5. Exponer globalmente
+          window.__MICROFRONTEND_CONTEXT__ = SimpleMicrofrontendContext;
+          window.__SHARED_BUS__ = sharedBus;
+          window.__TAB_ID__ = tabId;
+          window.__BROADCAST_CHANNEL__ = channel;
+          window.__MFE_CONTEXT_READY__ = true;
+          
+          console.log(`[BaseLayout] ✅ Contexto inicializado (tabId: ${tabId.substring(0, 8)}...)`);
+          
+          // ✅ Observer Pattern: Emitir evento para que listeners reaccionen (sin polling)
+          window.dispatchEvent(new CustomEvent('mfe:context:ready', { 
+            detail: { tabId, bus: sharedBus } 
+          }));
+        } catch (error) {
+          console.error('[BaseLayout] ❌ Error:', error);
+        }
+      }
+    </script>
+  </head>
+  
+  <body>
+    <!-- Loading Screen (solo si la página carga MFEs) -->
+    {loadsMFEs && (
+      <div id="mfe-loading-screen">
+        <div class="mfe-loading-card">
+          <div class="mfe-spinner"></div>
+          <h2 class="mfe-loading-title">Cargando Micro-Frontends</h2>
+          <p class="mfe-loading-subtitle">Inicializando arquitectura modular...</p>
+        </div>
+      </div>
+    )}
+    
+    <!-- ✅ Navegación Principal (Componente Encapsulado) -->
+    <MainNav currentPath={Astro.url.pathname} hideAuthLinks={requiresAuth} />
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      {requiresAuth && (
+        <div id="auth-gate" class="auth-gate">
+          <div class="card auth-card">
+            <h2>Acceso Restringido</h2>
+            <p>Esta página requiere autenticación.</p>
+            <div class="flex gap-4">
+              <input 
+                type="password" 
+                id="auth-password" 
+                class="input" 
+                placeholder="Contraseña (demo: admin123)"
+                autocomplete="current-password"
+              />
+              <button id="auth-submit" class="btn-primary">Acceder</button>
+            </div>
+            <p class="auth-hint">Para esta demo, usa: <code>admin123</code></p>
+          </div>
+        </div>
+      )}
+      
+      <div id="main-view" style={requiresAuth ? 'display:none' : ''}>
+        <slot />
+      </div>
+    </main>
+
+    <!-- Footer compartido -->
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; {new Date().getFullYear()} Portfolio MFE. Arquitectura con Module Federation.</p>
+        <p class="footer-tech">
+          <span class="mfe-badge react">React 19</span>
+          <span class="mfe-badge angular">Angular 21</span>
+          <span class="mfe-badge">Astro 6</span>
+        </p>
+      </div>
+    </footer>
+
+    <!-- Lógica del layout (HEXAGONAL ARCHITECTURE) -->
+    <script>
+      import '../scripts/layout-client-hexagonal';
+    </script>
+  </body>
+</html>

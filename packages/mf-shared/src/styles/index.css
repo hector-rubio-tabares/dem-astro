@@ -1,0 +1,14 @@
+/**
+ * Punto de entrada principal para estilos compartidos
+ * Importa todos los archivos necesarios en el orden correcto
+ */
+
+/* 1. Tokens base (colores, tipografía, espaciado, etc.) */
+@import './design-tokens.css';
+
+/* 2. Temas (light por defecto, dark con data-theme) */
+@import './theme-light.css';
+@import './theme-dark.css';
+
+/* 3. Estilos globales y componentes reutilizables */
+/* Ya incluidos en global.css - no duplicar imports */

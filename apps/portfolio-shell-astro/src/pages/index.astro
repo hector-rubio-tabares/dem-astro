@@ -1,22 +1,179 @@
 ---
-
+/**
+ * Página Home - Portfolio Principal
+ * Integración de MFEs: Projects (Angular) y About (React)
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Portfolio Shell Astro</title>
-	</head>
-	<body>
-		<main>
-			<h1>Portfolio Shell (Astro)</h1>
-			<p>Piloto local para validar integracion de micro-frontends.</p>
-			<p><a href="/demo">Abrir demo con bundles locales</a></p>
-			<p><a href="/demo-hot">Abrir demo hot (dev servers)</a></p>
-		</main>
-	</body>
-</html>
+<BaseLayout 
+  title="Portfolio - Arquitectura Micro-Frontend"
+  description="Proyectos y experiencia técnica con React 19, Angular 21 y Astro 6"
+  loadsMFEs={true}
+>
+  <div class="container">
+    <!-- Projects Section (Angular MFE con Bento Grid) -->
+    <section class="projects-section">
+      <!-- Web Component de Angular Projects (tiene título + link "Ver todos" interno) -->
+      <portfolio-projects></portfolio-projects>
+   </section>
+
+    <!-- About Section (React MFE) -->
+    <section class="section">
+      <div class="section-header">
+        <span class="label-sm section-prefix">02 // ABOUT_EXPERIENCE</span>
+        <h2>Acerca de</h2>
+      </div>
+      <div id="about-container">
+        <!-- React About se monta aquí -->
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ========== PROJECTS SECTION (Sin decoración extra) ========== */
+  .projects-section {
+    margin-bottom: var(--spacing-24);
+  }
+
+  /* ========== SECTIONS ========== */
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-xl);
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: var(--line-height-relaxed);
+    animation: fadeIn 1s ease-out 0.2s both;
+  }
+
+  /* ========== SECTIONS (con animaciones) ========== */
+  .section {
+    margin: var(--spacing-20) 0;
+    animation: slideUp 0.6s ease-out;
+  }
+
+  .section-header {
+    margin-bottom: var(--spacing-10);
+    padding-left: var(--spacing-4);
+    border-left: 3px solid var(--color-primary-cyan);
+  }
+
+  .section-prefix {
+    display: block;
+    color: var(--color-primary-cyan);
+    margin-bottom: var(--spacing-3);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: var(--font-size-sm);
+  }
+
+  .section h2 {
+    font-size: var(--font-size-4xl);
+    font-family: var(--font-display);
+    font-weight: 700;
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  #projects-container,
+  #about-container {
+    min-height: 300px;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Asegurar visibilidad de Web Components */
+  portfolio-projects {
+    display: block;
+    width: 100%;
+  }
+
+  #about-container > * {
+    display: block;
+    width: 100%;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--spacing-16) var(--spacing-4) var(--spacing-12);
+      border-radius: var(--border-radius-2xl);
+    }
+
+    .hero-title {
+      font-size: var(--font-size-3xl);
+    }
+
+    .hero-subtitle {
+      font-size: var(--font-size-lg);
+    }
+
+    .section {
+      margin: var(--spacing-12) 0;
+    }
+
+    .section h2 {
+      font-size: var(--font-size-3xl);
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Portfolio Home - MFE Loading con arquitectura centralizada
+   * 
+   * ✅ SOLID: Usa MFELoaderService (Single Responsibility)
+   * ✅ DRY: No duplica lógica de carga
+   * ✅ Strategy Pattern: Cada MFE sabe cómo cargarse
+   * ✅ Guard de ejecución: El loader previene cargas duplicadas
+   * 
+   * Cada página declara QUÉ componentes necesita, no CÓMO cargarlos
+   */
+
+  import { mfeLoader } from '@mf/shared';
+
+  /**
+   * Inicializar componentes del portfolio
+   * Guard interno: Solo se ejecuta UNA VEZ (handled by mfeLoader.isLoaded)
+   */
+  async function initializeHome() {
+    console.log('[Home] 🚀 Inicializando página Home...');
+
+    try {
+      // Declarativo: solo especificar QUÉ componentes cargar
+      const results = await mfeLoader.loadMultiple([
+        ['projects'],                 // Web Component Angular (auto-mount)
+        ['about', 'about-container'], // Mount Function React
+      ]);
+
+      // Validar resultados
+      const failures = results.filter(r => !r.success);
+      if (failures.length > 0) {
+        console.error('[Home] ⚠️ Algunos componentes fallaron:', failures);
+      } else {
+        console.log('[Home] ✅ Todos los componentes cargados exitosamente');
+      }
+
+      // Remover loading screen
+      mfeLoader.removeLoadingScreen();
+
+    } catch (error) {
+      console.error('[Home] ❌ Error fatal inicializando Home:', error);
+      mfeLoader.removeLoadingScreen(); // Remover incluso en error
+    }
+  }
+
+  // Ejecutar solo una vez cuando DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeHome, { once: true });
+  } else {
+    initializeHome();
+  }
+</script>

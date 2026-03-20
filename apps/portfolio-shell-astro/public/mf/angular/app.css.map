@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/app.css"],
-  "sourcesContent": [".angular-card {\r\n\tpadding: 1rem;\r\n\tborder-radius: 12px;\r\n\tborder: 1px solid #dddddd;\r\n\tbackground: #fff8e8;\r\n\tcolor: #2a2a2a;\r\n\tfont-family: \"Segoe UI\", sans-serif;\r\n}\r\n\r\n.angular-card h3 {\r\n\tmargin: 0 0 0.5rem;\r\n}\r\n\r\n.angular-card p {\r\n\tmargin: 0;\r\n}\r\n"],
-  "mappings": ";AAAA,CAAC;AACA,WAAS;AACT,iBAAe;AACf,UAAQ,IAAI,MAAM;AAClB,cAAY;AACZ,SAAO;AACP,eAAa,UAAU,EAAE;AAC1B;AAEA,CATC,aASa;AACb,UAAQ,EAAE,EAAE;AACb;AAEA,CAbC,aAaa;AACb,UAAQ;AACT;",
-  "names": []
-}

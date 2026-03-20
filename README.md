@@ -88,28 +88,65 @@ Comunicación:
 • Multi-Tab: BroadcastChannel (native browser API)
 ```
 
+### 🎨 Sistema de Diseño Compartido
+
+Todos los componentes (Astro, React, Angular) comparten un sistema de diseño unificado:
+
+- **Tokens CSS**: Colores, tipografía, espaciado, sombras, transiciones
+- **Temas**: Light (default) y Dark con toggle automático
+- **Responsive**: Mobile-first design con breakpoints consistentes
+- **Componentes**: Buttons, cards, inputs con estilos reutilizables
+- **Ubicación**: `@mf/shared/src/styles/`
+
+Ver [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) para documentación completa.
+
 ### Componentes
 
 ```
 pruebas/
 ├── apps/
 │   ├── portfolio-shell-astro/     # Shell principal (Astro)
-│   │   ├── src/scripts/
-│   │   │   ├── demo-hot.ts         # Orchestrator principal
-│   │   │   ├── event-bus.ts        # EventBus type-safe
-│   │   │   ├── message-validator.ts # Validación de mensajes
-│   │   │   └── mf-runtime.ts       # Utilidades de carga
+│   │   ├── src/
+│   │   │   ├── layouts/
+│   │   │   │   └── BaseLayout.astro  # Layout base con header/footer
+│   │   │   ├── pages/
+│   │   │   │   ├── index.astro       # Home (público)
+│   │   │   │   ├── projects.astro    # Proyectos (público)
+│   │   │   │   └── admin.astro       # Admin (🔒 protegido)
+│   │   │   ├── scripts/
+│   │   │   │   ├── mf-init.ts        # Inicialización universal de MFEs
+│   │   │   │   ├── mf-loader.ts      # Cargador de MFEs (Strategy Pattern)
+│   │   │   │   └── mf-runtime.ts     # Runtime utilities (timeout, origin validation)
+│   │   │   └── middleware.ts         # Auth middleware
 │   │   └── ...
 │   ├── portfolio-react-mf/         # Microfrontend React
 │   │   ├── src/
 │   │   │   ├── App.tsx             # Componente principal
-│   │   │   └── lib/message-validator.ts
+│   │   │   ├── App.css             # Estilos (usa design tokens)
+│   │   │   └── mf-entry.tsx        # Mount interface
 │   │   └── ...
 │   └── portfolio-angular-mf/       # Microfrontend Angular
-│       ├── src/app/
-│       │   ├── app.ts              # Componente principal
-│       │   └── lib/message-validator.ts
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── app.ts          # Componente (Web Component)
+│       │   │   └── app.css         # Estilos (usa design tokens)
+│       │   └── styles.css          # Global imports
 │       └── ...
+├── packages/
+│   └── mf-shared/                 # Librería compartida
+│       └── src/
+│           ├── styles/             # 🎨 Sistema de Diseño
+│           │   ├── design-tokens.css
+│           │   ├── theme-light.css
+│           │   ├── theme-dark.css
+│           │   ├── global.css
+│           │   └── mfe-integration.css
+│           ├── event-bus.ts
+│           ├── context.ts
+│           ├── message-validator.ts
+│           ├── strategies.ts
+│           └── types.ts
+├── DESIGN_SYSTEM.md               # 🎨 Documentación del sistema de diseño
 ├── INFORME_AUDITORIA.md           # Auditoría técnica completa
 ├── COMPARATIVA_VS_IFRAMES.md      # Por qué no iframes
 ├── RESUMEN_EJECUTIVO.md           # TL;DR ejecutivo
@@ -143,10 +180,16 @@ pnpm dev
 
 Abre en tu navegador: `http://localhost:4321`
 
+Rutas disponibles:
+- 🏠 **/** - Home con MFEs integrados
+- 📂 **/projects** - Showcase de proyectos
+- 🔒 **/admin** - Panel administración (password: `admin123`)
+
 Verás:
-- ✅ Astro shell cargado
-- ✅ React MF integrado con hooks
-- ✅ Angular MF integrado con signals
+- ✅ Astro shell con sistema de diseño
+- ✅ React MFE integrado con hooks
+- ✅ Angular MFE integrado con signals
+- ✅ Toggle tema claro/oscuro funcional
 - ✅ Comunicación bidireccional funcionando
 
 ---
@@ -154,22 +197,19 @@ Verás:
 ## 📝 Scripts Disponibles
 
 ```bash
-# Development (hot reload)
-pnpm dev                    # Inicia todos los servers
+# Development
+pnpm dev                    # Inicia todos los servers (Shell + React + Angular)
 
 # Build
-pnpm build                  # Build de producción
-pnpm --filter portfolio-shell-astro build
-pnpm --filter portfolio-react-mf build:mf
-pnpm --filter portfolio-angular-mf build
+pnpm build                  # Build completo de todas las apps
+pnpm build:shell            # Build solo del shell Astro
+pnpm build:react            # Build solo del MFE React
+pnpm build:angular          # Build solo del MFE Angular
 
-# Testing (cuando vitest esté instalado)
-pnpm test                   # Run tests
-pnpm test:watch            # Watch mode
-pnpm test:coverage         # Coverage report
-
-# Linting
-pnpm lint                   # Lint todos los proyectos
+# Testing
+pnpm test                   # Run tests (43 tests unitarios)
+pnpm test:watch             # Watch mode
+pnpm test:coverage          # Coverage report
 ```
 
 ---

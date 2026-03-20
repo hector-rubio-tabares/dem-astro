@@ -1,0 +1,228 @@
+---
+/**
+ * Página Login
+ * Autenticación para acceso a rutas protegidas
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Login - Portfolio MFE"
+  description="Ingresa a tu cuenta"
+>
+  <div class="container">
+    <section class="login-section">
+      <div class="card login-card">
+        <h1>Iniciar Sesión</h1>
+        <p class="lead">Accede al panel de administración</p>
+
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username"
+              class="input" 
+              placeholder="admin"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password"
+              class="input" 
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              Iniciar Sesión
+            </button>
+          </div>
+
+          <div id="error-message" class="error-message hidden"></div>
+          
+          <p class="help-text">
+            <strong>Demo:</strong> Usuario: <code>admin</code> / Contraseña: <code>admin123</code>
+          </p>
+        </form>
+
+        <div class="login-features">
+          <h3>Después del login tendrás acceso a:</h3>
+          <ul>
+            <li>✓ Panel de administración</li>
+            <li>✓ Monitoreo de MFEs en tiempo real</li>
+            <li>✓ Gestión de configuración</li>
+            <li>✓ Logs y estadísticas</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .login-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 300px);
+    padding: var(--spacing-8) 0;
+  }
+
+  .login-card {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .login-form {
+    margin: var(--spacing-6) 0;
+  }
+
+  .form-group {
+    margin-bottom: var(--spacing-5);
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: var(--spacing-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+  }
+
+  .form-actions {
+    margin-top: var(--spacing-6);
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+
+  .error-message {
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: var(--color-error-100);
+    border: 1px solid var(--color-error-500);
+    border-radius: var(--radius-md);
+    color: var(--color-error-700);
+  }
+
+  .error-message.hidden {
+    display: none;
+  }
+
+  .help-text {
+    margin-top: var(--spacing-4);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+  }
+
+  .login-features {
+    margin-top: var(--spacing-8);
+    padding-top: var(--spacing-6);
+    border-top: 1px solid var(--color-border-primary);
+  }
+
+  .login-features h3 {
+    margin-bottom: var(--spacing-4);
+    font-size: var(--font-size-lg);
+  }
+
+  .login-features ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .login-features li {
+    padding: var(--spacing-2) 0;
+    color: var(--color-text-secondary);
+  }
+</style>
+
+<script>
+  // ═══════════════════════════════════════════════════════════
+  // Login Form Handler (HEXAGONAL ARCHITECTURE + ERROR HANDLING)
+  // ═══════════════════════════════════════════════════════════
+  
+  // Infrastructure
+  import { SessionStorageAuthService } from '../infrastructure/adapters/SessionStorageAuthService';
+  import { ConsoleLogger } from '../infrastructure/adapters/ConsoleLogger';
+  import { ProductionErrorHandler } from '../infrastructure/adapters/ProductionErrorHandler';
+  
+  // Use Cases
+  import { LoginUseCase } from '../application/use-cases/LoginUseCase';
+  import { CheckAuthenticationUseCase } from '../application/use-cases/CheckAuthenticationUseCase';
+  
+  // Dependency Injection
+  const logger = new ConsoleLogger();
+  const errorHandler = new ProductionErrorHandler(logger);
+  const authService = new SessionStorageAuthService();
+  const loginUseCase = new LoginUseCase(authService, errorHandler, logger);
+  const checkAuthUseCase = new CheckAuthenticationUseCase(authService);
+  
+  const loginForm = document.getElementById('login-form') as HTMLFormElement;
+  const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+  const usernameInput = document.getElementById('username') as HTMLInputElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
+
+  // Obtener returnUrl desde query params (enviado por middleware)
+  const urlParams = new URLSearchParams(window.location.search);
+  const returnUrl = urlParams.get('returnUrl') || '/admin';
+
+  function showError(message: string) {
+    errorMessage.textContent = message;
+    errorMessage.classList.remove('hidden');
+  }
+
+  function hideError() {
+    errorMessage.classList.add('hidden');
+  }
+
+  async function handleLogin(event: Event) {
+    event.preventDefault();
+    hideError();
+
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value;
+
+    // Ejecutar use case de login
+    const result = await loginUseCase.execute({ username, password });
+
+    if (result.success) {
+      // Login exitoso → redirigir a la ruta original (o admin por defecto)
+      logger.info('[Login] Login exitoso, redirigiendo', { returnUrl });
+      
+      // ✅ Redirect inmediato (cookies son síncronas)
+      window.location.href = returnUrl;
+    } else {
+      // Login fallido → mostrar error
+      showError(result.error || 'Error desconocido');
+    }
+  }
+
+  // Verificar si ya está autenticado
+  function checkIfAuthenticated() {
+    const result = checkAuthUseCase.execute('/login', false);
+    
+    if (result.isAuthenticated) {
+      logger.info('[Login] Usuario ya autenticado, redirigiendo', { returnUrl });
+      window.location.href = returnUrl;
+    }
+  }
+
+  // Event listeners
+  loginForm.addEventListener('submit', handleLogin);
+
+  // Check auth on load
+  checkIfAuthenticated();
+</script>

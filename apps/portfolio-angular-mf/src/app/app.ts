@@ -7,9 +7,12 @@ import {
   validateMultiTabMessage,
   sanitizeDisplayString,
   MF_CONFIG,
+  EventBus,
   type TabMessage,
   type MultiTabMessage,
+  type MicroFrontendEvents,
 } from '@mf/shared';
+import { environment } from '../environments/environment';
 
 interface Message {
   id: number;
@@ -23,7 +26,19 @@ interface Message {
   selector: 'portfolio-angular-mf',
   template: `
     <section class="angular-card">
-      <h3>Angular Micro-Frontend</h3>
+      <div class="mfe-header">
+        <h3>Angular Micro-Frontend</h3>
+        <div class="mfe-badges">
+          <span class="mfe-badge angular">Angular 21</span>
+          <span
+            class="mfe-badge"
+            [class.env-dev]="!envProduction()"
+            [class.env-prod]="envProduction()"
+          >
+            {{ envName() }}
+          </span>
+        </div>
+      </div>
       <p>Renderizado dentro del shell Astro con signals.</p>
       <div class="angular-stats">
         <span>Clicks: {{ clicks() }}</span>
@@ -74,7 +89,13 @@ export class App implements OnInit, OnDestroy {
   externalClicks = signal(0);
   messages = signal<Message[]>([]);
 
-  private bus: any;
+  // Environment signals (detecta dev vs prod)
+  readonly envProduction = signal(environment.production);
+  readonly envName = computed(() =>
+    this.envProduction() ? '🔴 PROD' : '🟢 DEV'
+  );
+
+  private bus!: EventBus<MicroFrontendEvents>;
 
   // Expose MF_CONFIG to template
   readonly MF_CONFIG = MF_CONFIG;
@@ -136,7 +157,7 @@ export class App implements OnInit, OnDestroy {
       const hostElement = this.elementRef.nativeElement as HTMLElement;
       this.instanceId = hostElement.getAttribute('data-instance-id') || crypto.randomUUID();
 
-      this.bus = getMicrofrontendBus();
+      this.bus = getMicrofrontendBus<MicroFrontendEvents>();
       this.channel = getMicrofrontendChannel();
 
       this.bus.on('click-count', this.tabHandler);

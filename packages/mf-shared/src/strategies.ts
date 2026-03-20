@@ -7,7 +7,7 @@ export type MicrofrontendType = 'react' | 'angular' | 'vue' | 'svelte' | 'custom
 
 export interface MountConfig {
   container: HTMLElement
-  module: any
+  module: Record<string, unknown>
   instanceId: string
   index: number
   customElementName?: string
@@ -30,13 +30,16 @@ class FunctionBasedMountStrategy implements MountStrategy {
       throw new Error(`Module does not expose mount() function`)
     }
 
+    // Limpiar contenedor antes de montar
+    config.container.innerHTML = ''
+
     config.module.mount(config.container, {
       instanceId: config.instanceId,
       index: config.index,
     })
   }
 
-  unmount(container: HTMLElement): void {
+  unmount(_container: HTMLElement): void {
     // React/Vue deben implementar su propia limpieza
   }
 }
@@ -61,6 +64,9 @@ class CustomElementMountStrategy implements MountStrategy {
         timeout
       ])
     }
+    
+    // Limpiar contenedor antes de montar
+    config.container.innerHTML = ''
     
     const element = document.createElement(config.customElementName)
     element.setAttribute('data-instance-id', config.instanceId)

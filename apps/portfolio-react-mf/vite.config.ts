@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import federation from '@originjs/vite-plugin-federation'
+import path from 'node:path'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -14,20 +15,23 @@ export default defineConfig(({ mode }) => {
     .filter(Boolean)
 
   return {
+    resolve: {
+      alias: {
+        '@mf/shared': path.resolve(__dirname, '../../packages/mf-shared/src'),
+      },
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.json']
+    },
     plugins: [
-      ...(isProd
-        ? [
-            federation({
-              name: 'reactMF',
-              filename: 'remoteEntry.js',
-              exposes: {
-                './App': './src/App.tsx',
-                './mount': './src/mf-entry.tsx',
-              },
-              shared: ['react', 'react-dom'],
-            }),
-          ]
-        : []),
+      // Module Federation siempre habilitado (dev y prod)
+      federation({
+        name: 'reactMF',
+        filename: 'remoteEntry.js',
+        exposes: {
+          './App': './src/presentation/App.tsx',
+          './mount': './src/mf-entry.tsx',
+        },
+        shared: ['react', 'react-dom'],
+      }),
     ],
     server: {
       host: serverHost,

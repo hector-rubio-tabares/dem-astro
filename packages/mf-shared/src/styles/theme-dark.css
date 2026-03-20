@@ -1,0 +1,130 @@
+/**
+ * Tema Dark - The Ethereal Architect
+ * Valores semánticos que mapean a tokens base
+ * Diseñado para portfolios técnicos de alta gama
+ * 
+ * NOTA: NO usa :root para evitar conflictos con theme-light
+ * El default dark se maneja via script inline en BaseLayout que setea data-theme="dark"
+ */
+
+/* Dark theme - Aplicado cuando data-theme="dark" */
+[data-theme="dark"] {
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SURFACE HIERARCHY - Dark Mode MEJORADO (mejor contraste)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --surface-lowest: #0a1120;        /* Más oscuro para mayor contraste */
+  --surface-low: #151c29;           /* Secondary background */
+  --surface-base: #1a2332;          /* Base más claro para mejor legibilidad */
+  --surface-high: #232a38;          /* Elevated blocks */
+  --surface-highest: #2d3548;       /* Floating elements */
+  --surface-dim: #0d1421;           /* Dimmed surface */
+  --surface-bright: #242b3d;        /* Brighter surface para hover */
+  --surface-container: #1a2332;     /* Container alias */
+
+  /* TEXT COLORS (Mejorado contraste y legibilidad) */
+  --text-primary: #e5ecf8;          /* Más brillante para mejor legibilidad */
+  --text-secondary: #9ca3b8;        /* Secondary más claro */
+  --text-disabled: #5a6478;
+
+  /* OUTLINE & BORDERS */
+  --outline: #4a5568;               /* Standard borders (use sparingly) */
+  --outline-variant: #2d3548;       /* Ghost borders @15% opacity */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC COLORS - Mapped to surfaces
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-bg-primary: var(--surface-base);       /* #19202d - Main viewport */
+  --color-bg-secondary: var(--surface-low);      /* #151c29 - Cards, panels */
+  --color-bg-tertiary: var(--surface-lowest);    /* #070e1b - Code snippets */
+  --color-bg-elevated: var(--surface-high);      /* #232a38 - Interactive blocks */
+  --color-bg-overlay: rgba(13, 19, 33, 0.9);     /* Modal backdrop */
+
+  /* Surface = Background (alias) */
+  --color-surface-primary: var(--surface-base);
+  --color-surface-secondary: var(--surface-low);
+  --color-surface-tertiary: var(--surface-lowest);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * TEXT COLORS - NO pure white (#fff), use reduced strain colors
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-text-primary: var(--text-primary);      /* #dce2f5 - Primary content */
+  --color-text-secondary: var(--text-secondary);  /* #8b92a8 - Metadata */
+  --color-text-tertiary: #6e7681;
+  --color-text-disabled: var(--text-disabled);    /* #4a5568 */
+  --color-text-inverse: var(--surface-base);      /* Dark text on light bg */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * BORDERS - Use sparingly, prefer ghost borders @15% opacity
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-border-primary: var(--outline);         /* #4a5568 */
+  --color-border-secondary: var(--outline-variant); /* #2d3548 */
+  --color-border-focus: var(--color-primary-cyan); /* #00f5ff */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * LINKS - Primary cyan for technical aesthetic
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-link: var(--color-primary-cyan);        /* #00f5ff */
+  --color-link-hover: #33f7ff;                    /* Lighter cyan */
+  --color-link-visited: var(--color-secondary-violet); /* #8b5cf6 */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * ESTADOS INTERACTIVOS - Subtle surface shifts
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-hover-overlay: rgba(255, 255, 255, 0.04);
+  --color-active-overlay: rgba(255, 255, 255, 0.08);
+  --color-focus-ring: var(--color-primary-cyan);
+  
+  /* Active link con accent cyan */
+  --color-link-active-bg: var(--surface-high);      /* Usa surface predefinido */
+  --color-link-active-shadow: rgba(6, 182, 212, 0.4);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * BUTTONS - Signature gradient for primary CTAs
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-button-primary-bg: var(--gradient-signature);
+  --color-button-primary-bg-hover: linear-gradient(135deg, #33f7ff 0%, #6d3dd1 100%);
+  --color-button-primary-text: var(--color-primary-cyan-dark); /* #003739 */
+
+  --color-button-secondary-bg: transparent;
+  --color-button-secondary-bg-hover: var(--surface-high);
+  --color-button-secondary-text: var(--color-primary-cyan);
+  --color-button-secondary-border: var(--color-primary-cyan);
+
+  --color-button-tertiary-bg: transparent;
+  --color-button-tertiary-text: var(--color-secondary-violet); /* #8b5cf6 */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * CARDS - Layered glass panels
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-card-bg: var(--surface-low);            /* #151c29 */
+  --color-card-border: transparent;               /* NO borders - use bg shifts */
+  --color-card-shadow: var(--shadow-ambient-violet);
+  --color-card-hover-bg: var(--surface-high);     /* #232a38 */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * INPUTS - Dark terminal aesthetic
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-input-bg: var(--surface-lowest);        /* #070e1b */
+  --color-input-border: transparent;
+  --color-input-border-focus: var(--color-primary-cyan); /* #00f5ff with glow */
+  --color-input-text: var(--text-primary);
+  --color-input-placeholder: var(--text-secondary);
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * MFE GLOWING MODULES (React, Angular badges)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-mfe-react-primary: #61dafb;             /* React cyan */
+  --color-mfe-react-bg: var(--surface-highest);   /* #2d3548 */
+  --color-mfe-react-border: var(--color-primary-cyan);
+  --color-mfe-react-glow: rgba(97, 218, 251, 0.3);
+
+  --color-mfe-angular-primary: #dd0031;           /* Angular red */
+  --color-mfe-angular-bg: var(--surface-highest); /* #2d3548 */
+  --color-mfe-angular-border: #dd0031;
+  --color-mfe-angular-glow: rgba(221, 0, 49, 0.3);
+
+  --color-mfe-astro-primary: #ff5d01;             /* Astro orange */
+  --color-mfe-astro-bg: var(--surface-highest);
+  --color-mfe-astro-border: #ff5d01;
+  --color-mfe-astro-glow: rgba(255, 93, 1, 0.3);
+}

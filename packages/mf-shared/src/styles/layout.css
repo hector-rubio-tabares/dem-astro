@@ -1,0 +1,120 @@
+/**
+ * DESIGN SYSTEM - Layout Components
+ * Estilos del layout base (header, footer, auth gate)
+ */
+
+/* ========== HEADER ========== */
+.site-header {
+  background-color: var(--color-bg-elevated);
+  border-bottom: var(--border-width-thin) solid var(--color-border-primary);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .site-header {
+  background-color: rgba(15, 20, 25, 0.9);
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) 0;
+  gap: var(--spacing-6);
+}
+
+.logo {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-600);
+  text-decoration: none;
+}
+
+[data-theme="dark"] .logo {
+  color: var(--color-primary-400);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: var(--spacing-6);
+  margin: 0;
+  align-items: center;
+}
+
+.nav-links a {
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+.nav-links .btn-sm {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+
+.theme-toggle {
+  padding: var(--spacing-2) var(--spacing-3);
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  min-height: calc(100vh - 200px);
+  padding: var(--spacing-8) 0;
+}
+
+/* ========== AUTH GATE ========== */
+.auth-gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.auth-card {
+  max-width: 450px;
+  width: 100%;
+}
+
+.auth-hint {
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* ========== FOOTER ========== */
+.site-footer {
+  background-color: var(--color-bg-secondary);
+  border-top: var(--border-width-thin) solid var(--color-border-primary);
+  padding: var(--spacing-8) 0;
+  text-align: center;
+}
+
+.footer-tech {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--spacing-4);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .nav-links {
+    gap: var(--spacing-4);
+    font-size: var(--font-size-sm);
+  }
+
+  .logo {
+    font-size: var(--font-size-lg);
+  }
+
+  .main-content {
+    padding: var(--spacing-4) 0;
+  }
+}

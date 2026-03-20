@@ -48,20 +48,23 @@ function App({ container }: { container?: HTMLElement }) {
       const channel = getMicrofrontendChannel()
       const tabId = getMicrofrontendTabId()
       
-      const tabHandler = (payload: TabMessage) => {
+      // Type assertion para handlers del bus
+      const tabHandler = (payload: unknown) => {
         try {
           validateTabMessage(payload)
+          const typedPayload = payload as TabMessage;
+          
           // Filtrar mensajes de esta misma instancia
-          if (payload.instanceId !== instanceId) {
+          if (typedPayload.instanceId !== instanceId) {
             // Solo actualizar externalClicks si viene del mismo framework pero diferente instancia
-            if (payload.source === 'react') {
-              setExternalClicks(payload.count)
+            if (typedPayload.source === 'react') {
+              setExternalClicks(typedPayload.count)
             }
             setMessages(prev => [...prev, {
               id: Date.now(),
-              from: sanitizeDisplayString(payload.source),
+              from: sanitizeDisplayString(typedPayload.source),
               scope: 'tab',
-              count: payload.count,
+              count: typedPayload.count,
               timestamp: new Date().toLocaleTimeString()
             }])
           }
@@ -77,12 +80,14 @@ function App({ container }: { container?: HTMLElement }) {
         try {
           const payload = event.data
           validateMultiTabMessage(payload)
-          if (payload.tabId !== tabId) {
+          const typedPayload = payload as MultiTabMessage;
+          
+          if (typedPayload.tabId !== tabId) {
             setMessages(prev => [...prev, {
               id: Date.now() + 1,
-              from: sanitizeDisplayString(payload.source),
+              from: sanitizeDisplayString(typedPayload.source),
               scope: 'multi-tab',
-              count: payload.count,
+              count: typedPayload.count,
               timestamp: new Date().toLocaleTimeString()
             }])
           }
@@ -158,7 +163,10 @@ function App({ container }: { container?: HTMLElement }) {
 
   return (
     <section className="react-card">
-      <h3>React Micro-Frontend</h3>
+      <div className="mfe-header">
+        <h3>React Micro-Frontend</h3>
+        <span className="mfe-badge react">React 19</span>
+      </div>
       <p>Renderizado dentro del shell Astro con hooks.</p>
       <div className="react-stats">
         <span>Clicks: {clicks}</span>

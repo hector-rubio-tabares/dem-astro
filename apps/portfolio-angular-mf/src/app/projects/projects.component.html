@@ -1,0 +1,78 @@
+<!-- Projects Gallery - Bento Grid Layout con Angular Signals -->
+<!-- Loading Screen -->
+<div *ngIf="isLoading()" class="loading-screen">
+  <div class="loading-content">
+    <div class="loader-spinner"></div>
+    <p class="loading-text">{{ currentLoadingText() }}</p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="!isLoading()" class="projects-main">
+  <!-- Header Section con link "Ver todos" -->
+  <header class="projects-header">
+    <div class="header-row">
+      <h1 class="projects-title">
+        Proyectos & <span class="title-gradient">Soluciones</span>
+      </h1>
+      <a *ngIf="showViewAllLink" href="/proyectos" class="view-all-link">
+        Ver todos los proyectos
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+    <p class="projects-subtitle">
+      Una curaduría de interfaces digitales y arquitecturas de software diseñadas con precisión técnica y estética editorial.
+    </p>
+  </header>
+
+  <!-- Bento Grid -->
+  <div class="bento-grid">
+    <article
+      *ngFor="let project of projects(); trackBy: trackById"
+      class="project-card"
+      [ngClass]="[getGridClass(project.span)]"
+    >
+      <!-- Image Container -->
+      <div class="project-image" [ngClass]="[getAspectClass(project.aspect)]">
+        <img
+          [src]="project.image"
+          [alt]="project.title"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        />
+      </div>
+
+      <!-- Content -->
+      <div class="project-content">
+        <!-- Tags -->
+        <div class="project-tags">
+          <span
+            *ngFor="let tag of project.tags"
+            class="tag"
+          >
+            <span class="tag-dot"></span>
+            {{ tag }}
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h3 class="project-title">{{ project.title }}</h3>
+
+        <!-- Description -->
+        <p class="project-description">{{ project.description }}</p>
+
+        <!-- View Details Link -->
+        <div class="project-footer">
+          <a href="#" class="view-details">
+            View Details
+            <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>

@@ -1,1 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+/**
+ * Angular MFE - Estilos Globales
+ * Importa el sistema de diseño compartido desde @mf/shared
+ *
+ * global.css ya incluye:
+ * - design-tokens.css (variables base)
+ * - theme-dark.css (dark mode)
+ * - theme-light.css (light mode)
+ * - reset CSS
+ * - utilidades
+ */
+
+@import '@mf/shared/styles/global.css';
+@import '@mf/shared/styles/mfe-integration.css';

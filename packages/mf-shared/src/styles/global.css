@@ -1,0 +1,792 @@
+/**
+ * Estilos Globales - Sistema de Diseño Compartido
+ * 
+ * USO:
+ * - Astro:   import '@mf/shared/styles/global.css' en BaseLayout.astro
+ * - React:   import '@mf/shared/styles/global.css' en main.tsx
+ * - Angular: @import '@mf/shared/styles/global.css' en styles.css
+ * 
+ * Este archivo importa todos los tokens, temas y utilidades.
+ * Los MFEs solo deben importar ESTE archivo para tener acceso completo al sistema.
+ */
+
+@import './design-tokens.css';
+@import './theme-light.css';
+@import './theme-dark.css';
+
+/* ========== RESET Y BASE ========== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family-sans);
+  font-size: 16px;
+  line-height: var(--line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* ========== TIPOGRAFÍA ========== */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
+
+p {
+  margin-bottom: var(--spacing-4);
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  position: relative;
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* Efecto underline animado para links */
+a:not(.btn):not(.logo):hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-signature, var(--color-link));
+  border-radius: 2px;
+  animation: linkUnderline 0.3s ease;
+}
+
+@keyframes linkUnderline {
+  from { transform: scaleX(0); }
+  to { transform: scribeX(1); }
+}
+
+a:visited {
+  color: var(--color-link-visited);
+}
+
+code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  background-color: var(--color-bg-tertiary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+}
+
+/* ========== COMPONENTES REUTILIZABLES (MEJORADOS) ========== */
+
+/* Botones profesionales con efectos visuales */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  border: none;
+  border-radius: var(--border-radius-lg);  /* Más redondeado */
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);  /* Más peso */
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Sombra base */
+}
+
+/* Efecto ripple en botones */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-button-primary-bg);
+  color: var(--color-button-primary-text);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);  /* Sombra cyan */
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-button-primary-bg-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);  /* Sombra más grande */
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--color-button-secondary-bg);
+  color: var(--color-button-secondary-text);
+  border: 2px solid var(--color-button-secondary-border, var(--color-border-primary));
+  backdrop-filter: blur(10px);  /* Glass effect */
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-button-secondary-bg-hover);
+  border-color: var(--color-button-secondary-text);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones pequeños */
+.btn-sm {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-md);
+}
+
+/* Botones grandes */
+.btn-lg {
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--font-size-lg);
+  border-radius: var(--border-radius-xl);
+}
+
+.card {
+  background-color: var(--color-card-bg);
+  border: var(--border-width-thin) solid var(--color-card-border);
+  border-radius: var(--border-radius-2xl);  /* Más redondeado */
+  padding: var(--spacing-6);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glass effect en cards */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.1), 
+    transparent
+  );
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-4px);
+  border-color: var(--color-primary-cyan, var(--color-border-focus));
+}
+
+/* Card con efecto glass (para modals, nav) */
+.card-glass {
+  background: var(--glass-bg, rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--color-input-bg);
+  border: 2px solid var(--color-input-border);  /* Borde más grueso */
+  border-radius: var(--border-radius-lg);  /* Más redondeado */
+  color: var(--color-input-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-base);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);  /* Sombra interna */
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-input-border-focus);
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1),  /* Ring effect */
+              inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.input::placeholder {
+  color: var(--color-input-placeholder);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ========== LAYOUT UTILITIES ========== */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-2 { gap: var(--spacing-2); }
+.gap-4 { gap: var(--spacing-4); }
+.gap-6 { gap: var(--spacing-6); }
+.gap-8 { gap: var(--spacing-8); }
+
+/* ========== RESPONSIVE GRID ========== */
+.grid {
+  display: grid;
+  gap: var(--spacing-6);
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 768px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========== UTILIDADES DE ESPACIADO ========== */
+.mt-4 { margin-top: var(--spacing-4); }
+.mt-8 { margin-top: var(--spacing-8); }
+.mb-4 { margin-bottom: var(--spacing-4); }
+.mb-8 { margin-bottom: var(--spacing-8); }
+.p-4 { padding: var(--spacing-4); }
+.p-6 { padding: var(--spacing-6); }
+
+/* ========== ESTADOS ========== */
+.success {
+  color: var(--color-success-700);
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-500);
+}
+
+.warning {
+  color: var(--color-warning-700);
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-500);
+}
+
+.error {
+  color: var(--color-error-700);
+  background-color: var(--color-error-50);
+  border-color: var(--color-error-500);
+}
+
+.info {
+  color: var(--color-info-700);
+  background-color: var(--color-info-50);
+  border-color: var(--color-info-500);
+}
+
+/* ========== ACCESIBILIDAD ========== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus-visible:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ========== MODO OSCURO - MEDIA QUERY AUTOMÁTICA ========== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Aplica tema dark automáticamente si no hay preferencia explícita */
+    color-scheme: dark;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * THE ETHEREAL ARCHITECT - UTILITY CLASSES
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ========== TYPOGRAPHY UTILITIES ========== */
+.display-lg {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display-lg);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  font-weight: 700;
+}
+
+.display-md {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display-md);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  font-weight: 700;
+}
+
+.headline-md {
+  font-family: var(--font-display);
+  font-size: var(--font-size-headline-md);
+  line-height: var(--line-height-tight);
+  font-weight: 600;
+}
+
+.headline-sm {
+  font-family: var(--font-display);
+  font-size: var(--font-size-headline-sm);
+  line-height: var(--line-height-tight);
+  font-weight: 600;
+}
+
+.title-lg {
+  font-family: var(--font-display);
+  font-size: var(--font-size-title-lg);
+  font-weight: 600;
+}
+
+.body-lg {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.label-sm {
+  font-family: var(--font-display);
+  font-size: var(--font-size-label-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  font-weight: 600;
+}
+
+.label-md {
+  font-family: var(--font-display);
+  font-size: var(--font-size-label-md);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  font-weight: 600;
+}
+
+/* ========== GRADIENT TEXT ========== */
+.text-gradient {
+  background: var(--gradient-signature);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* Fallback */
+}
+
+/* ========== GLASS EFFECT (Floating nav, modals) ========== */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur); /* Safari support */
+}
+
+/* ========== GHOST BORDER (15% opacity for subtle separation) ========== */
+.ghost-border {
+  border: 1px solid var(--outline-variant);
+  opacity: 0.15;
+}
+
+/* ========== SURFACE LAYERS ========== */
+.surface-low {
+  background-color: var(--surface-low);
+}
+
+.surface-base {
+  background-color: var(--surface-base);
+}
+
+.surface-high {
+  background-color: var(--surface-high);
+}
+
+.surface-highest {
+  background-color: var(--surface-highest);
+}
+
+/* ========== GLOWING MFE MODULES (React, Angular, Astro badges) ========== */
+.mfe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-precise);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  background-color: var(--surface-highest);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.mfe-badge.react {
+  border-color: var(--color-mfe-react-border);
+  color: var(--color-mfe-react-primary);
+}
+
+.mfe-badge.react:hover {
+  box-shadow: var(--shadow-glow-primary);
+  transform: translateY(-1px);
+}
+
+.mfe-badge.angular {
+  border-color: var(--color-mfe-angular-border);
+  color: var(--color-mfe-angular-primary);
+}
+
+.mfe-badge.angular:hover {
+  box-shadow: 0 0 15px var(--color-mfe-angular-glow);
+  transform: translateY(-1px);
+}
+
+.mfe-badge.astro {
+  border-color: var(--color-mfe-astro-border);
+  color: var(--color-mfe-astro-primary);
+}
+
+.mfe-badge.astro:hover {
+  box-shadow: 0 0 15px var(--color-mfe-astro-glow);
+  transform: translateY(-1px);
+}
+
+/* Environment badges (DEV/PROD) */
+.mfe-badge.env-dev {
+  border-color: var(--color-success-500);
+  color: var(--color-success-500);
+}
+
+.mfe-badge.env-prod {
+  border-color: var(--color-error-500);
+  color: var(--color-error-500);
+}
+
+/* ========== CARDS - NO BORDERS (use background shifts) ========== */
+.card-ethereal {
+  background-color: var(--surface-low);
+  border-radius: var(--radius-precise);
+  padding: var(--spacing-8);
+  transition: background-color var(--transition-base), transform var(--transition-fast);
+}
+
+.card-ethereal:hover {
+  background-color: var(--surface-high);
+  transform: translateY(-2px);
+}
+
+/* ========== BUTTONS - ETHEREAL ARCHITECT STYLE ========== */
+.btn-gradient {
+  background: var(--gradient-signature);
+  color: var(--color-primary-cyan-dark);
+  border: none;
+  border-radius: var(--radius-precise);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #33f7ff 0%, #6d3dd1 100%);
+  box-shadow: var(--shadow-glow-primary);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary-cyan);
+  border: 1px solid var(--color-primary-cyan);
+  opacity: 0.3;
+  border-radius: var(--radius-precise);
+  padding: var(--spacing-3) var(--spacing-6);
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-ghost:hover {
+  opacity: 1;
+  background-color: var(--surface-high);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--color-secondary-violet);
+  border: none;
+  padding: var(--spacing-2) var(--spacing-4);
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.btn-text:hover {
+  color: var(--color-primary-cyan);
+}
+
+/* ========== ASYMMETRIC LAYOUT (Intentional design) ========== */
+.asymmetric-header {
+  padding-left: 0;
+  margin-bottom: var(--spacing-6);
+}
+
+.asymmetric-content {
+  padding-left: 15%; /* Push content for breathing room */
+}
+
+/* ========== VERTICAL SPACING (use 40px gap instead of borders) ========== */
+.section-gap {
+  margin-top: var(--spacing-10); /* 40px */
+}
+
+/* ========== INPUT FIELDS - TERMINAL AESTHETIC ========== */
+.input-ethereal {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--surface-lowest);
+  border: 1px solid transparent;
+  border-radius: var(--radius-precise);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.input-ethereal:focus {
+  outline: none;
+  border-color: var(--color-primary-cyan);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.input-ethereal::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ANIMACIONES PROFESIONALES - POLISH VISUAL
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Fade In (usado en contenido dinámico) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Slide Up (para cards que entran) */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.5s var(--transition-smooth);
+}
+
+/* Scale In (para modals, dialogs) */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.3s var(--transition-smooth);
+}
+
+/* Pulse (para notificaciones, badges) */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.pulse {
+  animation: pulse 2s var(--transition-smooth) infinite;
+}
+
+/* Shimmer (loading effect) */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-low) 0%,
+    var(--surface-high) 50%,
+    var(--surface-low) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Float (para elementos destacados) */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Glow Pulse (para elementos interactivos importantes) */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+  }
+}
+
+.glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * UTILIDADES DE PERFORMANCE
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Smooth scrolling (nativo) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* GPU acceleration para animaciones */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reducir motion para accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * ENFOQUE DE DESARROLLO - THE ETHEREAL ARCHITECT ✨
+ * Diseño técnico de alta gama con dimensionalidad visual profesional
+ * ═══════════════════════════════════════════════════════════════════════════ */
+

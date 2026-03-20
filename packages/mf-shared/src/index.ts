@@ -1,10 +1,18 @@
 /**
  * @mf/shared - Paquete compartido para microfrontends
+ * 
+ * Exporta:
+ * - EventBus, validadores, contexto, strategies (TypeScript)
+ * - Sistema de diseño CSS (importable desde @mf/shared/styles/*)
+ * 
+ * Uso de estilos:
+ *   import '@mf/shared/styles/global.css'  // Tokens, temas, utilidades
+ *   import '@mf/shared/styles/mfe-integration.css'  // Estilos específicos MFE
  */
 
 // Core
-export { EventBus } from './event-bus.js'
-export type { Handler, EventMap, EventBusOptions } from './event-bus.js'
+export { EventBus } from './event-bus'
+export type { Handler, EventMap, EventBusOptions } from './event-bus'
 
 // Validation
 export {
@@ -13,8 +21,8 @@ export {
   safeValidateTabMessage,
   safeValidateMultiTabMessage,
   sanitizeDisplayString,
-} from './message-validator.js'
-export type { TabMessage, MultiTabMessage } from './message-validator.js'
+} from './message-validator'
+export type { TabMessage, MultiTabMessage } from './message-validator'
 
 // Context (reemplaza window globals)
 export {
@@ -22,12 +30,19 @@ export {
   getMicrofrontendBus,
   getMicrofrontendTabId,
   getMicrofrontendChannel,
-} from './context.js'
+} from './context'
 
 // Strategy Pattern (sin if/else)
-export { MountStrategyFactory } from './strategies.js'
-export type { MicrofrontendType, MountConfig, MountStrategy } from './strategies.js'
+export { MountStrategyFactory } from './strategies'
+export type { MicrofrontendType, MountConfig, MountStrategy } from './strategies'
+
+// MFE Loader Service (Singleton Factory)
+export { mfeLoader, MFELoaderService } from './mfe-loader'
+export type { MFEType, MFEConfig, LoadResult, MFELoadRequest } from './mfe-loader'
+
+// Remote Module Loader (utility functions)
+export { loadRemoteModule, assertAllowedOrigin, assertMountContract, DEFAULT_TIMEOUT_MS } from './remote-module-loader'
 
 // Tipos y constantes
-export { MF_CONFIG } from './types.js'
-export type { MicroFrontendEvents } from './types.js'
+export { MF_CONFIG } from './types'
+export type { MicroFrontendEvents } from './types'

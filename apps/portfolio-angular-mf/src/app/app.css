@@ -1,69 +1,172 @@
+/**
+ * Estilos Angular MFE - Integrado con Design System
+ * Los tokens CSS base se importan desde @mf/shared/styles/global.css
+ * Este archivo solo define estilos específicos del componente Angular
+ */
+
 .angular-card {
-	padding: 1rem;
-	border-radius: 12px;
-	border: 1px solid #ffd4ad;
-	border-top: 4px solid #ff8c2a;
-	background: linear-gradient(180deg, #fff0df 0%, #fff9f2 55%, #ffffff 100%);
-	color: #4a2a11;
-	box-shadow: 0 8px 18px rgba(120, 64, 17, 0.12);
-	font-family: "Segoe UI", sans-serif;
+	/* Usa variables CSS del sistema compartido */
+	padding: var(--spacing-4);
+	border-radius: var(--border-radius-xl);
+	border: var(--border-width-thin) solid var(--color-mfe-angular-border);
+	border-top: var(--border-width-thick) solid var(--color-mfe-angular-primary);
+	background: var(--color-mfe-angular-bg);
+	color: var(--color-text-primary);
+	box-shadow: var(--shadow-lg);
+	font-family: var(--font-family-sans);
+	transition: all var(--transition-base);
+}
+
+.mfe-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-2);
+	gap: var(--spacing-3);
+	flex-wrap: wrap;
+}
+
+.mfe-badges {
+	display: flex;
+	gap: var(--spacing-2);
+	align-items: center;
+	flex-wrap: wrap;
 }
 
 .angular-card h3 {
-	margin: 0 0 0.35rem;
-	font-size: 1.05rem;
+	margin: 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
 }
 
 .angular-card p {
 	margin: 0;
-	color: #7a4f2e;
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-base);
 }
 
 .angular-stats {
 	display: flex;
-	gap: 0.65rem;
-	margin: 0.75rem 0;
+	gap: var(--spacing-3);
+	margin: var(--spacing-3) 0;
 	flex-wrap: wrap;
 }
 
 .angular-stats span {
 	display: inline-block;
-	font-size: 0.82rem;
-	border: 1px solid #ffc895;
+	font-size: var(--font-size-sm);
+	border: var(--border-width-thin) solid;
+	border-radius: var(--border-radius-full);
+	padding: var(--spacing-1) var(--spacing-3);
+	font-weight: var(--font-weight-medium);
+}
+
+[data-theme="light"] .angular-stats span {
+	border-color: #ffc895;
 	background: #fffaf4;
-	border-radius: 999px;
-	padding: 0.18rem 0.55rem;
 	color: #7a4f2e;
+}
+
+[data-theme="dark"] .angular-stats span {
+	border-color: var(--color-mfe-angular-primary);
+	background: rgba(255, 140, 42, 0.1);
+	color: #ffaa5a;
 }
 
 .external-clicks {
 	border-color: #c2b0ff !important;
 	background: #f5f0ff !important;
 	color: #5028a0 !important;
-	font-weight: 600;
+	font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .external-clicks {
+	background: rgba(194, 176, 255, 0.15) !important;
+	color: #d4c4ff !important;
+}
+
+/* Environment Badges */
+.mfe-badge {
+	display: inline-block;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-semibold);
+	padding: var(--spacing-1) var(--spacing-2);
+	border-radius: var(--border-radius-md);
+	border: var(--border-width-thin) solid;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.mfe-badge.angular {
+	border-color: var(--color-mfe-angular-primary);
+	background: var(--color-mfe-angular-bg);
+	color: var(--color-mfe-angular-primary);
+}
+
+.mfe-badge.env-dev {
+	border-color: #10b981;
+	background: #d1fae5;
+	color: #065f46;
+}
+
+[data-theme="dark"] .mfe-badge.env-dev {
+	background: rgba(16, 185, 129, 0.15);
+	color: #6ee7b7;
+}
+
+.mfe-badge.env-prod {
+	border-color: #ef4444;
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+[data-theme="dark"] .mfe-badge.env-prod {
+	background: rgba(239, 68, 68, 0.15);
+	color: #fca5a5;
 }
 
 .level-pill.level-inicial {
-	border-color: #ffc895;
-	background: #fffaf4;
-	color: #7a4f2e;
+	border-color: var(--color-info-500);
+	background: var(--color-info-50);
+	color: vvar(--border-width-thin) solid var(--color-secondary-500);
+	background: var(--color-button-primary-bg);
+	color: var(--color-button-primary-text);
+	border-radius: var(--border-radius-md);
+	padding: var(--spacing-3) var(--spacing-4);
+	font-weight: var(--font-weight-semibold);
+	font-family: var(--font-family-sans);
+	cursor: pointer;
+	transition: all var(--transition-fast);
 }
 
-.level-pill.level-medio {
-	border-color: #ffd38f;
-	background: #fff6ea;
-	color: #8a5700;
+.angular-btn:hover {
+	background: var(--color-button-primary-bg-hover);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-md);
 }
 
-.level-pill.level-alto {
-	border-color: #ff9d9d;
-	background: #fff0f0;
-	color: #9c1f1f;
+.event-controls {
+	display: flex;
+	gap: var(--spacing-2);
+	margin-top: var(--spacing-3);
+	flex-wrap: wrap;
 }
 
-.angular-btn {
-	border: 1px solid #f08a2e;
-	background: #ffffff;
+.angular-btn-secondary {
+	border: var(--border-width-thin) solid var(--color-border-primary);
+	background: var(--color-button-secondary-bg);
+	color: var(--color-button-secondary-text);
+	border-radius: var(--border-radius-md);
+	padding: var(--spacing-2) var(--spacing-3);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	font-family: var(--font-family-sans);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.angular-btn-secondary:hover {
+	background: var(--color-button-secondary-bg-hover);
 	color: #9b4f10;
 	border-radius: 8px;
 	padding: 0.45rem 0.75rem;
@@ -98,19 +201,20 @@
 }
 
 .messages-log {
-	margin-top: 1rem;
-	padding: 0.7rem;
-	border-radius: 8px;
-	background: #fffaf4;
-	border: 1px dashed #ffc895;
+	margin-top: var(--spacing-4);
+	padding: var(--spacing-3);
+	border-radius: var(--border-radius-md);
+	background: var(--color-bg-secondary);
+	border: var(--border-width-thin) dashed var(--color-border-primary);
 }
 
 .messages-log h4 {
-	margin: 0 0 0.5rem;
-	font-size: 0.85rem;
-	color: #7a4f2e;
+	margin: 0 0 var(--spacing-2);
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
 	text-transform: uppercase;
-	letter-spacing: 0.03em;
+	letter-spacing: 0.05em;
+	font-weight: var(--font-weight-semibold);
 }
 
 .messages-log ul {
@@ -120,10 +224,11 @@
 }
 
 .messages-log li {
-	font-size: 0.8rem;
-	color: #7a4f2e;
-	padding: 0.25rem 0;
-	border-bottom: 1px solid #ffeed8;
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	padding: var(--spacing-1) 0;
+	border-bottom: var(--border-width-thin) solid var(--color-border-secondary);
+	font-family: var(--font-family-mono);
 }
 
 .messages-log li:last-child {
@@ -131,13 +236,18 @@
 }
 
 .messages-log strong {
-	color: #9b4f10;
+	color: var(--color-text-primary);
 	text-transform: uppercase;
-	font-size: 0.75rem;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-bold);
 }
 
 .messages-log em {
-	color: #14b8ff;
+	color: var(--color-mfe-react-primary);
 	font-style: normal;
-	font-weight: 600;
+	font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .messages-log em {
+	color: #4dc3ff;
 }

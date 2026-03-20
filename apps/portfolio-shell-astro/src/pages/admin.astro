@@ -1,0 +1,386 @@
+---
+/**
+ * Página Admin (Protegida)
+ * Panel de administración con acceso restringido
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Admin - Portfolio MFE"
+  description="Panel de administración del sistema MFE"
+  requiresAuth={true}
+  loadsMFEs={true}
+>
+  <div class="container">
+    <!-- Admin Header -->
+    <section class="admin-header">
+      <h1>Panel de Administración</h1>
+      <p class="lead">Gestión y monitoreo del sistema de micro-frontends</p>
+      <button id="logout-btn" class="btn-secondary">Cerrar Sesión</button>
+    </section>
+
+    <!-- Dashboard Grid -->
+    <section class="dashboard">
+      <div class="dashboard-grid">
+        <!-- System Status -->
+        <div class="card dashboard-card">
+          <h3>Estado del Sistema</h3>
+          <div class="status-list">
+            <div class="status-item">
+              <span class="status-label">Shell Astro</span>
+              <span class="status-badge ok">✓ Activo</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">React MFE</span>
+              <span id="react-status" class="status-badge loading">⟳ Verificando...</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Angular MFE</span>
+              <span id="angular-status" class="status-badge loading">⟳ Verificando...</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">EventBus</span>
+              <span id="bus-status" class="status-badge ok">✓ Operativo</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">BroadcastChannel</span>
+              <span id="channel-status" class="status-badge loading">⟳ Verificando...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MFE Messages Monitor -->
+        <div class="card dashboard-card">
+          <h3>Monitor de Mensajes</h3>
+          <div id="message-log" class="message-log">
+            <p class="no-messages">Sin mensajes aún. Interactúa con los MFEs abajo.</p>
+          </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="card dashboard-card">
+          <h3>Configuración</h3>
+          <div class="config-list">
+            <div class="config-item">
+              <strong>Modo:</strong> <span id="env-mode">Detectando...</span>
+            </div>
+            <div class="config-item">
+              <strong>Tab ID:</strong> <code id="tab-id">Generando...</code>
+            </div>
+            <div class="config-item">
+              <strong>Tema:</strong> <span id="current-theme">light</span>
+            </div>
+            <div class="config-item">
+              <strong>Timeout MFE:</strong> <span id="mfe-timeout">8000ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live MFEs -->
+    <section class="mfes-section">
+      <h2>Micro-Frontends Activos</h2>
+      <div class="mfe-grid">
+        <div class="mfe-container">
+          <div class="mf-slot loading react" data-mf="react"></div>
+        </div>
+
+        <div class="mfe-container">
+          <div class="mf-slot loading angular" data-mf="angular"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ========== ADMIN HEADER ========== */
+  .admin-header {
+    text-align: center;
+    padding: var(--spacing-12) 0 var(--spacing-8);
+    position: relative;
+  }
+
+  #logout-btn {
+    position: absolute;
+    top: var(--spacing-4);
+    right: 0;
+  }
+
+  /* ========== DASHBOARD ========== */
+  .dashboard {
+    margin: var(--spacing-8) 0 var(--spacing-16);
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-6);
+  }
+
+  .dashboard-card {
+    height: fit-content;
+  }
+
+  /* ========== STATUS LIST ========== */
+  .status-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-3);
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--border-radius-md);
+  }
+
+  .status-label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  .status-badge {
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .status-badge.ok {
+    background-color: var(--color-success-50);
+    color: var(--color-success-700);
+  }
+
+  [data-theme="dark"] .status-badge.ok {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #81c784;
+  }
+
+  .status-badge.error {
+    background-color: var(--color-error-50);
+    color: var(--color-error-700);
+  }
+
+  [data-theme="dark"] .status-badge.error {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #ff7961;
+  }
+
+  .status-badge.loading {
+    background-color: var(--color-info-50);
+    color: var(--color-info-700);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  [data-theme="dark"] .status-badge.loading {
+    background-color: rgba(33, 150, 243, 0.15);
+    color: #64b5f6;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ========== MESSAGE LOG ========== */
+  .message-log {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--color-bg-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-4);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+  }
+
+  .no-messages {
+    color: var(--color-text-tertiary);
+    text-align: center;
+    font-style: italic;
+  }
+
+  .message-entry {
+    margin-bottom: var(--spacing-2);
+    padding: var(--spacing-2);
+    background-color: var(--color-bg-primary);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--color-primary-500);
+  }
+
+  .message-time {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+  }
+
+  /* ========== CONFIG LIST ========== */
+  .config-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .config-item {
+    padding: var(--spacing-3);
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--border-radius-md);
+  }
+
+  .config-item strong {
+    color: var(--color-text-primary);
+    margin-right: var(--spacing-2);
+  }
+
+  .config-item code {
+    font-size: var(--font-size-xs);
+    word-break: break-all;
+  }
+
+  /* ========== MFE SECTION ========== */
+  .mfes-section {
+    margin: var(--spacing-12) 0;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .admin-header {
+      padding: var(--spacing-8) 0 var(--spacing-6);
+    }
+
+    #logout-btn {
+      position: static;
+      margin-top: var(--spacing-4);
+    }
+
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { initializeMicrofrontendsHexagonal, getEventBus, getTabId } from '../scripts/mf-init-hexagonal';
+  
+  // HEXAGONAL ARCHITECTURE
+  import { SessionStorageAuthService } from '../infrastructure/adapters/SessionStorageAuthService';
+  import { CheckAuthenticationUseCase } from '../application/use-cases/CheckAuthenticationUseCase';
+  import { LogoutUseCase } from '../application/use-cases/LogoutUseCase';
+
+  // Dependency Injection
+  const authService = new SessionStorageAuthService();
+  const checkAuthUseCase = new CheckAuthenticationUseCase(authService);
+  const logoutUseCase = new LogoutUseCase(authService);
+
+  // ═══════════════════════════════════════════════════════════
+  // AUTH CHECK: Verificar autenticación al cargar la página
+  // ═══════════════════════════════════════════════════════════
+  function checkAuthentication() {
+    const result = checkAuthUseCase.execute(window.location.pathname, true);
+    
+    if (!result.isAuthenticated && result.requiresRedirect) {
+      // No autenticado → redirigir a login
+      console.warn('[Admin] No autenticado, redirigiendo a /login');
+      window.location.href = result.redirectUrl || '/login';
+      return false;
+    }
+    
+    console.log('[Admin] ✅ Usuario autenticado:', result.user?.getUsername());
+    return true;
+  }
+
+  // Verificar auth inmediatamente
+  if (!checkAuthentication()) {
+    // Detener ejecución del resto del script
+    throw new Error('Unauthorized');
+  }
+
+  // Logout handler
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    logoutUseCase.execute();
+    window.location.href = '/login';
+  });
+
+  // Inicializar MFEs
+  document.addEventListener('DOMContentLoaded', () => {
+    // Actualizar info de configuración
+    const envMode = import.meta.env.PROD ? 'Producción' : 'Desarrollo';
+    const envModeEl = document.getElementById('env-mode');
+    if (envModeEl) envModeEl.textContent = envMode;
+
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const currentThemeEl = document.getElementById('current-theme');
+    if (currentThemeEl) currentThemeEl.textContent = currentTheme;
+
+    // Inicializar MFEs (sin bloquear con await)
+    initializeMicrofrontendsHexagonal().then(() => {
+      
+      // Obtener referencias
+      const bus = getEventBus();
+      const tabId = getTabId();
+
+      // Actualizar Tab ID en UI
+      const tabIdEl = document.getElementById('tab-id');
+      if (tabIdEl) tabIdEl.textContent = tabId.substring(0, 8) + '...';
+
+      // Actualizar estados
+      updateStatus('react-status', 'ok', '✓ Cargado');
+      updateStatus('angular-status', 'ok', '✓ Cargado');
+      updateStatus('bus-status', 'ok', '✓ Operativo');
+      updateStatus('channel-status', 'ok', '✓ Conectado');
+
+      // Monitorear mensajes del bus
+      const messageLog = document.getElementById('message-log');
+      const messages: Array<{time: string, event: string, data: any}> = [];
+
+      bus.on('click-count', (payload) => {
+        logMessage('click-count', payload);
+      });
+
+      function logMessage(event: string, data: any) {
+        const time = new Date().toLocaleTimeString();
+        messages.unshift({ time, event, data });
+        
+        // Mantener solo los últimos 10
+        if (messages.length > 10) messages.pop();
+
+        renderMessages();
+      }
+
+      function renderMessages() {
+        if (!messageLog) return;
+        
+        if (messages.length === 0) {
+          messageLog.innerHTML = '<p class="no-messages">Sin mensajes aún. Interactúa con los MFEs abajo.</p>';
+          return;
+        }
+
+        messageLog.innerHTML = messages.map(msg => `
+          <div class="message-entry">
+            <div class="message-time">${msg.time}</div>
+            <div><strong>${msg.event}</strong>: ${JSON.stringify(msg.data)}</div>
+          </div>
+        `).join('');
+      }
+
+      renderMessages();
+
+    }).catch((error) => {
+      console.error('[Admin] ❌ Error inicializando MFEs:', error);
+      updateStatus('react-status', 'error', '✗ Error');
+      updateStatus('angular-status', 'error', '✗ Error');
+    });
+  });
+
+  function updateStatus(id: string, status: 'ok' | 'error' | 'loading', text: string) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.className = `status-badge ${status}`;
+      el.textContent = text;
+    }
+  }
+</script>

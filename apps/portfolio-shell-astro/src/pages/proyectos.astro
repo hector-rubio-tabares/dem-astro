@@ -1,0 +1,163 @@
+---
+/**
+ * Página Proyectos - Vista completa con paginación
+ * Usa ProjectsFullComponent para mostrar el catálogo completo
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Proyectos - Portfolio"
+  description="Catálogo completo de proyectos técnicos y arquitecturas de software"
+  loadsMFEs={true}
+>
+  <div class="projects-page">
+    <div class="container">
+      <!-- Header de la página -->
+      <header class="page-header">
+        <a href="/" class="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Volver al inicio
+        </a>
+        <h1 class="page-title">
+          Catálogo Completo de <span class="title-gradient">Proyectos</span>
+        </h1>
+        <p class="page-subtitle">
+          Explorar todos los proyectos técnicos, arquitecturas y soluciones de software diseñadas con precisión editorial.
+        </p>
+      </header>
+
+      <!-- Projects Grid Full (Angular MFE con paginación) -->
+      <section class="projects-full-section">
+        <portfolio-projects-full></portfolio-projects-full>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-page {
+    min-height: 100vh;
+    padding-top: calc(var(--spacing-16) + var(--spacing-4));
+    padding-bottom: var(--spacing-24);
+  }
+
+  /* ========== PAGE HEADER ========== */
+  .page-header {
+    margin-bottom: var(--spacing-16);
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    margin- bottom: var(--spacing-6);
+    transition: all var(--transition-smooth);
+  }
+
+  .back-link:hover {
+    color: var(--color-primary-cyan);
+    gap: var(--spacing-3);
+  }
+
+  .back-link svg {
+    transition: transform var(--transition-smooth);
+  }
+
+  .back-link:hover svg {
+    transform: translateX(-4px);
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-5xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-4);
+    line-height: var(--line-height-tight);
+  }
+
+  .title-gradient {
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-subtitle {
+    color: var(--text-secondary);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    max-width: 800px;
+  }
+
+  /* ========== PROJECTS SECTION ========== */
+  .projects-full-section {
+    width: 100%;
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (min-width: 768px) {
+    .page-title {
+      font-size: var(--font-size-6xl, 3.75rem);
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Inicializa Projects Full Component
+   * Similar a index.astro pero carga ProjectsFullComponent
+   */
+  import { mfeLoader } from '@mf/shared';
+
+  async function initializeProjectsPage() {
+    try {
+      console.log('[Proyectos] Inicializando página de proyectos completa...');
+
+      // Cargar componente de proyectos completo
+      const results = await mfeLoader.loadMultiple([
+        ['projects-full'], // Web Component Angular con paginación
+      ]);
+
+      const failures = results.filter(r => !r.success);
+      if (failures.length > 0) {
+        console.error('[Proyectos] ⚠️ Error al cargar componente:', failures);
+      } else {
+        console.log('[Proyectos] ✅ Componente cargado exitosamente');
+      }
+
+      mfeLoader.removeLoadingScreen();
+
+    } catch (error) {
+      console.error('[Proyectos] ❌ Error fatal:', error);
+      mfeLoader.removeLoadingScreen();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProjectsPage, { once: true });
+  } else {
+    initializeProjectsPage();
+  }
+</script>
