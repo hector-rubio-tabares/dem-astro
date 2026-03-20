@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { NgClass, NgFor, NgIf } from '@angular/common';
-import { type Project, PROJECTS_PREVIEW } from './projects.data';
+import { type Project } from './projects.data';
+import { ProjectsService } from './projects.service';
 
 /**
  * Projects Component - The Ethereal Architect
@@ -23,9 +24,14 @@ import { type Project, PROJECTS_PREVIEW } from './projects.data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
-  @Input() showViewAllLink: boolean = true;  // Mostrar link "Ver todos" por defecto
+  @Input() showViewAllLink: boolean = true;
 
-  readonly isLoading = signal(true);
+  private readonly projectsService = inject(ProjectsService);
+
+  // Datos del servicio (API-first con fallback estático)
+  readonly projects = this.projectsService.previewProjects;
+
+  readonly isLoading = signal(true); // Controla el overlay de frases
   readonly loadingPhraseIndex = signal(0);
 
   private readonly loadingPhrases = [
@@ -36,9 +42,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     "Renderizando visiones de software..."
   ];
 
-  // Datos provienen del catálogo compartido (DRY — sin duplicación)
-  readonly projects = signal<readonly Project[]>(PROJECTS_PREVIEW);
-
   readonly currentLoadingText = computed(() => {
     return this.loadingPhrases[this.loadingPhraseIndex() % this.loadingPhrases.length];
   });
@@ -46,6 +49,9 @@ export class ProjectsComponent implements OnInit, OnDestroy {
   private loadingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
+    // Lanzar carga desde el servicio (API-first + fallback estático)
+    void this.projectsService.loadProjects();
+
     const phraseInterval = setInterval(() => {
       this.loadingPhraseIndex.update(i => i + 1);
     }, 800);

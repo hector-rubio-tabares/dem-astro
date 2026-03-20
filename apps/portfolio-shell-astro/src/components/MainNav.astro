@@ -260,6 +260,9 @@ function isActive(path: string): boolean {
     try {
       const theme = initializeThemeUseCase.execute();
       
+      // PRESENTATION: Aplicar al DOM (responsabilidad de esta capa, no del use-case)
+      document.documentElement.setAttribute('data-theme', theme.getMode());
+
       const themeIcon = document.querySelector('.theme-icon');
       if (themeIcon) {
         themeIcon.textContent = theme.getIcon();
@@ -283,6 +286,9 @@ function isActive(path: string): boolean {
       try {
         const newTheme = toggleThemeUseCase.execute();
         
+        // PRESENTATION: Aplicar al DOM (responsabilidad de esta capa, no del use-case)
+        document.documentElement.setAttribute('data-theme', newTheme.getMode());
+
         const themeIcon = themeToggle.querySelector('.theme-icon');
         if (themeIcon) {
           themeIcon.textContent = newTheme.getIcon();

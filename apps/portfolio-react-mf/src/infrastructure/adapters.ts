@@ -110,22 +110,22 @@ export class InMemoryMessageRepository implements IMessageRepository {
 
 const FALLBACK_PORTFOLIO_DATA: PortfolioData = new PortfolioData(
   [
-    { label: 'Years Experience', value: '8+', icon: 'U+1F4C5' },
-    { label: 'Projects Delivered', value: '50+', icon: 'U+1F680' },
-    { label: 'Code Quality', value: '99.5%', icon: 'U+2728' },
-    { label: 'Team Size', value: '15+', icon: 'U+1F465' },
+    { label: 'Years Experience', value: '8+', icon: '📅' },
+    { label: 'Projects Delivered', value: '50+', icon: '🚀' },
+    { label: 'Code Quality', value: '99.5%', icon: '✨' },
+    { label: 'Team Size', value: '15+', icon: '👥' },
   ] satisfies PortfolioStat[],
   [
-    { title: 'Frontend', icon: 'U+1F3A8', technologies: ['React 19', 'Angular 21', 'Astro 6.0', 'TypeScript', 'CSS3', 'Web Components'] },
-    { title: 'Backend', icon: 'U+2699', technologies: ['Node.js', 'NestJS', 'GraphQL', 'PostgreSQL', 'Redis', 'Kafka'] },
-    { title: 'Architecture', icon: 'U+1F3D7', technologies: ['Hexagonal', 'DDD', 'SOLID', 'Clean Code', 'Event-Driven', 'Microservices'] },
-    { title: 'DevOps', icon: 'U+1F527', technologies: ['Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions', 'AWS', 'Terraform'] },
+    { title: 'Frontend', icon: '🎨', technologies: ['React 19', 'Angular 21', 'Astro 6.0', 'TypeScript', 'CSS3', 'Web Components'] },
+    { title: 'Backend', icon: '⚙️', technologies: ['Node.js', 'NestJS', 'GraphQL', 'PostgreSQL', 'Redis', 'Kafka'] },
+    { title: 'Architecture', icon: '🏗️', technologies: ['Hexagonal', 'DDD', 'SOLID', 'Clean Code', 'Event-Driven', 'Microservices'] },
+    { title: 'DevOps', icon: '🔧', technologies: ['Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions', 'AWS', 'Terraform'] },
   ] satisfies TechCategory[],
   [
-    { title: 'Clean Architecture', icon: 'U+1F537', description: 'Hexagonal architecture con ports & adapters. Separacion clara entre domain, application e infrastructure layers.' },
-    { title: 'SOLID Principles', icon: 'U+1F4D0', description: 'Single Responsibility, Open/Closed, Dependency Inversion. Codigo mantenible y escalable.' },
-    { title: 'Design Patterns', icon: 'U+1F3AF', description: 'Strategy, Observer, Facade, Adapter. Soluciones probadas a problemas comunes.' },
-    { title: 'Security First', icon: 'U+1F512', description: 'XSS protection, CSP policies, secure communication, error isolation.' },
+    { title: 'Clean Architecture', icon: '🔷', description: 'Hexagonal architecture con ports & adapters. Separación clara entre domain, application e infrastructure layers.' },
+    { title: 'SOLID Principles', icon: '📐', description: 'Single Responsibility, Open/Closed, Dependency Inversion. Código mantenible y escalable.' },
+    { title: 'Design Patterns', icon: '🎯', description: 'Strategy, Observer, Facade, Adapter. Soluciones probadas a problemas comunes.' },
+    { title: 'Security First', icon: '🔒', description: 'XSS protection, CSP policies, secure communication, error isolation.' },
   ] satisfies Principle[],
 );
 

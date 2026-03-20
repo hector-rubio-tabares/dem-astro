@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { NgClass, NgFor } from '@angular/common';
-import { type Project, PROJECTS_CATALOG } from './projects.data';
+import { type Project } from './projects.data';
+import { ProjectsService } from './projects.service';
 
 /**
  * Projects Full Component - Vista completa con paginación
@@ -22,17 +23,23 @@ import { type Project, PROJECTS_CATALOG } from './projects.data';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectsFullComponent {
+export class ProjectsFullComponent implements OnInit {
+  private readonly projectsService = inject(ProjectsService);
+
   // ═══════════════════════════════════════════════════════════════════════════
   // SIGNALS - Reactive State
   // ═══════════════════════════════════════════════════════════════════════════
 
   readonly currentPage = signal(1);
-  readonly itemsPerPage = signal(6);  // 6 proyectos por página
+  readonly itemsPerPage = signal(6);
 
-  // Catálogo completo desde la fuente única de verdad (DRY)
-  readonly allProjects = signal<readonly Project[]>(PROJECTS_CATALOG);
+  // Catálogo completo del servicio (API-first + fallback estático)
+  readonly allProjects = this.projectsService.allProjects;
 
+  ngOnInit(): void {
+    // El servicio es idempotente: si ya cargó, no re-fetches
+    void this.projectsService.loadProjects();
+  }
 
   // COMPUTED - Derived state
   readonly paginatedProjects = computed(() => {

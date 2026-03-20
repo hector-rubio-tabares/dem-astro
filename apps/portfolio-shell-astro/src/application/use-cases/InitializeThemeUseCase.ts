@@ -12,18 +12,8 @@ export class InitializeThemeUseCase {
   ) {}
 
   execute(): Theme {
-    // 1. Cargar tema guardado (o default)
-    const theme = this.themeRepository.load();
-
-    // 2. Aplicar inmediatamente en el DOM
-    this.applyThemeToDOM(theme);
-
-    return theme;
-  }
-
-  private applyThemeToDOM(theme: Theme): void {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', theme.getMode());
-    }
+    // Cargar tema guardado (o default) y retornar.
+    // La capa de presentación (cliente) aplica el atributo DOM.
+    return this.themeRepository.load();
   }
 }

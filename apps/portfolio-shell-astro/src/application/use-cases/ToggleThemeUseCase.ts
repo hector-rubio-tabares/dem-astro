@@ -21,15 +21,7 @@ export class ToggleThemeUseCase {
     // 3. Persistir
     this.themeRepository.save(newTheme);
 
-    // 4. Aplicar en el DOM
-    this.applyThemeToDOM(newTheme);
-
+    // 4. Retornar — la capa de presentación (cliente) aplica el atributo DOM.
     return newTheme;
-  }
-
-  private applyThemeToDOM(theme: Theme): void {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', theme.getMode());
-    }
   }
 }

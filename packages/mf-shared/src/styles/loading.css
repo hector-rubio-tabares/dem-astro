@@ -1,21 +1,43 @@
 /**
- * Loading Screen Global y Skeletons para MFEs
+ * Loading Screen — Boot Sequence Terminal
+ * Layout: header fijo + 3 columnas centradas + footer fijo
+ * Usa exclusivamente variables del design system.
+ *
+ * Excepciones documentadas (brand colors oficiales):
+ *   - React:   #61dafb
+ *   - Angular: #dd0031
  */
 
-/* Loading Screen Global de Astro */
+/* ─── Container ───────────────────────────────────────────────────────────── */
 #mfe-loading-screen {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  inset: 0;
+  background-color: var(--surface-lowest);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   z-index: 999999;
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--transition-smooth);
+  font-family: var(--font-family-mono);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+#mfe-loading-screen::before {
+  content: 'sin(x+1) = ∑ Xₙ    ∫₀^∞ e^-x²dx = √π/2    ∇×B = μ₀J + μ₀ε₀∂E/∂t    E = mc²    Ψ(x,t) = Ae^i(kx-ωt)    λ = h/mv    ΔxΔp ≥ ℏ/2    PV = nRT    ∮E·dA = Q/ε₀    det(A-λI) = 0    φ = (1+√5)/2    e^iπ + 1 = 0    sin²θ + cos²θ = 1    ∂²f/∂x²    lim(x→0) sinx/x = 1    Σk=1→n k = n(n+1)/2    F = G·m₁m₂/r²    S = -kB Σ pᵢ ln(pᵢ)    ∇²φ = ρ/ε₀    i∂Ψ/∂t = ĤΨ    ds² = -c²dt² + dx² + dy² + dz²    ζ(s) = Σn=1→∞ 1/nˢ    sin(x+1) = ∑ Xₙ    E=mc²    Ψ=Ae^ikx    F=ma    y=mx+b    e^iπ=-1    ∂f/∂x    PV=nRT';
+  position: absolute;
+  inset: 0;
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+  color: rgba(0, 245, 255, 0.07);
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow: hidden;
+  line-height: 2;
+  padding: 1.5rem 2rem;
+  pointer-events: none;
+  letter-spacing: 0.08em;
+  z-index: 0;
 }
 
 #mfe-loading-screen.hidden {
@@ -23,66 +45,492 @@
   pointer-events: none;
 }
 
-.mfe-loading-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  padding: 48px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  animation: slideUp 0.5s ease;
+/* ─── Header ──────────────────────────────────────────────────────────────── */
+.boot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+  background-color: rgba(13, 19, 33, 0.8);
+  backdrop-filter: blur(12px);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-disabled);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  gap: var(--spacing-4);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.boot-header-left {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-cyan);
+  letter-spacing: 0.1em;
 }
 
-.mfe-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #667eea;
-  border-top-color: transparent;
+.boot-header-center {
+  color: var(--text-disabled);
+  opacity: 0.6;
+  letter-spacing: 0.2em;
+}
+
+.boot-header-latency {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.boot-header-latency-label {
+  font-size: 9px;
+  color: var(--color-primary-cyan);
+  opacity: 0.5;
+  letter-spacing: 0.15em;
+}
+
+.boot-header-latency-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-cyan);
+}
+
+/* ─── Main Area ───────────────────────────────────────────────────────────── */
+.boot-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8) var(--spacing-8);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Glow accents */
+.boot-main::before,
+.boot-main::after {
+  content: '';
+  position: absolute;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 24px;
+  pointer-events: none;
+}
+.boot-main::before {
+  top: 25%;
+  left: -5%;
+  width: 24rem;
+  height: 24rem;
+  background: radial-gradient(circle, rgba(87, 27, 193, 0.1), transparent 70%);
+  filter: blur(60px);
+}
+.boot-main::after {
+  bottom: 15%;
+  right: -5%;
+  width: 24rem;
+  height: 24rem;
+  background: radial-gradient(circle, rgba(0, 245, 255, 0.05), transparent 70%);
+  filter: blur(80px);
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+/* ─── 3-Column Grid ───────────────────────────────────────────────────────── */
+.boot-grid {
+  display: grid;
+  grid-template-columns: 4fr 5fr 3fr;
+  gap: var(--spacing-8);
+  width: 100%;
+  max-width: 1400px;
+  align-items: center;
 }
 
-.mfe-loading-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0 0 8px 0;
+/* ─── Left Column ─────────────────────────────────────────────────────────── */
+.boot-col-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
 }
 
-.mfe-loading-subtitle {
-  font-size: 16px;
-  color: #718096;
+.boot-col-left-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.boot-col-left-label {
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  color: var(--color-primary-cyan);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* ─── Title ──────────────────────────────────────────────────────────────── */
+.boot-title {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ─── MFE Cards ───────────────────────────────────────────────────────────── */
+.boot-mfe-list {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
 }
 
-/* Skeleton para cada slot de MFE */
+.boot-mfe-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  background-color: var(--surface-low);
+  border-left: 2px solid var(--color-primary-cyan);
+  padding: var(--spacing-4) var(--spacing-4);
+}
+
+.boot-mfe-item--react {
+  border-left-color: #61dafb;
+}
+
+.boot-mfe-item--angular {
+  border-left-color: var(--outline-variant);
+  opacity: 0.7;
+}
+
+.boot-mfe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.boot-mfe-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+/* ─── MFE Badges ──────────────────────────────────────────────────────────── */
+.boot-mfe-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  padding: 2px var(--spacing-2);
+  border: 1px solid rgba(0, 245, 255, 0.3);
+  background-color: var(--surface-highest);
+  color: var(--color-primary-cyan);
+  flex-shrink: 0;
+}
+
+.boot-mfe-badge--react {
+  border-color: rgba(97, 218, 251, 0.3);
+  color: #61dafb;
+}
+
+.boot-mfe-badge--angular {
+  border-color: var(--outline-variant);
+  color: var(--text-secondary);
+}
+
+/* ─── MFE Label / Pct ────────────────────────────────────────────────────── */
+.boot-mfe-label {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+.boot-mfe-pct {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-cyan);
+  flex-shrink: 0;
+}
+
+.boot-mfe-pct--react { color: #61dafb; }
+.boot-mfe-pct--angular { color: var(--text-secondary); }
+
+/* ─── Progress Bars ───────────────────────────────────────────────────────── */
+.boot-bar-track {
+  height: 4px;
+  background-color: var(--surface-highest);
+  overflow: hidden;
+}
+
+.boot-bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 50ms linear;
+  background-color: var(--color-primary-cyan);
+}
+
+.boot-bar-fill--react {
+  background: linear-gradient(90deg, var(--color-primary-cyan), #61dafb);
+}
+
+.boot-bar-fill--angular {
+  background-color: rgba(184, 202, 202, 0.4);
+}
+
+/* ─── Sub-detail row ──────────────────────────────────────────────────────── */
+.boot-mfe-subdetail {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-family-mono);
+  font-size: 9px;
+  color: var(--text-disabled);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ─── Middle Column ───────────────────────────────────────────────────────── */
+.boot-col-mid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Terminal Window ─────────────────────────────────────────────────────── */
+.boot-terminal-window {
+  background-color: #070e1b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-md);
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.boot-terminal-chrome {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-4);
+  background-color: var(--surface-base);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.boot-terminal-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.boot-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.boot-dot--red    { background-color: rgba(255, 95, 87, 0.4); }
+.boot-dot--yellow { background-color: rgba(255, 189, 68, 0.4); }
+.boot-dot--green  { background-color: rgba(0, 202, 78, 0.4); }
+
+.boot-terminal-chrome-title {
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  color: var(--text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  text-align: center;
+  opacity: 0.5;
+}
+
+/* ─── Terminal Body ───────────────────────────────────────────────────────── */
+.boot-terminal {
+  flex: 1;
+  min-height: 0;
+  padding: var(--spacing-6);
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--outline) transparent;
+}
+
+.boot-terminal::-webkit-scrollbar { width: 4px; }
+.boot-terminal::-webkit-scrollbar-thumb {
+  background-color: var(--outline);
+  border-radius: 2px;
+}
+
+/* ─── Log Lines ───────────────────────────────────────────────────────────── */
+.boot-log-line {
+  display: flex;
+  gap: var(--spacing-2);
+  line-height: var(--line-height-normal);
+}
+
+.boot-log-ts {
+  color: var(--text-disabled);
+  flex-shrink: 0;
+  opacity: 0.4;
+}
+
+.boot-log-msg { color: rgba(220, 226, 245, 0.4); }
+.boot-log-line--done .boot-log-msg { color: var(--color-primary-cyan); }
+.boot-log-line--warn .boot-log-msg { color: var(--color-warning-500); }
+.boot-log-line--error .boot-log-msg { color: var(--color-error-500); }
+
+/* ─── Blinking Cursor ────────────────────────────────────────────────────── */
+.boot-cursor {
+  color: var(--color-primary-cyan);
+  display: inline-block;
+  animation: bootCursorBlink 1s step-end infinite;
+}
+
+@keyframes bootCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ─── Floating Uptime Card ────────────────────────────────────────────────── */
+.boot-uptime-card {
+  position: absolute;
+  bottom: -2rem;
+  right: -2rem;
+  background-color: var(--surface-base);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: var(--spacing-5);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  min-width: 180px;
+}
+
+.boot-uptime-label {
+  font-family: var(--font-family-mono);
+  font-size: 9px;
+  color: var(--color-primary-cyan);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: var(--spacing-1);
+}
+
+.boot-uptime-timer {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.boot-uptime-metrics {
+  display: flex;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.boot-uptime-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.boot-uptime-metric-label {
+  font-family: var(--font-family-mono);
+  font-size: 8px;
+  color: var(--text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.boot-uptime-metric-value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-cyan);
+}
+
+.boot-uptime-divider {
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.05);
+  align-self: stretch;
+}
+
+/* ─── Right Column ────────────────────────────────────────────────────────── */
+.boot-col-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-10);
+}
+
+.boot-progress-block {
+  text-align: right;
+}
+
+.boot-progress-label {
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  color: var(--color-primary-cyan);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  display: block;
+  margin-bottom: var(--spacing-2);
+}
+
+.boot-progress-pct {
+  font-family: var(--font-family-mono);
+  font-size: 7rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, var(--color-primary-cyan) 0%, var(--surface-highest) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.boot-progress-pct-symbol {
+  font-size: 2rem;
+  opacity: 0.5;
+  -webkit-text-fill-color: var(--color-primary-cyan);
+}
+
+/* ─── Skeleton: MF Slots ─────────────────────────────────────────────────── */
 .mf-slot {
   min-height: 200px;
   position: relative;
 }
 
 .mf-slot.loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--surface-high) 25%,
+    var(--surface-highest) 50%,
+    var(--surface-high) 75%
+  );
   background-size: 200% 100%;
   animation: skeletonLoading 1.5s ease-in-out infinite;
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
 }
 
@@ -92,40 +540,109 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 14px;
-  font-weight: 600;
-  color: #a0a0a0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-disabled);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 @keyframes skeletonLoading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-/* Dark mode skeleton */
-[data-theme="dark"] .mf-slot.loading {
-  background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
-  background-size: 200% 100%;
+/* ─── Operator Card ───────────────────────────────────────────────────────── */
+.boot-operator-card {
+  background-color: var(--surface-high);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: var(--spacing-6);
+  max-width: 240px;
+  text-align: right;
 }
 
-[data-theme="dark"] .mf-slot.loading::before {
-  color: #718096;
+.boot-operator-icon {
+  font-size: var(--font-size-3xl);
+  color: var(--color-secondary-violet);
+  display: block;
+  margin-bottom: var(--spacing-4);
 }
 
-[data-theme="dark"] .mfe-loading-card {
-  background: rgba(26, 32, 44, 0.95);
+.boot-operator-title {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-cyan);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-2);
+  display: block;
 }
 
-[data-theme="dark"] .mfe-loading-title {
-  color: #f7fafc;
+.boot-operator-body {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.6;
 }
 
-[data-theme="dark"] .mfe-loading-subtitle {
-  color: #cbd5e0;
+.boot-operator-meta {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-family: var(--font-family-mono);
+  font-size: 9px;
+  color: var(--text-disabled);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────────────── */
+.boot-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-3) var(--spacing-8);
+  border-top: 1px solid rgba(0, 245, 255, 0.1);
+  background-color: #070e1b;
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.boot-footer-copy {
+  color: var(--text-disabled);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}
+
+.boot-footer-nav {
+  display: flex;
+  gap: var(--spacing-8);
+}
+
+.boot-footer-link {
+  font-family: var(--font-family-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-disabled);
+  opacity: 0.4;
+  transition: opacity var(--transition-fast);
+}
+
+.boot-footer-link--active {
+  color: var(--color-primary-cyan);
+  opacity: 1;
 }
