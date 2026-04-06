@@ -1,0 +1,117 @@
+/**
+ * Projects Full Component Styles - The Ethereal Architect
+ * Bento Grid Layout + Pagination usando 100% Design System CSS
+ *
+ * REUTILIZA: projects.component.css styles
+ * AGREGA: Pagination controls
+ */
+
+@import './projects.component.css';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * MAIN CONTAINER (Sin loading screen)
+ * ═══════════════════════════════════════════════════════════════════════════ */
+.projects-full-main {
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  padding-left: var(--spacing-6);
+  padding-right: var(--spacing-6);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * PAGINATION CONTROLS
+ * ═══════════════════════════════════════════════════════════════════════════ */
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-16);
+  padding: var(--spacing-6);
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--surface-high);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background:var(--surface-highest);
+  border-color: var(--color-primary-cyan);
+  color: var(--color-primary-cyan);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-cyan);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pagination-btn svg {
+  transition: transform var(--transition-smooth);
+}
+
+.pagination-btn:hover:not(:disabled) svg:first-child {
+  transform: translateX(-4px);
+}
+
+.pagination-btn:hover:not(:disabled) svg:last-child {
+  transform: translateX(4px);
+}
+
+/* Pagination Info */
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--surface-low);
+  border-radius: var(--border-radius-lg);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.current-page {
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary-cyan);
+  line-height: 1;
+}
+
+.separator {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xl);
+}
+
+.total-pages {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * RESPONSIVE
+ * ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .pagination-controls {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .pagination-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

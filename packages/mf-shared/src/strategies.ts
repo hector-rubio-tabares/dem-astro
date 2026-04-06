@@ -1,80 +1,64 @@
-/**
- * Strategy Pattern para montar microfrontends
- * Elimina if/else con Map de estrategias
- */
-
 export type MicrofrontendType = 'react' | 'angular' | 'vue' | 'svelte' | 'custom'
 
 export interface MountConfig {
   container: HTMLElement
-  module: any
+  module: Record<string, unknown>
   instanceId: string
   index: number
   customElementName?: string
 }
 
-/**
- * Estrategia base para montar microfrontends
- */
 export interface MountStrategy {
   mount(config: MountConfig): void | Promise<void>
   unmount?(container: HTMLElement): void
 }
 
-/**
- * Estrategia para React/Vue (tienen función mount)
- */
 class FunctionBasedMountStrategy implements MountStrategy {
   mount(config: MountConfig): void {
-    if (typeof config.module.mount !== 'function') {
+    if (typeof config.module['mount'] !== 'function') {
       throw new Error(`Module does not expose mount() function`)
     }
 
-    config.module.mount(config.container, {
-      instanceId: config.instanceId,
-      index: config.index,
-    })
+    config.container.innerHTML = ''
+
+    ;(config.module['mount'] as (container: HTMLElement, ctx: Record<string, unknown>) => void)(
+      config.container,
+      { instanceId: config.instanceId, index: config.index }
+    )
   }
 
-  unmount(container: HTMLElement): void {
-    // React/Vue deben implementar su propia limpieza
-  }
+  unmount(_container: HTMLElement): void {}
 }
 
-/**
- * Estrategia para Angular (Custom Elements)
- */
 class CustomElementMountStrategy implements MountStrategy {
   async mount(config: MountConfig): Promise<void> {
     if (!config.customElementName) {
       throw new Error('customElementName is required for Custom Element strategy')
     }
-    
-    // Esperar a que el custom element esté definido (con timeout de 10s)
+
     if (!customElements.get(config.customElementName)) {
-      const timeout = new Promise((_, reject) => 
+      const timeout = new Promise((_, reject) =>
         setTimeout(() => reject(new Error(`Timeout esperando ${config.customElementName}`)), 10000)
       )
-      
+
       await Promise.race([
         customElements.whenDefined(config.customElementName),
-        timeout
+        timeout,
       ])
     }
-    
+
+    config.container.innerHTML = ''
+
     const element = document.createElement(config.customElementName)
     element.setAttribute('data-instance-id', config.instanceId)
     config.container.appendChild(element)
   }
 
   unmount(container: HTMLElement): void {
-    container.innerHTML = '' // Limpia el custom element
+    container.innerHTML = ''
   }
 }
 
-/**
- * Factory de estrategias usando Map (sin if/else)
- */
 export class MountStrategyFactory {
   private static readonly strategies = new Map<MicrofrontendType, MountStrategy>([
     ['react', new FunctionBasedMountStrategy()],
@@ -84,12 +68,9 @@ export class MountStrategyFactory {
     ['custom', new CustomElementMountStrategy()],
   ])
 
-  /**
-   * Obtener estrategia sin if/else
-   */
   static getStrategy(type: MicrofrontendType): MountStrategy {
     const strategy = this.strategies.get(type)
-    
+
     if (!strategy) {
       throw new Error(`No mount strategy found for type: ${type}`)
     }
@@ -97,9 +78,6 @@ export class MountStrategyFactory {
     return strategy
   }
 
-  /**
-   * Registrar nueva estrategia dinámicamente
-   */
   static registerStrategy(type: MicrofrontendType, strategy: MountStrategy): void {
     this.strategies.set(type, strategy)
   }

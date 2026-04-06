@@ -1,4 +1,10 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ════════════════════════════════════════════════════════════════════
+# Angular MFE - GitIgnore
+# ════════════════════════════════════════════════════════════════════
+# 
+# NOTA: Angular NO usa archivos .env por defecto.
+# La configuración está en src/environments/environment.ts (versionado).
+# ════════════════════════════════════════════════════════════════════
 
 # Compiled output
 /dist
@@ -10,6 +16,10 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+
+# Environment variables (opcional - Angular no los usa por defecto)
+.env
+.env.local
 
 # IDEs and editors
 .idea/

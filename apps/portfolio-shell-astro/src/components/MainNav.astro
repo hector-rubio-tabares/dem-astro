@@ -1,0 +1,179 @@
+---
+export interface Props {
+  currentPath?: string;
+  hideAuthLinks?: boolean;
+}
+
+const { currentPath = '/', hideAuthLinks = false } = Astro.props;
+
+function isActive(path: string): boolean {
+  return currentPath === path;
+}
+---
+
+<header class="site-header">
+  <nav class="container">
+    <div class="nav-content">
+      <a href="/" class="logo">Hector Rubio</a>
+      
+      <ul class="nav-links">
+        <li>
+          <a href="/" class:list={['nav-link', { active: isActive('/') }]}>
+            Inicio
+          </a>
+        </li>
+        <li>
+          <a href="/proyectos" class:list={['nav-link', { active: isActive('/proyectos') }]}>
+            Proyectos
+          </a>
+        </li>
+        <li>
+          <a href="/admin" id="admin-link" class:list={['nav-link', { active: isActive('/admin') }]}>
+            Admin
+          </a>
+        </li>
+        
+        {!hideAuthLinks && (
+          <li id="auth-nav-item">
+            <a href="/login" id="login-link" class="btn-secondary btn-sm">
+              Login
+            </a>
+          </li>
+        )}
+      </ul>
+
+      <button id="theme-toggle" class="btn-secondary theme-toggle" aria-label="Cambiar tema">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<style>
+  #admin-link {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  :global(body[data-authenticated="true"]) #admin-link {
+    opacity: 1;
+    pointer-events: auto;
+  }
+</style>
+
+<script>
+  import { LocalStorageThemeRepository } from '../infrastructure/adapters/LocalStorageThemeRepository';
+  import { SessionStorageAuthService } from '../infrastructure/adapters/SessionStorageAuthService';
+  import { ConsoleLogger } from '../infrastructure/adapters/ConsoleLogger';
+
+  import { InitializeThemeUseCase } from '../application/use-cases/InitializeThemeUseCase';
+  import { ToggleThemeUseCase } from '../application/use-cases/ToggleThemeUseCase';
+
+  const logger = new ConsoleLogger();
+  const themeRepository = new LocalStorageThemeRepository();
+  const authService = new SessionStorageAuthService();
+
+  const initializeThemeUseCase = new InitializeThemeUseCase(themeRepository);
+  const toggleThemeUseCase = new ToggleThemeUseCase(themeRepository);
+
+  function initializeTheme(): void {
+    try {
+      const theme = initializeThemeUseCase.execute();
+
+      document.documentElement.setAttribute('data-theme', theme.getMode());
+
+      const themeIcon = document.querySelector('.theme-icon');
+      if (themeIcon) {
+        themeIcon.textContent = theme.getIcon();
+      }
+
+      logger.info('[MainNav] Tema inicializado', { mode: theme.getMode() });
+    } catch (error) {
+      logger.error('[MainNav] Error inicializando tema', error);
+    }
+  }
+
+  function setupThemeToggle(): void {
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    if (!themeToggle) {
+      logger.warn('[MainNav] No se encontró theme-toggle');
+      return;
+    }
+
+    themeToggle.onclick = () => {
+      try {
+        const newTheme = toggleThemeUseCase.execute();
+
+        document.documentElement.setAttribute('data-theme', newTheme.getMode());
+
+        const themeIcon = themeToggle.querySelector('.theme-icon');
+        if (themeIcon) {
+          themeIcon.textContent = newTheme.getIcon();
+        }
+
+        logger.info('[MainNav] Tema cambiado', { mode: newTheme.getMode() });
+      } catch (error) {
+        logger.error('[MainNav] Error cambiando tema', error);
+      }
+    };
+  }
+
+  function updateAuthNavigation(): void {
+    const loginLink = document.getElementById('login-link') as HTMLAnchorElement;
+    
+    if (!loginLink) return;
+
+    const isAuthenticated = authService.isAuthenticated();
+    
+    if (isAuthenticated) {
+      loginLink.textContent = 'Logout';
+      loginLink.className = 'btn-secondary btn-sm';
+      loginLink.href = '#';
+      loginLink.onclick = (e) => {
+        e.preventDefault();
+        authService.logout();
+        document.body.removeAttribute('data-authenticated');
+        window.location.href = '/login';
+      };
+
+      document.body.setAttribute('data-authenticated', 'true');
+    } else {
+      loginLink.textContent = 'Login';
+      loginLink.className = 'btn-secondary btn-sm';
+      loginLink.href = '/login';
+      loginLink.onclick = null;
+
+      document.body.removeAttribute('data-authenticated');
+    }
+  }
+
+  function updateActiveLinks(): void {
+    const pathname = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === pathname);
+    });
+  }
+
+  function initialize(): void {
+    initializeTheme();
+    setupThemeToggle();
+    updateAuthNavigation();
+    updateActiveLinks();
+
+    logger.info('[MainNav] Componente inicializado');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    initializeTheme();
+    setupThemeToggle();
+    updateActiveLinks();
+    updateAuthNavigation();
+  });
+</script>

@@ -1,0 +1,209 @@
+/**
+ * PRESENTATION LAYER - Estilos de componentes
+ * Usa las variables del design system (@mf/shared/styles)
+ */
+
+.react-card {
+  background: var(--color-surface-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-primary);
+  transition: box-shadow var(--transition-normal);
+}
+
+.react-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.react-card h3 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-2);
+}
+
+.react-card p {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-6);
+}
+
+/* MFE Header - ya está definido en mfe-integration.css */
+.mfe-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.mfe-badge {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.mfe-badge.react {
+  background: #61dafb1a;
+  color: #61dafb;
+  border: 1px solid #61dafb40;
+}
+
+/* Stats */
+.react-stats {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.react-stats span {
+  background: var(--color-surface-secondary);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.level-pill {
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.level-pill.level-inicial {
+  background: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.level-pill.level-medio {
+  background: var(--color-warning-100);
+  color: var(--color-warning-700);
+}
+
+.level-pill.level-alto {
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+}
+
+.external-clicks {
+  background: var(--color-info-100);
+  color: var(--color-info-700);
+  border: 1px solid var(--color-info-300);
+}
+
+/* Buttons */
+.react-btn {
+  background: var(--color-primary-500);
+  color: white;
+  border: none;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  width: 100%;
+  transition: all var(--transition-fast);
+}
+
+.react-btn:hover {
+  background: var(--color-primary-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.react-btn:active {
+  transform: translateY(0);
+}
+
+.event-controls {
+  display: flex;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+.react-btn-secondary {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  flex: 1;
+  min-width: 150px;
+  transition: all var(--transition-fast);
+}
+
+.react-btn-secondary:hover {
+  background: var(--color-surface-tertiary);
+  border-color: var(--color-primary-500);
+  color: var(--color-primary-600);
+}
+
+/* Messages Log */
+.messages-log {
+  margin-top: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+.messages-log h4 {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-3);
+}
+
+.messages-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.messages-log li {
+  padding: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+  background: var(--color-surface-primary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  border-left: 3px solid var(--color-primary-500);
+}
+
+.messages-log li strong {
+  color: var(--color-primary-600);
+  font-weight: var(--font-weight-semibold);
+}
+
+.messages-log li em {
+  color: var(--color-text-primary);
+  font-style: normal;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .react-stats {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .event-controls {
+    flex-direction: column;
+  }
+  
+  .react-btn-secondary {
+    min-width: 100%;
+  }
+}

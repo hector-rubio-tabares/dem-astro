@@ -1,0 +1,114 @@
+/**
+ * Tema Light - The Ethereal Architect
+ * Paleta clara profesional con acentos cyan/violet
+ */
+
+[data-theme="light"] {
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SURFACE HIERARCHY - Light Mode (Soft, professional)
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --surface-lowest: #f5f7fa;        /* Sunken effect (soft gray) */
+  --surface-low: #edf1f7;           /* Secondary background (light blue-gray) */
+  --surface-base: #ffffff;          /* Primary content area (pure white) */
+  --surface-high: #ffffff;          /* Elevated interactive blocks */
+  --surface-highest: #ffffff;       /* Floating nav/modals */
+  --surface-dim: #e5e9f0;           /* Dimmed surface */
+  --surface-bright: #ffffff;        /* Brightest surface */
+  --surface-container: #ffffff;     /* Container alias */
+
+  /* TEXT COLORS (High contrast for readability) */
+  --text-primary: #1a202c;          /* Almost black (softer than pure black) */
+  --text-secondary: #4a5568;        /* Medium gray */
+  --text-disabled: #a0aec0;         /* Light gray */
+
+  /* OUTLINE & BORDERS (Subtle, not harsh) */
+  --outline: #cbd5e0;               /* Soft gray border */
+  --outline-variant: #e2e8f0;       /* Very subtle border */
+
+  /* ═══════════════════════════════════════════════════════════════════════════
+   * SEMANTIC COLORS
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  --color-bg-primary: var(--surface-base);
+  --color-bg-secondary: var(--surface-low);
+  --color-bg-tertiary: var(--surface-lowest);
+  --color-bg-elevated: var(--surface-high);
+  --color-bg-overlay: rgba(26, 32, 44, 0.6);    /* Darker overlay for modals */
+
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: #718096;               /* Lighter gray */
+  --color-text-disabled: var(--text-disabled);
+  --color-text-inverse: #ffffff;
+
+  --color-border-primary: var(--outline);
+  --color-border-secondary: var(--outline-variant);
+  --color-border-focus: #0ea5e9;                /* Bright cyan for focus */
+
+  /* LINKS - Usa cyan signature adaptado a light */
+  --color-link: #0891b2;                        /* Cyan oscuro (legible) */
+  --color-link-hover: #0e7490;                  /* Cyan más oscuro */
+  --color-link-visited: #7c3aed;                /* Violet (consistente con dark) */
+
+  /* ESTADOS INTERACTIVOS */
+  --color-hover-overlay: rgba(0, 0, 0, 0.04);
+  --color-active-overlay: rgba(0, 0, 0, 0.08);
+  --color-focus-ring: #0ea5e9;                  /* Cyan brillante */
+  
+  /* Active link con accent cyan */
+  --color-link-active-bg: rgba(6, 182, 212, 0.08);  /* Cyan muy sutil */
+  --color-link-active-shadow: rgba(6, 182, 212, 0.3);
+
+  /* BUTTONS - Gradiente signature adaptado a light */
+  --color-button-primary-bg: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%); /* Cyan-Violet */
+  --color-button-primary-bg-hover: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
+  --color-button-primary-text: #ffffff;
+
+  --color-button-secondary-bg: transparent;
+  --color-button-secondary-bg-hover: var(--surface-low);
+  --color-button-secondary-text: #0891b2;       /* Cyan oscuro */
+  --color-button-secondary-border: #0891b2;
+
+  --color-button-tertiary-bg: transparent;
+  --color-button-tertiary-text: #7c3aed;        /* Violet */
+
+  /* CARDS - Sutil elevación con sombra suave */
+  --color-card-bg: #ffffff;
+  --color-card-border: var(--outline-variant);
+  --color-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --color-card-hover-bg: var(--surface-low);    /* Shift sutil en hover */
+
+  /* INPUTS - Clean, moderno */
+  --color-input-bg: #ffffff;
+  --color-input-border: var(--outline);
+  --color-input-border-focus: #0ea5e9;          /* Cyan brillante */
+  --color-input-text: var(--text-primary);
+  --color-input-placeholder: #a0aec0;           /* Gray claro */
+
+  /* MFE BADGES - Colores vibrantes pero profesionales */
+  --color-mfe-react-primary: #0891b2;           /* Cyan oscuro */
+  --color-mfe-react-bg: #ecfeff;                /* Cyan muy claro */
+  --color-mfe-react-border: #06b6d4;            /* Cyan medio */
+  --color-mfe-react-glow: rgba(6, 182, 212, 0.2);
+
+  --color-mfe-angular-primary: #dc2626;         /* Red profesional */
+  --color-mfe-angular-bg: #fef2f2;              /* Red muy claro */
+  --color-mfe-angular-border: #ef4444;          /* Red medio */
+  --color-mfe-angular-glow: rgba(239, 68, 68, 0.2);
+
+  --color-mfe-astro-primary: #ea580c;
+  --color-mfe-astro-bg: #fff7ed;
+  --color-mfe-astro-border: #f97316;
+  --color-mfe-astro-glow: rgba(249, 115, 22, 0.2);
+
+  --color-status-success-bg: var(--color-success-50);
+  --color-status-success-text: var(--color-success-700);
+  --color-status-error-bg: var(--color-error-50);
+  --color-status-error-text: var(--color-error-700);
+  --color-status-error-border: var(--color-error-500);
+  --color-status-info-bg: var(--color-info-50);
+  --color-status-info-text: var(--color-info-700);
+}

@@ -1,0 +1,30 @@
+﻿@if (isLoading()) {
+  <mf-loading-overlay [phrases]="loadingPhrases" />
+} @else {
+  <div class="projects-main">
+    <header class="projects-header">
+      <div class="header-row">
+        <h1 class="projects-title">
+          Proyectos & <span class="title-gradient">Soluciones</span>
+        </h1>
+        @if (showViewAllLink()) {
+          <a href="/proyectos" class="view-all-link">
+            Ver todos los proyectos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        }
+      </div>
+      <p class="projects-subtitle">
+        Una curaduria de interfaces digitales y arquitecturas de software disenadas con precision tecnica y estetica editorial.
+      </p>
+    </header>
+
+    <div class="bento-grid">
+      @for (project of projects(); track project.id) {
+        <portfolio-project-card [project]="project" />
+      }
+    </div>
+  </div>
+}

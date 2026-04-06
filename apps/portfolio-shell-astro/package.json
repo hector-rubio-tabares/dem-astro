@@ -9,11 +9,16 @@
     "dev": "astro dev",
     "dev:mf": "astro dev --host 127.0.0.1 --port 4321",
     "build": "astro build",
+    "build:check": "astro build && node -e \"const fs=require('fs');const html=fs.readFileSync('dist/index.html','utf-8');const match=html.match(/<script[^>]*>([^<]*MFE_CONTEXT[^<]*)<\\/script>/);if(match){console.log('\\n🔒 Script Minificado en Producción:\\n');console.log(match[1].substring(0,500)+'...');console.log('\\n✅ Tamaño: '+match[1].length+' bytes');}else{console.log('❌ No se encontró el script')}\"",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^10.0.4",
     "@mf/shared": "workspace:*",
-    "astro": "^6.0.5"
+    "astro": "^6.1.4"
+  },
+  "devDependencies": {
+    "terser": "^5.46.1"
   }
 }

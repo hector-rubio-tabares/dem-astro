@@ -14,8 +14,14 @@ pnpm-debug.log*
 
 
 # environment variables
+# Solo ignorar .env local (sobrescribe las demás variables)
 .env
-.env.production
+.env.local
+
+# Los siguientes SE versionan en Git:
+# .env.example (plantilla)
+# .env.development (desarrollo)
+# .env.production (producción)
 
 # macOS-specific files
 .DS_Store

@@ -1,33 +1,29 @@
-/**
- * @mf/shared - Paquete compartido para microfrontends
- */
+export { EventBus } from './event-bus'
+export type { Handler, EventMap, EventBusOptions } from './event-bus'
 
-// Core
-export { EventBus } from './event-bus.js'
-export type { Handler, EventMap, EventBusOptions } from './event-bus.js'
-
-// Validation
 export {
   validateTabMessage,
   validateMultiTabMessage,
   safeValidateTabMessage,
   safeValidateMultiTabMessage,
   sanitizeDisplayString,
-} from './message-validator.js'
-export type { TabMessage, MultiTabMessage } from './message-validator.js'
+} from './message-validator'
+export type { TabMessage, MultiTabMessage } from './message-validator'
 
-// Context (reemplaza window globals)
 export {
   MicrofrontendContext,
   getMicrofrontendBus,
   getMicrofrontendTabId,
   getMicrofrontendChannel,
-} from './context.js'
+} from './context'
 
-// Strategy Pattern (sin if/else)
-export { MountStrategyFactory } from './strategies.js'
-export type { MicrofrontendType, MountConfig, MountStrategy } from './strategies.js'
+export { MountStrategyFactory } from './strategies'
+export type { MicrofrontendType, MountConfig, MountStrategy } from './strategies'
 
-// Tipos y constantes
-export { MF_CONFIG } from './types.js'
-export type { MicroFrontendEvents } from './types.js'
+export { mfeLoader, MFELoaderService } from './mfe-loader'
+export type { MFEType, MFEConfig, LoadResult, MFELoadRequest } from './mfe-loader'
+
+export { loadRemoteModule, assertAllowedOrigin, assertMountContract, DEFAULT_TIMEOUT_MS } from './remote-module-loader'
+
+export { MF_CONFIG } from './types'
+export type { MicroFrontendEvents, PortfolioEvent, EventType, MFESource } from './types'

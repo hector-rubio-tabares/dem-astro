@@ -1,7 +1,3 @@
-/**
- * Message validation utilities for secure cross-framework communication
- */
-
 export interface TabMessage {
   source: string
   count: number

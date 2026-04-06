@@ -1,0 +1,43 @@
+﻿@if (isLoading()) {
+  <mf-loading-overlay />
+} @else {
+  <div class="projects-full-main">
+    <div class="bento-grid">
+      @for (project of paginatedProjects(); track project.id) {
+        <portfolio-project-card [project]="project" />
+      }
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        class="pagination-btn"
+        [disabled]="!canGoPrevious()"
+        (click)="previousPage()"
+        aria-label="Pagina anterior"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Anterior
+      </button>
+
+      <div class="pagination-info">
+        <span class="current-page">{{ currentPage() }}</span>
+        <span class="separator">/</span>
+        <span class="total-pages">{{ totalPages() }}</span>
+      </div>
+
+      <button
+        class="pagination-btn"
+        [disabled]="!canGoNext()"
+        (click)="nextPage()"
+        aria-label="Pagina siguiente"
+      >
+        Siguiente
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+}

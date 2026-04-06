@@ -1,0 +1,253 @@
+/**
+ * Estilos Angular MFE - Integrado con Design System
+ * Los tokens CSS base se importan desde @mf/shared/styles/global.css
+ * Este archivo solo define estilos específicos del componente Angular
+ */
+
+.angular-card {
+	/* Usa variables CSS del sistema compartido */
+	padding: var(--spacing-4);
+	border-radius: var(--border-radius-xl);
+	border: var(--border-width-thin) solid var(--color-mfe-angular-border);
+	border-top: var(--border-width-thick) solid var(--color-mfe-angular-primary);
+	background: var(--color-mfe-angular-bg);
+	color: var(--color-text-primary);
+	box-shadow: var(--shadow-lg);
+	font-family: var(--font-family-sans);
+	transition: all var(--transition-base);
+}
+
+.mfe-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: var(--spacing-2);
+	gap: var(--spacing-3);
+	flex-wrap: wrap;
+}
+
+.mfe-badges {
+	display: flex;
+	gap: var(--spacing-2);
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.angular-card h3 {
+	margin: 0;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+}
+
+.angular-card p {
+	margin: 0;
+	color: var(--color-text-secondary);
+	font-size: var(--font-size-base);
+}
+
+.angular-stats {
+	display: flex;
+	gap: var(--spacing-3);
+	margin: var(--spacing-3) 0;
+	flex-wrap: wrap;
+}
+
+.angular-stats span {
+	display: inline-block;
+	font-size: var(--font-size-sm);
+	border: var(--border-width-thin) solid;
+	border-radius: var(--border-radius-full);
+	padding: var(--spacing-1) var(--spacing-3);
+	font-weight: var(--font-weight-medium);
+}
+
+[data-theme="light"] .angular-stats span {
+	border-color: #ffc895;
+	background: #fffaf4;
+	color: #7a4f2e;
+}
+
+[data-theme="dark"] .angular-stats span {
+	border-color: var(--color-mfe-angular-primary);
+	background: rgba(255, 140, 42, 0.1);
+	color: #ffaa5a;
+}
+
+.external-clicks {
+	border-color: #c2b0ff !important;
+	background: #f5f0ff !important;
+	color: #5028a0 !important;
+	font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .external-clicks {
+	background: rgba(194, 176, 255, 0.15) !important;
+	color: #d4c4ff !important;
+}
+
+/* Environment Badges */
+.mfe-badge {
+	display: inline-block;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-semibold);
+	padding: var(--spacing-1) var(--spacing-2);
+	border-radius: var(--border-radius-md);
+	border: var(--border-width-thin) solid;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.mfe-badge.angular {
+	border-color: var(--color-mfe-angular-primary);
+	background: var(--color-mfe-angular-bg);
+	color: var(--color-mfe-angular-primary);
+}
+
+.mfe-badge.env-dev {
+	border-color: #10b981;
+	background: #d1fae5;
+	color: #065f46;
+}
+
+[data-theme="dark"] .mfe-badge.env-dev {
+	background: rgba(16, 185, 129, 0.15);
+	color: #6ee7b7;
+}
+
+.mfe-badge.env-prod {
+	border-color: #ef4444;
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+[data-theme="dark"] .mfe-badge.env-prod {
+	background: rgba(239, 68, 68, 0.15);
+	color: #fca5a5;
+}
+
+.level-pill.level-inicial {
+	border-color: var(--color-info-500);
+	background: var(--color-info-50);
+	color: vvar(--border-width-thin) solid var(--color-secondary-500);
+	background: var(--color-button-primary-bg);
+	color: var(--color-button-primary-text);
+	border-radius: var(--border-radius-md);
+	padding: var(--spacing-3) var(--spacing-4);
+	font-weight: var(--font-weight-semibold);
+	font-family: var(--font-family-sans);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.angular-btn:hover {
+	background: var(--color-button-primary-bg-hover);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-md);
+}
+
+.event-controls {
+	display: flex;
+	gap: var(--spacing-2);
+	margin-top: var(--spacing-3);
+	flex-wrap: wrap;
+}
+
+.angular-btn-secondary {
+	border: var(--border-width-thin) solid var(--color-border-primary);
+	background: var(--color-button-secondary-bg);
+	color: var(--color-button-secondary-text);
+	border-radius: var(--border-radius-md);
+	padding: var(--spacing-2) var(--spacing-3);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	font-family: var(--font-family-sans);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.angular-btn-secondary:hover {
+	background: var(--color-button-secondary-bg-hover);
+	color: #9b4f10;
+	border-radius: 8px;
+	padding: 0.45rem 0.75rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.angular-btn:hover {
+	background: #fff3e7;
+}
+
+.event-controls {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.7rem;
+	flex-wrap: wrap;
+}
+
+.angular-btn-secondary {
+	border: 1px solid #f08a2e;
+	background: #fffaf4;
+	color: #9b4f10;
+	border-radius: 8px;
+	padding: 0.35rem 0.6rem;
+	font-size: 0.85rem;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.angular-btn-secondary:hover {
+	background: #ffeed8;
+}
+
+.messages-log {
+	margin-top: var(--spacing-4);
+	padding: var(--spacing-3);
+	border-radius: var(--border-radius-md);
+	background: var(--color-bg-secondary);
+	border: var(--border-width-thin) dashed var(--color-border-primary);
+}
+
+.messages-log h4 {
+	margin: 0 0 var(--spacing-2);
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-weight: var(--font-weight-semibold);
+}
+
+.messages-log ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.messages-log li {
+	font-size: var(--font-size-sm);
+	color: var(--color-text-secondary);
+	padding: var(--spacing-1) 0;
+	border-bottom: var(--border-width-thin) solid var(--color-border-secondary);
+	font-family: var(--font-family-mono);
+}
+
+.messages-log li:last-child {
+	border-bottom: none;
+}
+
+.messages-log strong {
+	color: var(--color-text-primary);
+	text-transform: uppercase;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-bold);
+}
+
+.messages-log em {
+	color: var(--color-mfe-react-primary);
+	font-style: normal;
+	font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .messages-log em {
+	color: #4dc3ff;
+}

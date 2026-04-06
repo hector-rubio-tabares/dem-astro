@@ -1,22 +1,40 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MFESlot from "../components/MFESlot.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Portfolio Shell Astro</title>
-	</head>
-	<body>
-		<main>
-			<h1>Portfolio Shell (Astro)</h1>
-			<p>Piloto local para validar integracion de micro-frontends.</p>
-			<p><a href="/demo">Abrir demo con bundles locales</a></p>
-			<p><a href="/demo-hot">Abrir demo hot (dev servers)</a></p>
-		</main>
-	</body>
-</html>
+<BaseLayout
+  title="Hector Rubio — Software Engineer Fullstack"
+  description="Portfolio de Hector David Rubio Tabares. Software Engineer Fullstack (.NET / Angular). Proyectos reales en producción: 3DS v2, SSO Keycloak, CI/CD Azure DevOps."
+  showBootScreen={true}
+>
+  <MFESlot
+    mfe="about"
+    containerId="about-container"
+    strategy="visible"
+    label="Cargando sección sobre mí..."
+    minHeight={16}
+  />
+  <MFESlot
+    mfe="projects"
+    strategy="load"
+    label="Cargando proyectos..."
+    minHeight={20}
+  />
+</BaseLayout>
+
+<style>
+  section {
+    margin-block: var(--spacing-20);
+  }
+
+  section:first-of-type {
+    margin-block-start: 0;
+  }
+
+  @media (max-width: 768px) {
+    section {
+      margin-block: var(--spacing-12);
+    }
+  }
+</style>

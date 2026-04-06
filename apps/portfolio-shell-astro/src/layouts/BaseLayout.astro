@@ -1,0 +1,204 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@mf/shared/styles/global.css';
+import '@mf/shared/styles/mfe-integration.css';
+import '@mf/shared/styles/layout.css';
+import MainNav from '../components/MainNav.astro';
+import BootScreen from '../components/BootScreen.astro';
+import AuthGate from '../components/AuthGate.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  requiresAuth?: boolean;
+  showBootScreen?: boolean;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const {
+  title = 'Hector Rubio — Software Engineer',
+  description = 'Software Engineer Fullstack (.NET / Angular) con experiencia en sistemas productivos, integraciones y arquitectura hexagonal.',
+  requiresAuth = false,
+  showBootScreen = false,
+  ogImage = '/og-default.png',
+  canonical = Astro.url.href,
+} = Astro.props;
+
+const siteOrigin = Astro.site?.origin ?? Astro.url.origin;
+const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${ogImage}`;
+---
+
+<!DOCTYPE html>
+<script is:inline>
+  (function() {
+    function applyTheme() {
+      try {
+        const saved = localStorage.getItem('mfe-theme');
+        document.documentElement.setAttribute('data-theme', saved || 'dark');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+    function cleanupBootScreen() {
+      try {
+        if (sessionStorage.getItem('boot-completed')) {
+          var bs = document.getElementById('mfe-loading-screen');
+          if (bs) bs.remove();
+        }
+      } catch (e) {}
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+    document.addEventListener('astro:after-swap', cleanupBootScreen);
+    document.addEventListener('astro:before-swap', function(swapEvent) {
+      try { sessionStorage.setItem('boot-completed', '1'); } catch (err) {}
+      document.querySelectorAll('head style[data-vite-dev-id]').forEach(function(el) {
+        var vid = el.getAttribute('data-vite-dev-id');
+        if (vid && !swapEvent.newDocument.head.querySelector('[data-vite-dev-id="' + vid + '"]')) {
+          swapEvent.newDocument.head.appendChild(el.cloneNode(true));
+        }
+      });
+    });
+  })();
+</script>
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageAbsolute} />
+    <meta property="og:locale" content="es_ES" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbsolute} />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: title,
+      description,
+      url: siteOrigin,
+    })} />
+
+    <ClientRouter />
+
+    <script is:inline define:vars={{
+      mfeReactUrl: import.meta.env.PUBLIC_REACT_MF_URL ?? '',
+      mfeAngularUrl: import.meta.env.PUBLIC_ANGULAR_MF_URL ?? ''
+    }}>
+      if (mfeReactUrl)   window.__MFE_REACT_URL__   = mfeReactUrl;
+      if (mfeAngularUrl) window.__MFE_ANGULAR_URL__ = mfeAngularUrl;
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+
+    <script is:inline>
+      if (typeof window !== 'undefined' && !window.__MFE_CONTEXT_INITIALIZED__) {
+        window.__MFE_CONTEXT_INITIALIZED__ = true;
+
+        try {
+          let channel = null;
+          try {
+            channel = new BroadcastChannel('mfe-broadcast-channel');
+          } catch (error) {
+          }
+
+          class SimpleEventBus {
+            constructor() { this.handlers = new Map(); }
+            on(event, handler) {
+              const current = this.handlers.get(event) || new Set();
+              current.add(handler);
+              this.handlers.set(event, current);
+              return () => current.delete(handler);
+            }
+            emit(event, payload) {
+              const handlers = this.handlers.get(event);
+              if (handlers) handlers.forEach(h => h(payload));
+            }
+            off(event, handler) {
+              const handlers = this.handlers.get(event);
+              if (handlers) handlers.delete(handler);
+            }
+          }
+
+          class SimpleMicrofrontendContext {
+            constructor(bus, tabId, channel) {
+              this.bus = bus;
+              this.tabId = tabId;
+              this.channel = channel;
+            }
+            getBus() { return this.bus; }
+            getTabId() { return this.tabId; }
+            getChannel() { return this.channel; }
+            static initialize(config) {
+              if (this.instance) return;
+              this.instance = new this(config.bus, config.tabId, config.channel);
+            }
+            static getInstance() {
+              if (!this.instance) throw new Error('[MFContext] Not initialized');
+              return this.instance;
+            }
+          }
+          SimpleMicrofrontendContext.instance = null;
+
+          const tabId = crypto.randomUUID();
+          const sharedBus = new SimpleEventBus();
+          SimpleMicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
+
+          window.__MICROFRONTEND_CONTEXT__ = SimpleMicrofrontendContext;
+          window.__SHARED_BUS__ = sharedBus;
+          window.__TAB_ID__ = tabId;
+          window.__BROADCAST_CHANNEL__ = channel;
+          window.__MFE_CONTEXT_READY__ = true;
+
+          window.dispatchEvent(new CustomEvent('mfe:context:ready', {
+            detail: { tabId, bus: sharedBus }
+          }));
+        } catch (error) {}
+      }
+    </script>
+  </head>
+  
+  <body>
+    {showBootScreen && <BootScreen />}
+    <MainNav currentPath={Astro.url.pathname} hideAuthLinks={requiresAuth} transition:persist />
+
+    <main class="main-content" aria-label="Contenido principal">
+      {requiresAuth && <AuthGate />}
+      
+      <div id="main-view" style={requiresAuth ? 'display:none' : ''}>
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site-footer" transition:persist>
+      <div class="container">
+        <p>&copy; {new Date().getFullYear()} Hector David Rubio Tabares. Manizales, Colombia.</p>
+        <p class="footer-tech">
+          <span class="mfe-badge react">React 19</span>
+          <span class="mfe-badge angular">Angular 21</span>
+          <span class="mfe-badge">Astro 6</span>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/layout-client-hexagonal';
+    </script>
+  </body>
+</html>
