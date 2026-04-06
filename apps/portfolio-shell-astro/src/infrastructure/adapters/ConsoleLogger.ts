@@ -1,9 +1,3 @@
-/**
- * INFRASTRUCTURE LAYER - Adapter: Console Logger
- * Implementación de ILogger usando console
- * En producción solo muestra errores críticos
- */
-
 import type { ILogger, LogLevel } from '../../application/ports/ILogger';
 import { LogLevel as Level } from '../../application/ports/ILogger';
 
@@ -11,7 +5,6 @@ export class ConsoleLogger implements ILogger {
   private readonly minLevel: LogLevel;
 
   constructor() {
-    // En producción solo errores, en desarrollo todo
     this.minLevel = import.meta.env.PROD ? Level.ERROR : Level.DEBUG;
   }
 

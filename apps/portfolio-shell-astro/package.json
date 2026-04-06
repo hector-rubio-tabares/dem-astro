@@ -14,8 +14,9 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^10.0.4",
     "@mf/shared": "workspace:*",
-    "astro": "^6.0.5"
+    "astro": "^6.1.4"
   },
   "devDependencies": {
     "terser": "^5.46.1"

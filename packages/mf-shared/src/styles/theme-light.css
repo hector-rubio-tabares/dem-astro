@@ -99,8 +99,16 @@
   --color-mfe-angular-border: #ef4444;          /* Red medio */
   --color-mfe-angular-glow: rgba(239, 68, 68, 0.2);
 
-  --color-mfe-astro-primary: #ea580c;           /* Orange */
-  --color-mfe-astro-bg: #fff7ed;                /* Orange muy claro */
-  --color-mfe-astro-border: #f97316;            /* Orange medio */
+  --color-mfe-astro-primary: #ea580c;
+  --color-mfe-astro-bg: #fff7ed;
+  --color-mfe-astro-border: #f97316;
   --color-mfe-astro-glow: rgba(249, 115, 22, 0.2);
+
+  --color-status-success-bg: var(--color-success-50);
+  --color-status-success-text: var(--color-success-700);
+  --color-status-error-bg: var(--color-error-50);
+  --color-status-error-text: var(--color-error-700);
+  --color-status-error-border: var(--color-error-500);
+  --color-status-info-bg: var(--color-info-50);
+  --color-status-info-text: var(--color-info-700);
 }

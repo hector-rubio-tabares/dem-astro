@@ -1,19 +1,4 @@
 ---
-/**
- * MainNav Component - Componente de Navegación Principal
- * 
- * SOLID Principles:
- * - Single Responsibility: Solo maneja navegación, tema y auth UI
- * - Open/Closed: Extensible vía props
- * - Dependency Inversion: Usa interfaces de @mf/shared
- * 
- * Encapsula:
- * - Links de navegación
- * - Toggle de tema (light/dark)
- * - Estado de autenticación (login/logout)
- * - Lógica client-side autocontenida
- */
-
 export interface Props {
   currentPath?: string;
   hideAuthLinks?: boolean;
@@ -21,7 +6,6 @@ export interface Props {
 
 const { currentPath = '/', hideAuthLinks = false } = Astro.props;
 
-// Determinar link activo
 function isActive(path: string): boolean {
   return currentPath === path;
 }
@@ -30,7 +14,7 @@ function isActive(path: string): boolean {
 <header class="site-header">
   <nav class="container">
     <div class="nav-content">
-      <a href="/" class="logo">Portfolio MFE</a>
+      <a href="/" class="logo">Hector Rubio</a>
       
       <ul class="nav-links">
         <li>
@@ -66,140 +50,6 @@ function isActive(path: string): boolean {
 </header>
 
 <style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: var(--z-index-fixed);  /* 1030 - Siempre arriba del contenido */
-    background: rgba(26, 35, 50, 0.95);  /* Más opaco para evitar ver contenido atrás */
-    border-bottom: 1px solid var(--glass-border-dark);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow: var(--shadow-md);
-  }
-
-  /* Tema light: header más sutil y fino */
-  [data-theme="light"] .site-header {
-    background: rgba(255, 255, 255, 0.95);  /* Más opaco */
-    border-bottom: 1px solid var(--glass-border-light);
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  .nav-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--spacing-4) 0;  /* Padding fino (no 5) */
-  }
-
-  .logo {
-    font-family: var(--font-display);
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    text-decoration: none;
-    color: var(--text-primary);
-    background: var(--gradient-signature);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    transition: all var(--transition-smooth);
-    filter: var(--drop-shadow-cyan);
-  }
-
-  [data-theme="light"] .logo {
-    filter: var(--drop-shadow-cyan-light);
-  }
-
-  .logo:hover {
-    opacity: 0.85;
-    transform: scale(1.05);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: var(--spacing-6);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    align-items: center;
-  }
-
-  .nav-link {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    transition: all var(--transition-smooth);
-    position: relative;
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--border-radius-md);
-  }
-
-  .nav-link:hover {
-    color: var(--text-primary);
-    background: var(--surface-high);
-    transform: translateY(-2px);
-  }
-
-  [data-theme="light"] .nav-link {
-    color: var(--text-primary);  /* Más oscuro en light mode */
-  }
-
-  [data-theme="light"] .nav-link:hover {
-    background: var(--color-hover-overlay);
-  }
-
-  .nav-link.active {
-    color: var(--color-primary-cyan);
-    background: var(--color-link-active-bg);
-  }
-
-  [data-theme="light"] .nav-link.active {
-    background: var(--color-link-active-bg);
-  }
-
-  .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: var(--spacing-3);
-    right: var(--spacing-3);
-    height: 2px;
-    background: var(--gradient-signature);
-    border-radius: var(--border-radius-full);
-    box-shadow: var(--drop-shadow-cyan-glow);
-  }
-
-  [data-theme="light"] .nav-link.active::after {
-    box-shadow: var(--drop-shadow-cyan-glow-light);
-  }
-
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;  /* Más delgado */
-    height: 40px;
-    padding: 0;
-    border-radius: var(--border-radius-lg);
-    cursor: pointer;
-  }
-
-  .theme-toggle:hover {
-    transform: rotate(15deg) scale(1.1);
-    box-shadow: var(--shadow-cyan);
-  }
-
-  [data-theme="light"] .theme-toggle:hover {
-    box-shadow: var(--shadow-sm);
-  }
-
-  .theme-icon {
-    font-size: 1.25rem;
-    line-height: 1;
-    transition: all var(--transition-smooth);
-  }
-
   #admin-link {
     opacity: 0.5;
     pointer-events: none;
@@ -209,41 +59,15 @@ function isActive(path: string): boolean {
     opacity: 1;
     pointer-events: auto;
   }
-
-  @media (max-width: 768px) {
-    .nav-links {
-      gap: var(--spacing-3);
-      font-size: var(--font-size-sm);
-    }
-
-    .logo {
-      font-size: var(--font-size-lg);
-    }
-  }
 </style>
 
 <script>
-  /**
-   * MainNav Client Logic - Autocontenida
-   * Usa arquitectura hexagonal con dependency injection
-   * 
-   * ✅ SOLID: Single Responsibility (solo maneja este componente)
-   * ✅ Encapsulación: Toda la lógica del nav en un lugar
-   * ✅ Reutilizable: No depende de IDs globales o scripts externos
-   */
-
-  // Infrastructure
   import { LocalStorageThemeRepository } from '../infrastructure/adapters/LocalStorageThemeRepository';
   import { SessionStorageAuthService } from '../infrastructure/adapters/SessionStorageAuthService';
   import { ConsoleLogger } from '../infrastructure/adapters/ConsoleLogger';
 
-  // Use Cases
   import { InitializeThemeUseCase } from '../application/use-cases/InitializeThemeUseCase';
   import { ToggleThemeUseCase } from '../application/use-cases/ToggleThemeUseCase';
-
-  // ═══════════════════════════════════════════════════════════
-  // DEPENDENCY INJECTION
-  // ═══════════════════════════════════════════════════════════
 
   const logger = new ConsoleLogger();
   const themeRepository = new LocalStorageThemeRepository();
@@ -252,15 +76,10 @@ function isActive(path: string): boolean {
   const initializeThemeUseCase = new InitializeThemeUseCase(themeRepository);
   const toggleThemeUseCase = new ToggleThemeUseCase(themeRepository);
 
-  // ═══════════════════════════════════════════════════════════
-  // THEME MANAGEMENT
-  // ═══════════════════════════════════════════════════════════
-
   function initializeTheme(): void {
     try {
       const theme = initializeThemeUseCase.execute();
-      
-      // PRESENTATION: Aplicar al DOM (responsabilidad de esta capa, no del use-case)
+
       document.documentElement.setAttribute('data-theme', theme.getMode());
 
       const themeIcon = document.querySelector('.theme-icon');
@@ -282,11 +101,10 @@ function isActive(path: string): boolean {
       return;
     }
 
-    themeToggle.addEventListener('click', () => {
+    themeToggle.onclick = () => {
       try {
         const newTheme = toggleThemeUseCase.execute();
-        
-        // PRESENTATION: Aplicar al DOM (responsabilidad de esta capa, no del use-case)
+
         document.documentElement.setAttribute('data-theme', newTheme.getMode());
 
         const themeIcon = themeToggle.querySelector('.theme-icon');
@@ -298,12 +116,8 @@ function isActive(path: string): boolean {
       } catch (error) {
         logger.error('[MainNav] Error cambiando tema', error);
       }
-    });
+    };
   }
-
-  // ═══════════════════════════════════════════════════════════
-  // AUTH NAVIGATION
-  // ═══════════════════════════════════════════════════════════
 
   function updateAuthNavigation(): void {
     const loginLink = document.getElementById('login-link') as HTMLAnchorElement;
@@ -313,7 +127,6 @@ function isActive(path: string): boolean {
     const isAuthenticated = authService.isAuthenticated();
     
     if (isAuthenticated) {
-      // Usuario autenticado → Logout
       loginLink.textContent = 'Logout';
       loginLink.className = 'btn-secondary btn-sm';
       loginLink.href = '#';
@@ -324,10 +137,8 @@ function isActive(path: string): boolean {
         window.location.href = '/login';
       };
 
-      // Marcar body como autenticado (para mostrar /admin)
       document.body.setAttribute('data-authenticated', 'true');
     } else {
-      // Usuario NO autenticado → Login
       loginLink.textContent = 'Login';
       loginLink.className = 'btn-secondary btn-sm';
       loginLink.href = '/login';
@@ -337,22 +148,32 @@ function isActive(path: string): boolean {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // INITIALIZATION
-  // ═══════════════════════════════════════════════════════════
+  function updateActiveLinks(): void {
+    const pathname = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === pathname);
+    });
+  }
 
   function initialize(): void {
     initializeTheme();
     setupThemeToggle();
     updateAuthNavigation();
+    updateActiveLinks();
 
     logger.info('[MainNav] Componente inicializado');
   }
 
-  // Auto-initialize cuando el componente se monta
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize);
   } else {
     initialize();
   }
+
+  document.addEventListener('astro:after-swap', () => {
+    initializeTheme();
+    setupThemeToggle();
+    updateActiveLinks();
+    updateAuthNavigation();
+  });
 </script>

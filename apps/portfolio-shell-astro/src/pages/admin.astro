@@ -1,29 +1,21 @@
 ---
-/**
- * Página Admin (Protegida)
- * Panel de administración con acceso restringido
- */
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout 
+<BaseLayout
   title="Admin - Portfolio MFE"
   description="Panel de administración del sistema MFE"
   requiresAuth={true}
-  loadsMFEs={true}
 >
   <div class="container">
-    <!-- Admin Header -->
     <section class="admin-header">
       <h1>Panel de Administración</h1>
       <p class="lead">Gestión y monitoreo del sistema de micro-frontends</p>
       <button id="logout-btn" class="btn-secondary">Cerrar Sesión</button>
     </section>
 
-    <!-- Dashboard Grid -->
     <section class="dashboard">
       <div class="dashboard-grid">
-        <!-- System Status -->
         <div class="card dashboard-card">
           <h3>Estado del Sistema</h3>
           <div class="status-list">
@@ -50,7 +42,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <!-- MFE Messages Monitor -->
         <div class="card dashboard-card">
           <h3>Monitor de Mensajes</h3>
           <div id="message-log" class="message-log">
@@ -58,7 +49,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
-        <!-- Configuration -->
         <div class="card dashboard-card">
           <h3>Configuración</h3>
           <div class="config-list">
@@ -79,7 +69,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </section>
 
-    <!-- Live MFEs -->
     <section class="mfes-section">
       <h2>Micro-Frontends Activos</h2>
       <div class="mfe-grid">
@@ -96,7 +85,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  /* ========== ADMIN HEADER ========== */
   .admin-header {
     text-align: center;
     padding: var(--spacing-12) 0 var(--spacing-8);
@@ -109,7 +97,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     right: 0;
   }
 
-  /* ========== DASHBOARD ========== */
   .dashboard {
     margin: var(--spacing-8) 0 var(--spacing-16);
   }
@@ -124,7 +111,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     height: fit-content;
   }
 
-  /* ========== STATUS LIST ========== */
   .status-list {
     display: flex;
     flex-direction: column;
@@ -153,34 +139,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   .status-badge.ok {
-    background-color: var(--color-success-50);
-    color: var(--color-success-700);
-  }
-
-  [data-theme="dark"] .status-badge.ok {
-    background-color: rgba(76, 175, 80, 0.15);
-    color: #81c784;
+    background-color: var(--color-status-success-bg);
+    color: var(--color-status-success-text);
   }
 
   .status-badge.error {
-    background-color: var(--color-error-50);
-    color: var(--color-error-700);
-  }
-
-  [data-theme="dark"] .status-badge.error {
-    background-color: rgba(244, 67, 54, 0.15);
-    color: #ff7961;
+    background-color: var(--color-status-error-bg);
+    color: var(--color-status-error-text);
   }
 
   .status-badge.loading {
-    background-color: var(--color-info-50);
-    color: var(--color-info-700);
+    background-color: var(--color-status-info-bg);
+    color: var(--color-status-info-text);
     animation: pulse 1.5s ease-in-out infinite;
-  }
-
-  [data-theme="dark"] .status-badge.loading {
-    background-color: rgba(33, 150, 243, 0.15);
-    color: #64b5f6;
   }
 
   @keyframes pulse {
@@ -188,7 +159,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     50% { opacity: 0.5; }
   }
 
-  /* ========== MESSAGE LOG ========== */
   .message-log {
     max-height: 300px;
     overflow-y: auto;
@@ -218,7 +188,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: var(--font-size-xs);
   }
 
-  /* ========== CONFIG LIST ========== */
   .config-list {
     display: flex;
     flex-direction: column;
@@ -241,12 +210,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     word-break: break-all;
   }
 
-  /* ========== MFE SECTION ========== */
   .mfes-section {
     margin: var(--spacing-12) 0;
   }
 
-  /* ========== RESPONSIVE ========== */
   @media (max-width: 768px) {
     .admin-header {
       padding: var(--spacing-8) 0 var(--spacing-6);
@@ -312,7 +279,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const envModeEl = document.getElementById('env-mode');
     if (envModeEl) envModeEl.textContent = envMode;
 
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const currentTheme = document.documentElement.getAttribute('data-theme') ;
     const currentThemeEl = document.getElementById('current-theme');
     if (currentThemeEl) currentThemeEl.textContent = currentTheme;
 
@@ -353,18 +320,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       function renderMessages() {
         if (!messageLog) return;
-        
+
         if (messages.length === 0) {
-          messageLog.innerHTML = '<p class="no-messages">Sin mensajes aún. Interactúa con los MFEs abajo.</p>';
+          messageLog.textContent = 'Sin mensajes aún. Interactúa con los MFEs abajo.';
           return;
         }
 
-        messageLog.innerHTML = messages.map(msg => `
-          <div class="message-entry">
-            <div class="message-time">${msg.time}</div>
-            <div><strong>${msg.event}</strong>: ${JSON.stringify(msg.data)}</div>
-          </div>
-        `).join('');
+        messageLog.textContent = '';
+        messages.forEach(msg => {
+          const entry = document.createElement('div');
+          entry.className = 'message-entry';
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'message-time';
+          timeEl.textContent = msg.time;
+
+          const bodyEl = document.createElement('div');
+          const strong = document.createElement('strong');
+          strong.textContent = msg.event;
+          const text = document.createTextNode(': ' + JSON.stringify(msg.data));
+          bodyEl.appendChild(strong);
+          bodyEl.appendChild(text);
+
+          entry.appendChild(timeEl);
+          entry.appendChild(bodyEl);
+          messageLog.appendChild(entry);
+        });
       }
 
       renderMessages();

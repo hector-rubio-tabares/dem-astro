@@ -1,18 +1,7 @@
-/**
- * Loading Screen — Boot Sequence Terminal
- * Layout: header fijo + 3 columnas centradas + footer fijo
- * Usa exclusivamente variables del design system.
- *
- * Excepciones documentadas (brand colors oficiales):
- *   - React:   #61dafb
- *   - Angular: #dd0031
- */
-
-/* ─── Container ───────────────────────────────────────────────────────────── */
 #mfe-loading-screen {
   position: fixed;
   inset: 0;
-  background-color: var(--surface-lowest);
+  background-color: #0a1120;
   display: flex;
   flex-direction: column;
   z-index: 999999;
@@ -21,6 +10,7 @@
   font-family: var(--font-family-mono);
   color: var(--text-primary);
   overflow: hidden;
+  contain: layout style paint;
 }
 
 #mfe-loading-screen::before {
@@ -45,7 +35,6 @@
   pointer-events: none;
 }
 
-/* ─── Header ──────────────────────────────────────────────────────────────── */
 .boot-header {
   display: flex;
   justify-content: space-between;
@@ -99,7 +88,6 @@
   color: var(--color-primary-cyan);
 }
 
-/* ─── Main Area ───────────────────────────────────────────────────────────── */
 .boot-main {
   flex: 1;
   min-height: 0;
@@ -112,7 +100,6 @@
   overflow: hidden;
 }
 
-/* Glow accents */
 .boot-main::before,
 .boot-main::after {
   content: '';
@@ -137,7 +124,6 @@
   filter: blur(80px);
 }
 
-/* ─── 3-Column Grid ───────────────────────────────────────────────────────── */
 .boot-grid {
   display: grid;
   grid-template-columns: 4fr 5fr 3fr;
@@ -147,7 +133,6 @@
   align-items: center;
 }
 
-/* ─── Left Column ─────────────────────────────────────────────────────────── */
 .boot-col-left {
   display: flex;
   flex-direction: column;
@@ -169,7 +154,6 @@
   opacity: 0.8;
 }
 
-/* ─── Title ──────────────────────────────────────────────────────────────── */
 .boot-title {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-3xl);
@@ -180,7 +164,6 @@
   line-height: 1.1;
 }
 
-/* ─── MFE Cards ───────────────────────────────────────────────────────────── */
 .boot-mfe-list {
   list-style: none;
   margin: 0;
@@ -221,7 +204,6 @@
   gap: var(--spacing-3);
 }
 
-/* ─── MFE Badges ──────────────────────────────────────────────────────────── */
 .boot-mfe-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
@@ -244,7 +226,6 @@
   color: var(--text-secondary);
 }
 
-/* ─── MFE Label / Pct ────────────────────────────────────────────────────── */
 .boot-mfe-label {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-xs);
@@ -264,7 +245,6 @@
 .boot-mfe-pct--react { color: #61dafb; }
 .boot-mfe-pct--angular { color: var(--text-secondary); }
 
-/* ─── Progress Bars ───────────────────────────────────────────────────────── */
 .boot-bar-track {
   height: 4px;
   background-color: var(--surface-highest);
@@ -273,8 +253,10 @@
 
 .boot-bar-fill {
   height: 100%;
-  width: 0%;
-  transition: width 50ms linear;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
   background-color: var(--color-primary-cyan);
 }
 
@@ -286,7 +268,6 @@
   background-color: rgba(184, 202, 202, 0.4);
 }
 
-/* ─── Sub-detail row ──────────────────────────────────────────────────────── */
 .boot-mfe-subdetail {
   display: flex;
   justify-content: space-between;
@@ -298,14 +279,12 @@
   opacity: 0.6;
 }
 
-/* ─── Middle Column ───────────────────────────────────────────────────────── */
 .boot-col-mid {
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-/* ─── Terminal Window ─────────────────────────────────────────────────────── */
 .boot-terminal-window {
   background-color: #070e1b;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -354,7 +333,6 @@
   opacity: 0.5;
 }
 
-/* ─── Terminal Body ───────────────────────────────────────────────────────── */
 .boot-terminal {
   flex: 1;
   min-height: 0;
@@ -377,7 +355,6 @@
   border-radius: 2px;
 }
 
-/* ─── Log Lines ───────────────────────────────────────────────────────────── */
 .boot-log-line {
   display: flex;
   gap: var(--spacing-2);
@@ -395,7 +372,6 @@
 .boot-log-line--warn .boot-log-msg { color: var(--color-warning-500); }
 .boot-log-line--error .boot-log-msg { color: var(--color-error-500); }
 
-/* ─── Blinking Cursor ────────────────────────────────────────────────────── */
 .boot-cursor {
   color: var(--color-primary-cyan);
   display: inline-block;
@@ -407,7 +383,6 @@
   50%       { opacity: 0; }
 }
 
-/* ─── Floating Uptime Card ────────────────────────────────────────────────── */
 .boot-uptime-card {
   position: absolute;
   bottom: -2rem;
@@ -474,7 +449,6 @@
   align-self: stretch;
 }
 
-/* ─── Right Column ────────────────────────────────────────────────────────── */
 .boot-col-right {
   display: flex;
   flex-direction: column;
@@ -515,7 +489,6 @@
   -webkit-text-fill-color: var(--color-primary-cyan);
 }
 
-/* ─── Skeleton: MF Slots ─────────────────────────────────────────────────── */
 .mf-slot {
   min-height: 200px;
   position: relative;
@@ -553,7 +526,6 @@
   100% { background-position: -200% 0; }
 }
 
-/* ─── Operator Card ───────────────────────────────────────────────────────── */
 .boot-operator-card {
   background-color: var(--surface-high);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -604,7 +576,6 @@
   opacity: 0.4;
 }
 
-/* ─── Footer ──────────────────────────────────────────────────────────────── */
 .boot-footer {
   display: flex;
   justify-content: space-between;
@@ -645,4 +616,81 @@
 .boot-footer-link--active {
   color: var(--color-primary-cyan);
   opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .boot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-6);
+  }
+
+  .boot-col-right {
+    display: none;
+  }
+
+  .boot-terminal-window {
+    height: 380px;
+  }
+
+  .boot-uptime-card {
+    position: static;
+    margin-top: var(--spacing-4);
+    min-width: unset;
+    width: 100%;
+  }
+
+  .boot-progress-pct {
+    font-size: 5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .boot-header {
+    padding: var(--spacing-2) var(--spacing-4);
+    gap: var(--spacing-2);
+  }
+
+  .boot-header-center {
+    display: none;
+  }
+
+  .boot-main {
+    padding: var(--spacing-4);
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .boot-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+    align-items: flex-start;
+  }
+
+  .boot-col-right {
+    display: none;
+  }
+
+  .boot-col-mid {
+    display: none;
+  }
+
+  .boot-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .boot-footer {
+    padding: var(--spacing-2) var(--spacing-4);
+    flex-direction: column;
+    gap: var(--spacing-2);
+    align-items: flex-start;
+  }
+
+  .boot-footer-nav {
+    gap: var(--spacing-4);
+  }
+
+  #mfe-loading-screen::before {
+    font-size: 10px;
+    padding: var(--spacing-2);
+  }
 }

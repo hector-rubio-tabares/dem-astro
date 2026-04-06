@@ -1,33 +1,68 @@
 ---
-/**
- * Layout Base
- * Estructura compartida por todas las páginas
- * 
- * ✅ Refactorizado: Usa MainNav.astro para navegación (encapsulado)
- */
+import { ClientRouter } from 'astro:transitions';
 import '@mf/shared/styles/global.css';
 import '@mf/shared/styles/mfe-integration.css';
-import '@mf/shared/styles/loading.css';
-import '@mf/shared/styles/layout.css'; // Estilos de header, footer, auth
+import '@mf/shared/styles/layout.css';
 import MainNav from '../components/MainNav.astro';
+import BootScreen from '../components/BootScreen.astro';
+import AuthGate from '../components/AuthGate.astro';
 
 interface Props {
   title?: string;
   description?: string;
   requiresAuth?: boolean;
-  loadsMFEs?: boolean; // Nueva prop para indicar si la página carga MFEs
+  showBootScreen?: boolean;
+  ogImage?: string;
+  canonical?: string;
 }
 
-const { 
-  title = 'Portfolio Shell', 
-  description = 'Arquitectura Micro-Frontend con Module Federation',
+const {
+  title = 'Hector Rubio — Software Engineer',
+  description = 'Software Engineer Fullstack (.NET / Angular) con experiencia en sistemas productivos, integraciones y arquitectura hexagonal.',
   requiresAuth = false,
-  loadsMFEs = false  // Por defecto NO muestra loading screen
+  showBootScreen = false,
+  ogImage = '/og-default.png',
+  canonical = Astro.url.href,
 } = Astro.props;
+
+const siteOrigin = Astro.site?.origin ?? Astro.url.origin;
+const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${ogImage}`;
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<script is:inline>
+  (function() {
+    function applyTheme() {
+      try {
+        const saved = localStorage.getItem('mfe-theme');
+        document.documentElement.setAttribute('data-theme', saved || 'dark');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+    function cleanupBootScreen() {
+      try {
+        if (sessionStorage.getItem('boot-completed')) {
+          var bs = document.getElementById('mfe-loading-screen');
+          if (bs) bs.remove();
+        }
+      } catch (e) {}
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+    document.addEventListener('astro:after-swap', cleanupBootScreen);
+    document.addEventListener('astro:before-swap', function(swapEvent) {
+      try { sessionStorage.setItem('boot-completed', '1'); } catch (err) {}
+      document.querySelectorAll('head style[data-vite-dev-id]').forEach(function(el) {
+        var vid = el.getAttribute('data-vite-dev-id');
+        if (vid && !swapEvent.newDocument.head.querySelector('[data-vite-dev-id="' + vid + '"]')) {
+          swapEvent.newDocument.head.appendChild(el.cloneNode(true));
+        }
+      });
+    });
+  })();
+</script>
+<html lang="es" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -35,78 +70,54 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
     <title>{title}</title>
-    
-    <!-- ═══════════════════════════════════════════════════════════════════════════
-      CRITICAL: Theme Initialization (BLOCKING SCRIPT)
-      Este script debe ejecutarse SÍNCRONAMENTE antes del render para evitar flash
-    ═══════════════════════════════════════════════════════════════════════════ -->
-    <script is:inline>
-      // Leer tema de localStorage (o default 'dark')
-      (function() {
-        try {
-          const savedTheme = localStorage.getItem('theme') || 'dark';
-          document.documentElement.setAttribute('data-theme', savedTheme);
-        } catch (e) {
-          // Fallback si localStorage no está disponible
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageAbsolute} />
+    <meta property="og:locale" content="es_ES" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbsolute} />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: title,
+      description,
+      url: siteOrigin,
+    })} />
+
+    <ClientRouter />
+
+    <script is:inline define:vars={{
+      mfeReactUrl: import.meta.env.PUBLIC_REACT_MF_URL ?? '',
+      mfeAngularUrl: import.meta.env.PUBLIC_ANGULAR_MF_URL ?? ''
+    }}>
+      if (mfeReactUrl)   window.__MFE_REACT_URL__   = mfeReactUrl;
+      if (mfeAngularUrl) window.__MFE_ANGULAR_URL__ = mfeAngularUrl;
     </script>
     
-    <!-- Preload de fuentes para performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-    
-    <!--
-      ═══════════════════════════════════════════════════════════════════════════
-      IMPORTANTE: Este script DEBE ser inline (no se puede mover a archivo .ts)
-      ═══════════════════════════════════════════════════════════════════════════
-      
-      RAZÓN: Prevención de Race Condition Crítica
-      
-      Este script usa `is:inline` para ejecutarse SÍNCRONAMENTE antes de cualquier
-      módulo ESM. Si se mueve a un archivo externo, los MFEs (React/Angular) pueden
-      cargar ANTES de que window.__SHARED_BUS__ esté disponible, causando:
-      
-        ❌ Error: "[MFContext] Bus not found"
-        ❌ EventBus undefined en getMicrofrontendBus()
-        ❌ Crash de toda la aplicación
-      
-      ORDEN DE EJECUCIÓN CORRECTO:
-        1. ✅ Este script inline (síncrono, bloquea parsing)
-        2. ✅ window.__SHARED_BUS__ disponible globalmente
-        3. ✅ Los MFEs cargan y encuentran el contexto
-      
-      ALTERNATIVAS INTENTADAS (todas fallan):
-        ❌ Script externo con type="module" → Race condition persiste
-        ❌ waitForContext() con polling → Delay adicional, complejidad
-        ❌ Promise.resolve() en módulos → Los MFEs cargan primero igual
-      
-      🔧 MODO DESARROLLO: Código legible con comentarios y console.log para debugging
-      🔒 MODO PRODUCCIÓN: Minificado/ofuscado automáticamente (Terser ~750 bytes)
-      
-      Este es el ÚNICO código inline justificado en toda la aplicación.
-      Todo lo demás (CSS, lógica de negocio) está externalizado correctamente.
-    -->
+
     <script is:inline>
-      // Inicialización mínima de contexto MFE (60 líneas, crítico para sincronización)
       if (typeof window !== 'undefined' && !window.__MFE_CONTEXT_INITIALIZED__) {
         window.__MFE_CONTEXT_INITIALIZED__ = true;
-        
-        console.log('[BaseLayout] 🔧 Inicializando contexto MFE...');
-        
+
         try {
-          // 1. Crear BroadcastChannel
           let channel = null;
           try {
             channel = new BroadcastChannel('mfe-broadcast-channel');
           } catch (error) {
-            console.warn('[BaseLayout] ⚠️ BroadcastChannel no soportado');
           }
 
-          // 2. EventBus minimal
           class SimpleEventBus {
             constructor() { this.handlers = new Map(); }
             on(event, handler) {
@@ -125,7 +136,6 @@ const {
             }
           }
 
-          // 3. MicrofrontendContext minimal
           class SimpleMicrofrontendContext {
             constructor(bus, tabId, channel) {
               this.bus = bus;
@@ -146,376 +156,39 @@ const {
           }
           SimpleMicrofrontendContext.instance = null;
 
-          // 4. Inicializar
           const tabId = crypto.randomUUID();
           const sharedBus = new SimpleEventBus();
           SimpleMicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
 
-          // 5. Exponer globalmente
           window.__MICROFRONTEND_CONTEXT__ = SimpleMicrofrontendContext;
           window.__SHARED_BUS__ = sharedBus;
           window.__TAB_ID__ = tabId;
           window.__BROADCAST_CHANNEL__ = channel;
           window.__MFE_CONTEXT_READY__ = true;
-          
-          console.log(`[BaseLayout] ✅ Contexto inicializado (tabId: ${tabId.substring(0, 8)}...)`);
-          
-          // ✅ Observer Pattern: Emitir evento para que listeners reaccionen (sin polling)
-          window.dispatchEvent(new CustomEvent('mfe:context:ready', { 
-            detail: { tabId, bus: sharedBus } 
+
+          window.dispatchEvent(new CustomEvent('mfe:context:ready', {
+            detail: { tabId, bus: sharedBus }
           }));
-        } catch (error) {
-          console.error('[BaseLayout] ❌ Error:', error);
-        }
+        } catch (error) {}
       }
     </script>
   </head>
   
   <body>
-    <!-- Loading Screen (solo si la página carga MFEs) -->
-    {loadsMFEs && (
-      <div id="mfe-loading-screen" data-theme="dark">
+    {showBootScreen && <BootScreen />}
+    <MainNav currentPath={Astro.url.pathname} hideAuthLinks={requiresAuth} transition:persist />
 
-        <!-- Header -->
-        <header class="boot-header">
-          <div style="display:flex;align-items:center;gap:1rem;">
-            <span class="boot-header-left">SYS_ARCHITECT_V2.0</span>
-            <span style="width:1px;height:1rem;background:currentColor;opacity:0.2;"></span>
-            <span class="boot-header-center">KERNEL_BOOT_V1.0.4</span>
-          </div>
-          <div class="boot-header-latency">
-            <span class="boot-header-latency-label">LATENCY_MS</span>
-            <span class="boot-header-latency-value"><span id="boot-latency">--.-</span>ms</span>
-          </div>
-        </header>
-
-        <!-- Main 3-column grid -->
-        <main class="boot-main">
-          <div class="boot-grid">
-
-            <!-- LEFT: Hydration modules -->
-            <div class="boot-col-left">
-              <div class="boot-col-left-heading">
-                <span class="boot-col-left-label">01 // INITIALIZING_FRAGMENTS</span>
-                <div class="boot-title">HYDRATION_SEQUENCE</div>
-              </div>
-
-              <ul class="boot-mfe-list">
-                <li class="boot-mfe-item">
-                  <div class="boot-mfe-header">
-                    <div class="boot-mfe-header-left">
-                      <span class="boot-mfe-badge">ASTRO</span>
-                      <span class="boot-mfe-label">STATIC_GENERATOR</span>
-                    </div>
-                    <span class="boot-mfe-pct" id="pct-astro">0%</span>
-                  </div>
-                  <div class="boot-bar-track">
-                    <div class="boot-bar-fill" id="bar-astro"></div>
-                  </div>
-                  <div class="boot-mfe-subdetail">
-                    <span>ISLANDS_DISCOVERED: 42</span>
-                    <span id="status-astro">STATUS: DONE</span>
-                  </div>
-                </li>
-
-                <li class="boot-mfe-item boot-mfe-item--react">
-                  <div class="boot-mfe-header">
-                    <div class="boot-mfe-header-left">
-                      <span class="boot-mfe-badge boot-mfe-badge--react">REACT</span>
-                      <span class="boot-mfe-label">UI_HYDRATION</span>
-                    </div>
-                    <span class="boot-mfe-pct boot-mfe-pct--react" id="pct-react">0%</span>
-                  </div>
-                  <div class="boot-bar-track">
-                    <div class="boot-bar-fill boot-bar-fill--react" id="bar-react"></div>
-                  </div>
-                  <div class="boot-mfe-subdetail">
-                    <span>HOOKS_RESOLVED: 124/156</span>
-                    <span id="status-react">STATUS: SYNCING</span>
-                  </div>
-                </li>
-
-                <li class="boot-mfe-item boot-mfe-item--angular">
-                  <div class="boot-mfe-header">
-                    <div class="boot-mfe-header-left">
-                      <span class="boot-mfe-badge boot-mfe-badge--angular">ANGULAR</span>
-                      <span class="boot-mfe-label">ENGINE_DEPENDENCY</span>
-                    </div>
-                    <span class="boot-mfe-pct boot-mfe-pct--angular" id="pct-angular">0%</span>
-                  </div>
-                  <div class="boot-bar-track">
-                    <div class="boot-bar-fill boot-bar-fill--angular" id="bar-angular"></div>
-                  </div>
-                  <div class="boot-mfe-subdetail">
-                    <span>DI_TREE_MAPPING...</span>
-                    <span id="status-angular">STATUS: WAIT</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <!-- MIDDLE: Terminal -->
-            <div class="boot-col-mid">
-              <div class="boot-terminal-window">
-                <div class="boot-terminal-chrome">
-                  <div class="boot-terminal-dots">
-                    <span class="boot-dot boot-dot--red"></span>
-                    <span class="boot-dot boot-dot--yellow"></span>
-                    <span class="boot-dot boot-dot--green"></span>
-                  </div>
-                  <span class="boot-terminal-chrome-title">stdout // session_01</span>
-                  <div></div>
-                </div>
-                <div class="boot-terminal" id="boot-terminal">
-                  <span class="boot-cursor" aria-hidden="true">|</span>
-                </div>
-              </div>
-
-              <!-- Floating uptime card -->
-              <div class="boot-uptime-card">
-                <div class="boot-uptime-label">SYSTEM_UPTIME</div>
-                <div class="boot-uptime-timer" id="boot-timer">00:00:00:00</div>
-                <div class="boot-uptime-metrics">
-                  <div class="boot-uptime-metric">
-                    <span class="boot-uptime-metric-label">CPU</span>
-                    <span class="boot-uptime-metric-value" id="stat-io">0%</span>
-                  </div>
-                  <div class="boot-uptime-divider"></div>
-                  <div class="boot-uptime-metric">
-                    <span class="boot-uptime-metric-label">MEM</span>
-                    <span class="boot-uptime-metric-value" id="stat-read">0KB</span>
-                  </div>
-                  <div class="boot-uptime-divider"></div>
-                  <div class="boot-uptime-metric">
-                    <span class="boot-uptime-metric-label">DISK</span>
-                    <span class="boot-uptime-metric-value" id="stat-mb">READ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- RIGHT: Progress + Operator -->
-            <div class="boot-col-right">
-              <div class="boot-progress-block">
-                <span class="boot-progress-label">BOOT_PROGRESS</span>
-                <div class="boot-progress-pct" id="boot-pct">00<span class="boot-progress-pct-symbol">%</span></div>
-              </div>
-
-              <div class="boot-operator-card">
-                <span class="boot-operator-icon">⬛</span>
-                <span class="boot-operator-title">OPERATOR_01_AUTH</span>
-                <p class="boot-operator-body">
-                  Initializing the Ethereal Architect environment. Mapping hardware layers to visual tokens.
-                </p>
-                <div class="boot-operator-meta">
-                  <span>LOCATION: 40.7128°N</span>
-                  <span>IP: 192.168.1.104</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="boot-footer">
-          <span class="boot-footer-copy">©2024_ETHEREAL_ARCHITECT_KERNEL_v1.0.4</span>
-          <nav class="boot-footer-nav">
-            <a class="boot-footer-link boot-footer-link--active" href="#">TERMINAL_STDOUT</a>
-            <a class="boot-footer-link" href="#">API_DOCS</a>
-            <a class="boot-footer-link" href="#">SYSTEM_UPTIME</a>
-          </nav>
-        </footer>
-
-        <script is:inline>
-          (function () {
-            var startTime = Date.now();
-
-            function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
-
-            // ── Timer ────────────────────────────────────────────────────────
-            setInterval(function () {
-              var elapsed = Date.now() - startTime;
-              var cs = Math.floor((elapsed % 1000) / 10);
-              var s  = Math.floor(elapsed / 1000) % 60;
-              var m  = Math.floor(elapsed / 60000) % 60;
-              var h  = Math.floor(elapsed / 3600000);
-              var el = document.getElementById('boot-timer');
-              if (el) el.textContent = pad2(h) + ':' + pad2(m) + ':' + pad2(s) + ':' + pad2(cs);
-            }, 47);
-
-            // ── Latency fluctuation ──────────────────────────────────────────
-            var latEl = document.getElementById('boot-latency');
-            if (latEl) {
-              latEl.textContent = (Math.random() * 15 + 5).toFixed(1);
-              setInterval(function () {
-                if (latEl) latEl.textContent = (Math.random() * 15 + 5).toFixed(1);
-              }, 900);
-            }
-
-            // ── Bar animator ─────────────────────────────────────────────────
-            function animateBar(barId, pctId, target, durationMs, onDone) {
-              var bar = document.getElementById(barId);
-              var pct = document.getElementById(pctId);
-              if (!bar || !pct) return;
-              var current   = 0;
-              var stepMs    = 30;
-              var steps     = Math.max(1, durationMs / stepMs);
-              var increment = target / steps;
-              var timer     = setInterval(function () {
-                current = Math.min(current + increment, target);
-                var v = Math.round(current);
-                bar.style.width    = v + '%';
-                pct.textContent    = v + '%';
-                if (current >= target) {
-                  clearInterval(timer);
-                  if (typeof onDone === 'function') onDone();
-                }
-              }, stepMs);
-            }
-
-            // ── Main percentage ──────────────────────────────────────────────
-            var bootPctEl   = document.getElementById('boot-pct');
-            var mainCurrent = 0;
-            var mainTimer   = null;
-            function animateMainTo(target) {
-              if (mainTimer) clearInterval(mainTimer);
-              mainTimer = setInterval(function () {
-                mainCurrent = Math.min(mainCurrent + 1, target);
-                if (bootPctEl) bootPctEl.innerHTML = pad2(mainCurrent) + '<span class="boot-progress-pct-symbol">%</span>';
-                if (mainCurrent >= target) { clearInterval(mainTimer); mainTimer = null; }
-              }, 30);
-            }
-
-            // ── Terminal log ─────────────────────────────────────────────────
-            var terminal = document.getElementById('boot-terminal');
-            var cursor   = terminal ? terminal.querySelector('.boot-cursor') : null;
-            var logIdx   = 0;
-            var logs = [
-              { ts: '0.0001', msg: 'Kernel boot sequence initiated',                    type: '' },
-              { ts: '0.0023', msg: 'Design tokens loaded — 98 custom properties',       type: '' },
-              { ts: '0.0041', msg: '[DONE] ASTRO static generator ready',               type: 'done' },
-              { ts: '0.0089', msg: 'Hydrating shell application...',                    type: '' },
-              { ts: '0.0134', msg: '[DONE] Module Federation runtime active',           type: 'done' },
-              { ts: '0.0201', msg: 'Connecting to REACT UI_HYDRATION...',               type: '' },
-              { ts: '0.0312', msg: '[DONE] EventBus initialized — window.__SHARED_BUS__', type: 'done' },
-              { ts: '0.0445', msg: '[WAIT] ANGULAR engine dependency resolver pending', type: 'warn' },
-              { ts: '0.0567', msg: 'Loading remote module manifests...',                type: '' },
-              { ts: '0.0789', msg: '[DONE] All MFEs registered successfully',           type: 'done' }
-            ];
-
-            function appendLog(entry) {
-              if (!terminal || !cursor) return;
-              var line    = document.createElement('div');
-              line.className = 'boot-log-line' + (entry.type ? ' boot-log-line--' + entry.type : '');
-              var tsSpan  = document.createElement('span');
-              tsSpan.className   = 'boot-log-ts';
-              tsSpan.textContent = '[' + entry.ts + ']';
-              var msgSpan = document.createElement('span');
-              msgSpan.className   = 'boot-log-msg';
-              msgSpan.textContent = entry.msg;
-              line.appendChild(tsSpan);
-              line.appendChild(msgSpan);
-              terminal.insertBefore(line, cursor);
-              terminal.scrollTop = terminal.scrollHeight;
-            }
-
-            function scheduleLog() {
-              if (logIdx >= logs.length) return;
-              appendLog(logs[logIdx++]);
-              if (logIdx < logs.length) setTimeout(scheduleLog, 200 + Math.floor(Math.random() * 250));
-            }
-            setTimeout(scheduleLog, 120);
-
-            // ── MFE bars + main progress ─────────────────────────────────────
-            setTimeout(function () {
-              animateBar('bar-astro', 'pct-astro', 100, 900, null);
-              animateMainTo(33);
-            }, 300);
-
-            setTimeout(function () {
-              animateBar('bar-react', 'pct-react', 100, 1200, function () {
-                var el = document.getElementById('status-react');
-                if (el) { el.textContent = 'DONE'; el.className = 'boot-mfe-status boot-mfe-status--done'; }
-              });
-              animateMainTo(66);
-            }, 1300);
-
-            setTimeout(function () {
-              animateBar('bar-angular', 'pct-angular', 100, 1200, function () {
-                var el = document.getElementById('status-angular');
-                if (el) { el.textContent = 'DONE'; el.className = 'boot-mfe-status boot-mfe-status--done'; }
-              });
-              animateMainTo(99);
-            }, 2600);
-
-            // ── Stats counters ───────────────────────────────────────────────
-            var ioEl   = document.getElementById('stat-io');
-            var readEl = document.getElementById('stat-read');
-            var mbEl   = document.getElementById('stat-mb');
-            var ioV = 0, readV = 0, mbV = 0;
-            setInterval(function () {
-              ioV   += Math.floor(Math.random() * 6) + 1;
-              readV += Math.floor(Math.random() * 64) + 4;
-              mbV    = parseFloat((mbV + Math.random() * 0.3 + 0.05).toFixed(2));
-              if (ioEl)   ioEl.textContent   = ioV;
-              if (readEl) readEl.textContent = readV + 'KB';
-              if (mbEl)   mbEl.textContent   = mbV.toFixed(1);
-            }, 320);
-
-            // ── Auto-hide ────────────────────────────────────────────────────
-            // Compatibilidad con DOMLoadingUI.ts: también acepta classList.add('hidden') externo.
-            function hideSelf() {
-              var screen = document.getElementById('mfe-loading-screen');
-              if (screen) screen.classList.add('hidden');
-            }
-            // DEV PREVIEW: timeout extendido a 12 s para poder apreciar la animación.
-            // TODO: Revertir a 600 antes de hacer merge.
-            var DEV_PREVIEW_DELAY = 12000;
-            if (document.readyState === 'loading') {
-              document.addEventListener('DOMContentLoaded', function () { setTimeout(hideSelf, DEV_PREVIEW_DELAY); });
-            } else {
-              setTimeout(hideSelf, DEV_PREVIEW_DELAY);
-            }
-          }());
-        </script>
-      </div>
-    )}
-    
-    <!-- ✅ Navegación Principal (Componente Encapsulado) -->
-    <MainNav currentPath={Astro.url.pathname} hideAuthLinks={requiresAuth} />
-
-    <!-- Contenido principal -->
-    <main class="main-content">
-      {requiresAuth && (
-        <div id="auth-gate" class="auth-gate">
-          <div class="card auth-card">
-            <h2>Acceso Restringido</h2>
-            <p>Esta página requiere autenticación.</p>
-            <div class="flex gap-4">
-              <input 
-                type="password" 
-                id="auth-password" 
-                class="input" 
-                placeholder="Contraseña (demo: admin123)"
-                autocomplete="current-password"
-              />
-              <button id="auth-submit" class="btn-primary">Acceder</button>
-            </div>
-            <p class="auth-hint">Para esta demo, usa: <code>admin123</code></p>
-          </div>
-        </div>
-      )}
+    <main class="main-content" aria-label="Contenido principal">
+      {requiresAuth && <AuthGate />}
       
       <div id="main-view" style={requiresAuth ? 'display:none' : ''}>
         <slot />
       </div>
     </main>
 
-    <!-- Footer compartido -->
-    <footer class="site-footer">
+    <footer class="site-footer" transition:persist>
       <div class="container">
-        <p>&copy; {new Date().getFullYear()} Portfolio MFE. Arquitectura con Module Federation.</p>
+        <p>&copy; {new Date().getFullYear()} Hector David Rubio Tabares. Manizales, Colombia.</p>
         <p class="footer-tech">
           <span class="mfe-badge react">React 19</span>
           <span class="mfe-badge angular">Angular 21</span>
@@ -524,7 +197,6 @@ const {
       </div>
     </footer>
 
-    <!-- Lógica del layout (HEXAGONAL ARCHITECTURE) -->
     <script>
       import '../scripts/layout-client-hexagonal';
     </script>

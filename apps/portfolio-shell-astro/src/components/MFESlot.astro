@@ -1,0 +1,172 @@
+---
+export interface Props {
+  mfe: string;
+  containerId?: string;
+  label?: string;
+  strategy?: 'load' | 'idle' | 'visible';
+  minHeight?: number;
+  class?: string;
+}
+
+const {
+  mfe,
+  containerId,
+  label = 'Cargando componente...',
+  strategy = 'visible',
+  minHeight = 12,
+  class: className,
+} = Astro.props;
+
+const resolvedId = containerId ?? `mfe-${mfe}`;
+---
+
+<div
+  class:list={['mfe-slot', className]}
+  data-mfe={mfe}
+  data-container-id={resolvedId}
+  data-strategy={strategy}
+  style={`--slot-min-height: ${minHeight}rem`}
+>
+  <div id={resolvedId} class="mfe-slot__target" aria-live="polite">
+    <slot>
+      <div class="mfe-slot__skeleton" role="status" aria-label={label}>
+        <span class="mfe-slot__pulse" aria-hidden="true"></span>
+        <span class="sr-only">{label}</span>
+      </div>
+    </slot>
+  </div>
+</div>
+
+<script>
+  import { mfeLoader, type MFEType } from '@mf/shared';
+
+  async function mountSlot(wrapper: HTMLElement): Promise<void> {
+    const mfeKey     = wrapper.dataset.mfe as MFEType;
+    const containerId = wrapper.dataset.containerId as string;
+    if (!mfeKey) return;
+
+    try {
+      await mfeLoader.load(mfeKey, containerId);
+    } catch {
+      const target = document.getElementById(containerId);
+      if (target) {
+        const msg = document.createElement('p');
+        msg.className = 'mfe-slot__error';
+        msg.textContent = `No se pudo cargar "${mfeKey}".`;
+        target.replaceChildren(msg);
+      }
+    }
+  }
+
+  function scheduleSlot(wrapper: HTMLElement): void {
+    const strategy = wrapper.dataset.strategy as string;
+
+    if (strategy === 'idle') {
+      const schedule = 'requestIdleCallback' in window
+        ? (cb: () => void) => (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(cb)
+        : (cb: () => void) => setTimeout(cb, 200);
+      schedule(() => mountSlot(wrapper));
+      return;
+    }
+
+    if (strategy === 'visible') {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            obs.unobserve(wrapper);
+            mountSlot(wrapper);
+          }
+        });
+      }, { rootMargin: '200px' });
+      observer.observe(wrapper);
+    }
+  }
+
+  async function initializeSlots(): Promise<void> {
+    const pending = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-mfe]:not([data-mfe-ready])')
+    );
+
+    if (pending.length === 0) {
+      mfeLoader.removeLoadingScreen();
+      return;
+    }
+
+    const critical: HTMLElement[] = [];
+
+    pending.forEach(wrapper => {
+      wrapper.setAttribute('data-mfe-ready', '');
+      if (wrapper.dataset.strategy === 'load') {
+        critical.push(wrapper);
+      } else {
+        scheduleSlot(wrapper);
+      }
+    });
+
+    await Promise.allSettled(critical.map(w => mountSlot(w)));
+    mfeLoader.removeLoadingScreen();
+  }
+
+  initializeSlots();
+  document.addEventListener('astro:after-swap', initializeSlots);
+</script>
+
+<style>
+  .mfe-slot {
+    width: 100%;
+  }
+
+  .mfe-slot__target {
+    min-height: var(--slot-min-height, 12rem);
+  }
+
+  .mfe-slot__skeleton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--slot-min-height, 12rem);
+    border-radius: var(--border-radius-xl);
+    background: var(--surface-low, var(--color-bg-secondary));
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mfe-slot__pulse {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-primary-cyan, #00f5ff) 8%, transparent) 50%,
+      transparent 100%
+    );
+    animation: mfe-skeleton-sweep 1.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes mfe-skeleton-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  :global(.mfe-slot__error) {
+    padding: var(--spacing-4);
+    color: var(--color-status-error-text);
+    font-size: var(--font-size-sm);
+    background-color: var(--color-status-error-bg);
+    border-radius: var(--border-radius-lg);
+    border: var(--border-width-thin) solid var(--color-status-error-border);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

@@ -13,6 +13,8 @@ import { loadRemoteModule } from '@mf/shared';
 export class ModuleFederationLoader implements IMFELoader {
   private loadedModules: Map<string, Record<string, unknown>> = new Map();
 
+  constructor(private readonly allowedOrigins: Set<string>) {}
+
   async load(config: MFEConfig): Promise<MFEInstance[]> {
     console.log(`[Loader] Cargando ${config.getDisplayName()}...`);
 
@@ -80,8 +82,7 @@ export class ModuleFederationLoader implements IMFELoader {
   }
 
   private async importModule(url: string, timeoutMs: number): Promise<Record<string, unknown>> {
-    // ✅ Usar utilidad compartida (no duplicar código)
-    return loadRemoteModule(url, { timeout: timeoutMs }) as Promise<Record<string, unknown>>;
+    return loadRemoteModule(url, { timeout: timeoutMs, allowedOrigins: this.allowedOrigins }) as Promise<Record<string, unknown>>;
   }
 
   private async mountInstance(

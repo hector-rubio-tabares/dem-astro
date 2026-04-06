@@ -34,7 +34,7 @@ export class Theme {
   }
 
   getIcon(): string {
-    return this.mode === 'dark' ? '☀️' : '🌙';
+    return this.mode === 'dark' ? '🌙' : '☀️';
   }
 
   equals(other: Theme): boolean {

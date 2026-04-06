@@ -1,9 +1,3 @@
-/**
- * Estilos para integración de MFEs
- * Define el diseño visual de los contenedores de micro-frontends
- */
-
-/* ========== CONTENEDORES MFE ========== */
 .mfe-container {
   width: 100%;
   min-height: 200px;
@@ -19,7 +13,6 @@
   transition: all var(--transition-base);
 }
 
-/* ========== VARIANTES MFE ========== */
 .mfe-card.react {
   border-top: var(--border-width-thick) solid var(--color-mfe-react-primary);
   background: var(--color-mfe-react-bg);
@@ -30,7 +23,6 @@
   background: var(--color-mfe-angular-bg);
 }
 
-/* ========== ESTADOS DE CARGA ========== */
 .mfe-loading {
   display: flex;
   align-items: center;
@@ -66,7 +58,6 @@
   color: #ff7961;
 }
 
-/* ========== ADAPTACIONES RESPONSIVE MFE ========== */
 @media (max-width: 768px) {
   .mfe-card {
     padding: var(--spacing-4);
@@ -84,7 +75,6 @@
   margin-top: var(--spacing-8);
 }
 
-/* ========== BADGES Y PILLS ========== */
 .mfe-header {
   display: flex;
   justify-content: space-between;
@@ -127,14 +117,12 @@
   color: #ffaa5a;
 }
 
-/* ========== ESTILOS HEREDADOS PARA MFEs ========== */
 #react-root,
 #angular-root {
   width: 100%;
   display: block;
 }
 
-/* Asegura que los MFEs respeten el sistema de diseño */
 #react-root *,
 #angular-root * {
   box-sizing: border-box;

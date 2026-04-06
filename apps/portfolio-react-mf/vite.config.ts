@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
     .map((item) => item.trim())
     .filter(Boolean)
 
+  const corsOrigin: string[] = [...corsOrigins];
+
   return {
     resolve: {
       alias: {
@@ -37,8 +39,9 @@ export default defineConfig(({ mode }) => {
       host: serverHost,
       port: serverPort,
       strictPort: true,
+      allowedHosts: ['localhost', '127.0.0.1'],
       cors: {
-        origin: corsOrigins,
+        origin: corsOrigin,
         methods: ['GET', 'HEAD', 'OPTIONS'],
         credentials: false,
       },

@@ -1,8 +1,3 @@
-/**
- * DOMAIN LAYER - Value Object: AuthToken
- * Representa el token de autenticación del usuario
- */
-
 export class AuthToken {
   private constructor(
     private readonly value: string,
@@ -20,7 +15,6 @@ export class AuthToken {
   }
 
   static createDemo(): AuthToken {
-    // Token de demo válido por 24 horas
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return new AuthToken('demo-auth-token', expiresAt);
   }

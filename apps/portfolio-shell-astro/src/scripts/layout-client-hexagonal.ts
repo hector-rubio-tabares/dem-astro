@@ -58,9 +58,10 @@ function initialize(): void {
   logger.info('[LayoutClient] Inicializado');
 }
 
-// Auto-initialize
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initialize);
 } else {
   initialize();
 }
+
+document.addEventListener('astro:after-swap', checkAuthGate);

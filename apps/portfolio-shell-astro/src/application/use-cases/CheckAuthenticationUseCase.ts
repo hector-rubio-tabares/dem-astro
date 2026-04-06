@@ -1,8 +1,3 @@
-/**
- * APPLICATION LAYER - Use Case: Check Authentication
- * Caso de uso para verificar si el usuario está autenticado
- */
-
 import type { IAuthService } from '../ports/IAuthService';
 import type { User } from '../../core/entities/User';
 
@@ -22,7 +17,6 @@ export class CheckAuthenticationUseCase {
     const isAuthenticated = this.authService.isAuthenticated();
     const user = this.authService.getCurrentUser();
 
-    // Si la ruta NO requiere auth, permitir acceso
     if (!requiresAuth) {
       return {
         isAuthenticated,
@@ -31,7 +25,6 @@ export class CheckAuthenticationUseCase {
       };
     }
 
-    // Si la ruta requiere auth pero no está autenticado → redirigir a login
     if (requiresAuth && !isAuthenticated) {
       return {
         isAuthenticated: false,
@@ -40,7 +33,6 @@ export class CheckAuthenticationUseCase {
       };
     }
 
-    // Usuario autenticado y ruta requiere auth → permitir acceso
     return {
       isAuthenticated: true,
       user: user ?? undefined,

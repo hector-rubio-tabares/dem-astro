@@ -1,20 +1,8 @@
-/**
- * Estilos Globales - Sistema de Diseño Compartido
- * 
- * USO:
- * - Astro:   import '@mf/shared/styles/global.css' en BaseLayout.astro
- * - React:   import '@mf/shared/styles/global.css' en main.tsx
- * - Angular: @import '@mf/shared/styles/global.css' en styles.css
- * 
- * Este archivo importa todos los tokens, temas y utilidades.
- * Los MFEs solo deben importar ESTE archivo para tener acceso completo al sistema.
- */
-
 @import './design-tokens.css';
 @import './theme-light.css';
 @import './theme-dark.css';
+@import './pages.css';
 
-/* ========== RESET Y BASE ========== */
 *,
 *::before,
 *::after {
@@ -39,7 +27,6 @@ body {
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-/* ========== TIPOGRAFÍA ========== */
 h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
@@ -71,7 +58,6 @@ a:hover {
   color: var(--color-link-hover);
 }
 
-/* Efecto underline animado para links */
 a:not(.btn):not(.logo):hover::after {
   content: '';
   position: absolute;
@@ -86,7 +72,7 @@ a:not(.btn):not(.logo):hover::after {
 
 @keyframes linkUnderline {
   from { transform: scaleX(0); }
-  to { transform: scribeX(1); }
+  to { transform: scaleX(1); }
 }
 
 a:visited {
@@ -101,9 +87,6 @@ code {
   border-radius: var(--border-radius-sm);
 }
 
-/* ========== COMPONENTES REUTILIZABLES (MEJORADOS) ========== */
-
-/* Botones profesionales con efectos visuales */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -111,19 +94,18 @@ code {
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-6);
   border: none;
-  border-radius: var(--border-radius-lg);  /* Más redondeado */
+  border-radius: var(--border-radius-lg);
   font-family: var(--font-family-sans);
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);  /* Más peso */
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: all var(--transition-base);
   white-space: nowrap;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Sombra base */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Efecto ripple en botones */
 .btn::before {
   content: '';
   position: absolute;
@@ -150,13 +132,13 @@ code {
 .btn-primary {
   background: var(--color-button-primary-bg);
   color: var(--color-button-primary-text);
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);  /* Sombra cyan */
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--color-button-primary-bg-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);  /* Sombra más grande */
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -167,7 +149,7 @@ code {
   background-color: var(--color-button-secondary-bg);
   color: var(--color-button-secondary-text);
   border: 2px solid var(--color-button-secondary-border, var(--color-border-primary));
-  backdrop-filter: blur(10px);  /* Glass effect */
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
@@ -178,14 +160,12 @@ code {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Botones pequeños */
 .btn-sm {
   padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
 }
 
-/* Botones grandes */
 .btn-lg {
   padding: var(--spacing-4) var(--spacing-8);
   font-size: var(--font-size-lg);
@@ -195,7 +175,7 @@ code {
 .card {
   background-color: var(--color-card-bg);
   border: var(--border-width-thin) solid var(--color-card-border);
-  border-radius: var(--border-radius-2xl);  /* Más redondeado */
+  border-radius: var(--border-radius-2xl);
   padding: var(--spacing-6);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
               0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -204,7 +184,6 @@ code {
   overflow: hidden;
 }
 
-/* Glass effect en cards */
 .card::before {
   content: '';
   position: absolute;
@@ -226,7 +205,6 @@ code {
   border-color: var(--color-primary-cyan, var(--color-border-focus));
 }
 
-/* Card con efecto glass (para modals, nav) */
 .card-glass {
   background: var(--glass-bg, rgba(255, 255, 255, 0.1));
   backdrop-filter: blur(12px);
@@ -238,19 +216,19 @@ code {
   width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
   background-color: var(--color-input-bg);
-  border: 2px solid var(--color-input-border);  /* Borde más grueso */
-  border-radius: var(--border-radius-lg);  /* Más redondeado */
+  border: 2px solid var(--color-input-border);
+  border-radius: var(--border-radius-lg);
   color: var(--color-input-text);
   font-family: var(--font-family-sans);
   font-size: var(--font-size-base);
   transition: all var(--transition-base);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);  /* Sombra interna */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .input:focus {
   outline: none;
   border-color: var(--color-input-border-focus);
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1),  /* Ring effect */
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1),
               inset 0 2px 4px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
@@ -260,7 +238,6 @@ code {
   font-weight: var(--font-weight-normal);
 }
 
-/* ========== LAYOUT UTILITIES ========== */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -294,7 +271,6 @@ code {
 .gap-6 { gap: var(--spacing-6); }
 .gap-8 { gap: var(--spacing-8); }
 
-/* ========== RESPONSIVE GRID ========== */
 .grid {
   display: grid;
   gap: var(--spacing-6);
@@ -316,7 +292,6 @@ code {
   }
 }
 
-/* ========== UTILIDADES DE ESPACIADO ========== */
 .mt-4 { margin-top: var(--spacing-4); }
 .mt-8 { margin-top: var(--spacing-8); }
 .mb-4 { margin-bottom: var(--spacing-4); }
@@ -324,7 +299,6 @@ code {
 .p-4 { padding: var(--spacing-4); }
 .p-6 { padding: var(--spacing-6); }
 
-/* ========== ESTADOS ========== */
 .success {
   color: var(--color-success-700);
   background-color: var(--color-success-50);
@@ -349,7 +323,6 @@ code {
   border-color: var(--color-info-500);
 }
 
-/* ========== ACCESIBILIDAD ========== */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -367,19 +340,12 @@ code {
   outline-offset: 2px;
 }
 
-/* ========== MODO OSCURO - MEDIA QUERY AUTOMÁTICA ========== */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    /* Aplica tema dark automáticamente si no hay preferencia explícita */
     color-scheme: dark;
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
- * THE ETHEREAL ARCHITECT - UTILITY CLASSES
- * ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ========== TYPOGRAPHY UTILITIES ========== */
 .display-lg {
   font-family: var(--font-display);
   font-size: var(--font-size-display-lg);
@@ -438,30 +404,26 @@ code {
   font-weight: 600;
 }
 
-/* ========== GRADIENT TEXT ========== */
 .text-gradient {
   background: var(--gradient-signature);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent; /* Fallback */
+  color: transparent;
 }
 
-/* ========== GLASS EFFECT (Floating nav, modals) ========== */
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur); /* Safari support */
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
-/* ========== GHOST BORDER (15% opacity for subtle separation) ========== */
 .ghost-border {
   border: 1px solid var(--outline-variant);
   opacity: 0.15;
 }
 
-/* ========== SURFACE LAYERS ========== */
 .surface-low {
   background-color: var(--surface-low);
 }
@@ -478,7 +440,6 @@ code {
   background-color: var(--surface-highest);
 }
 
-/* ========== GLOWING MFE MODULES (React, Angular, Astro badges) ========== */
 .mfe-badge {
   display: inline-flex;
   align-items: center;
@@ -525,7 +486,6 @@ code {
   transform: translateY(-1px);
 }
 
-/* Environment badges (DEV/PROD) */
 .mfe-badge.env-dev {
   border-color: var(--color-success-500);
   color: var(--color-success-500);
@@ -536,7 +496,6 @@ code {
   color: var(--color-error-500);
 }
 
-/* ========== CARDS - NO BORDERS (use background shifts) ========== */
 .card-ethereal {
   background-color: var(--surface-low);
   border-radius: var(--radius-precise);
@@ -549,7 +508,6 @@ code {
   transform: translateY(-2px);
 }
 
-/* ========== BUTTONS - ETHEREAL ARCHITECT STYLE ========== */
 .btn-gradient {
   background: var(--gradient-signature);
   color: var(--color-primary-cyan-dark);
@@ -605,22 +563,19 @@ code {
   color: var(--color-primary-cyan);
 }
 
-/* ========== ASYMMETRIC LAYOUT (Intentional design) ========== */
 .asymmetric-header {
   padding-left: 0;
   margin-bottom: var(--spacing-6);
 }
 
 .asymmetric-content {
-  padding-left: 15%; /* Push content for breathing room */
+  padding-left: 15%;
 }
 
-/* ========== VERTICAL SPACING (use 40px gap instead of borders) ========== */
 .section-gap {
-  margin-top: var(--spacing-10); /* 40px */
+  margin-top: var(--spacing-10);
 }
 
-/* ========== INPUT FIELDS - TERMINAL AESTHETIC ========== */
 .input-ethereal {
   width: 100%;
   padding: var(--spacing-3) var(--spacing-4);
@@ -643,11 +598,6 @@ code {
   color: var(--text-secondary);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
- * ANIMACIONES PROFESIONALES - POLISH VISUAL
- * ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Fade In (usado en contenido dinámico) */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -661,7 +611,6 @@ code {
   animation: fadeIn 0.4s ease-in-out;
 }
 
-/* Slide Up (para cards que entran) */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -677,7 +626,6 @@ code {
   animation: slideUp 0.5s var(--transition-smooth);
 }
 
-/* Scale In (para modals, dialogs) */
 @keyframes scaleIn {
   from {
     opacity: 0;
@@ -693,7 +641,6 @@ code {
   animation: scaleIn 0.3s var(--transition-smooth);
 }
 
-/* Pulse (para notificaciones, badges) */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -709,7 +656,6 @@ code {
   animation: pulse 2s var(--transition-smooth) infinite;
 }
 
-/* Shimmer (loading effect) */
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -730,7 +676,6 @@ code {
   animation: shimmer 2s infinite linear;
 }
 
-/* Float (para elementos destacados) */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -744,7 +689,6 @@ code {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Glow Pulse (para elementos interactivos importantes) */
 @keyframes glowPulse {
   0%, 100% {
     box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
@@ -758,22 +702,15 @@ code {
   animation: glowPulse 2s ease-in-out infinite;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
- * UTILIDADES DE PERFORMANCE
- * ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Smooth scrolling (nativo) */
 html {
   scroll-behavior: smooth;
 }
 
-/* GPU acceleration para animaciones */
 .gpu-accelerated {
   transform: translateZ(0);
   will-change: transform;
 }
 
-/* Reducir motion para accesibilidad */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -784,9 +721,3 @@ html {
     scroll-behavior: auto !important;
   }
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════
- * ENFOQUE DE DESARROLLO - THE ETHEREAL ARCHITECT ✨
- * Diseño técnico de alta gama con dimensionalidad visual profesional
- * ═══════════════════════════════════════════════════════════════════════════ */
-

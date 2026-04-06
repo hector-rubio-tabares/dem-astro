@@ -1,8 +1,3 @@
-/**
- * INFRASTRUCTURE LAYER - Adaptadores
- * Implementaciones concretas de los puertos usando @mf/shared y fetch
- */
-
 import {
   getMicrofrontendBus,
   getMicrofrontendChannel,
@@ -110,22 +105,24 @@ export class InMemoryMessageRepository implements IMessageRepository {
 
 const FALLBACK_PORTFOLIO_DATA: PortfolioData = new PortfolioData(
   [
-    { label: 'Years Experience', value: '8+', icon: '📅' },
-    { label: 'Projects Delivered', value: '50+', icon: '🚀' },
-    { label: 'Code Quality', value: '99.5%', icon: '✨' },
-    { label: 'Team Size', value: '15+', icon: '👥' },
+    { label: 'Años de experiencia', value: '2+', icon: '📅' },
+    { label: 'Empresas en producción', value: '3', icon: '🏢' },
+    { label: 'Tecnologías dominadas', value: '15+', icon: '🚀' },
+    { label: 'País', value: 'Colombia', icon: '🌎' },
   ] satisfies PortfolioStat[],
   [
-    { title: 'Frontend', icon: '🎨', technologies: ['React 19', 'Angular 21', 'Astro 6.0', 'TypeScript', 'CSS3', 'Web Components'] },
-    { title: 'Backend', icon: '⚙️', technologies: ['Node.js', 'NestJS', 'GraphQL', 'PostgreSQL', 'Redis', 'Kafka'] },
-    { title: 'Architecture', icon: '🏗️', technologies: ['Hexagonal', 'DDD', 'SOLID', 'Clean Code', 'Event-Driven', 'Microservices'] },
-    { title: 'DevOps', icon: '🔧', technologies: ['Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions', 'AWS', 'Terraform'] },
+    { title: 'Backend', icon: '⚙️', technologies: ['.NET Core', '.NET 8', 'ASP.NET', 'Laravel', 'Python', 'NestJS', 'FastAPI', 'Node.js'] },
+    { title: 'Frontend', icon: '🎨', technologies: ['Angular', 'React', 'TypeScript', 'Tailwind CSS', 'PrimeReact', 'Web Components'] },
+    { title: 'Bases de Datos', icon: '🗄️', technologies: ['SQL Server', 'PostgreSQL', 'Oracle', 'Entity Framework Core'] },
+    { title: 'Cloud & DevOps', icon: '☁️', technologies: ['Azure', 'Azure DevOps', 'CI/CD', 'GitLab', 'GitHub', 'Azure Functions'] },
+    { title: 'Testing & QA', icon: '🧪', technologies: ['Playwright', 'JMeter', 'E2E Testing', 'Load Testing'] },
+    { title: 'Arquitectura', icon: '🏗️', technologies: ['Hexagonal', 'DDD', 'SOLID', 'REST APIs', 'Keycloak', 'Scrum'] },
   ] satisfies TechCategory[],
   [
-    { title: 'Clean Architecture', icon: '🔷', description: 'Hexagonal architecture con ports & adapters. Separación clara entre domain, application e infrastructure layers.' },
-    { title: 'SOLID Principles', icon: '📐', description: 'Single Responsibility, Open/Closed, Dependency Inversion. Código mantenible y escalable.' },
-    { title: 'Design Patterns', icon: '🎯', description: 'Strategy, Observer, Facade, Adapter. Soluciones probadas a problemas comunes.' },
-    { title: 'Security First', icon: '🔒', description: 'XSS protection, CSP policies, secure communication, error isolation.' },
+    { title: 'Impacto en Producción', icon: '🔥', description: 'Resolución de incidencias críticas financieras de larga data en plataformas internacionales con miles de usuarios activos.' },
+    { title: 'Seguridad Aplicada', icon: '🔒', description: 'Integración 3D Secure v2, autenticación SSO con Keycloak, cifrado en tránsito y control de sesión entre pestañas.' },
+    { title: 'Calidad de Código', icon: '📐', description: 'SOLID, Clean Architecture, hexagonal con ports & adapters. Código mantenible, testeable y escalable.' },
+    { title: 'Integración Continua', icon: '🔄', description: 'Migración de pipelines CI/CD entre organizaciones Azure DevOps, automatización E2E con Playwright y carga con JMeter.' },
   ] satisfies Principle[],
 );
 
@@ -149,7 +146,7 @@ export class ApiPortfolioRepository implements IPortfolioRepository {
       });
 
       if (!response.ok) {
-        throw new Error(`[PortfolioApi] HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const raw = await response.json() as {
@@ -159,6 +156,8 @@ export class ApiPortfolioRepository implements IPortfolioRepository {
       };
 
       return new PortfolioData(raw.stats, raw.techStack, raw.principles);
+    } catch {
+      return FALLBACK_PORTFOLIO_DATA;
     } finally {
       clearTimeout(timerId);
     }

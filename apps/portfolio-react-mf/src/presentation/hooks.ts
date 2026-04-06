@@ -1,8 +1,3 @@
-/**
- * PRESENTATION LAYER - Custom Hooks
- * Hooks que conectan la UI con la capa de aplicacion (sin deps de framework en use-cases)
- */
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Count, Level, Message, PortfolioData } from '../domain/entities';
 import {
@@ -15,8 +10,6 @@ import {
 import { InfrastructureFactory } from '../infrastructure/adapters';
 import type { IMessageRepository } from '../application/ports';
 import { MF_CONFIG } from '@mf/shared';
-
-// Portfolio Hook
 
 export interface UsePortfolioResult {
   data: PortfolioData | null;
@@ -35,12 +28,6 @@ export function usePortfolio(): UsePortfolioResult {
 
     useCase.execute()
       .then(result => { if (!cancelled) setData(result); })
-      .catch(err => {
-        if (!cancelled) {
-          console.warn('[usePortfolio] API unavailable, using fallback:', err);
-          InfrastructureFactory.createPortfolioRepository().getPortfolioData().then(d => { if (!cancelled) setData(d); });
-        }
-      })
       .finally(() => { if (!cancelled) setIsLoading(false); });
 
     return () => { cancelled = true; };
