@@ -65,9 +65,9 @@ const EXPERIENCE: TimelineEntry[] = [
 export function ExperienceTab() {
   return (
     <div className="experience-content">
-      <div className="timeline">
+      <ol className="timeline">
         {EXPERIENCE.map((entry, index) => (
-          <div key={index} className="timeline-item">
+          <li key={index} className="timeline-item">
             <div className="timeline-year label-sm">{entry.period}</div>
             <div className="timeline-content">
               <h3 className="title-lg">{entry.role}</h3>
@@ -79,9 +79,9 @@ export function ExperienceTab() {
               </h4>
               <p className="body-md">{entry.description}</p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   );
 }

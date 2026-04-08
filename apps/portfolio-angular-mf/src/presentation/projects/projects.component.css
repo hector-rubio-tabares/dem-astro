@@ -11,11 +11,11 @@
  * MAIN CONTAINER
  * ═══════════════════════════════════════════════════════════════════════════ */
 .projects-main {
-  padding-top: calc(var(--spacing-24) + var(--spacing-8));  /* 7rem spacing desde el header */
+  padding-top: var(--spacing-12);
   padding-bottom: var(--spacing-24);
   padding-left: var(--spacing-6);
   padding-right: var(--spacing-6);
-  max-width: 1536px;  /* Equivalente a max-w-7xl */
+  max-width: 1536px;
   margin: 0 auto;
 }
 

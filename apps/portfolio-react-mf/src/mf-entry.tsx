@@ -4,6 +4,7 @@ import '@mf/shared/styles/mfe-integration.css'
 import './presentation/App.css'
 import App from './presentation/App'
 import { About } from './presentation/About'
+import { ContactSection } from './presentation/components/ContactSection'
 import { MFErrorBoundary } from './ErrorBoundary'
 import type { EventBus } from '@mf/shared'
 
@@ -66,7 +67,6 @@ export function mountAbout(container: HTMLElement, context?: MountContext) {
   const root = createRoot(container)
   roots.set(container, root)
 
-  // Si el shell pasa un bus, guardarlo en window
   if (context?.bus) {
     window.__SHARED_BUS__ = context.bus
   }
@@ -74,6 +74,18 @@ export function mountAbout(container: HTMLElement, context?: MountContext) {
   root.render(
     <MFErrorBoundary mfName="React MFE - About">
       <About />
+    </MFErrorBoundary>
+  )
+}
+
+export function mountContact(container: HTMLElement) {
+  import('./presentation/About.css');
+  const root = createRoot(container)
+  roots.set(container, root)
+
+  root.render(
+    <MFErrorBoundary mfName="React MFE - Contact">
+      <ContactSection />
     </MFErrorBoundary>
   )
 }

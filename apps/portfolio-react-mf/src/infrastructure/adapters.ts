@@ -105,18 +105,18 @@ export class InMemoryMessageRepository implements IMessageRepository {
 
 const FALLBACK_PORTFOLIO_DATA: PortfolioData = new PortfolioData(
   [
-    { label: 'Años de experiencia', value: '2+', icon: '📅' },
-    { label: 'Empresas en producción', value: '3', icon: '🏢' },
-    { label: 'Tecnologías dominadas', value: '15+', icon: '🚀' },
-    { label: 'País', value: 'Colombia', icon: '🌎' },
+    { label: 'Años en producción', value: '2+', icon: '📅' },
+    { label: 'Empresas clientes', value: '3', icon: '🏢' },
+    { label: '3DS v2 implementado', value: 'Nuvei', icon: '💳' },
+    { label: 'SSO para usuarios', value: '5.000+', icon: '🔒' },
   ] satisfies PortfolioStat[],
   [
-    { title: 'Backend', icon: '⚙️', technologies: ['.NET Core', '.NET 8', 'ASP.NET', 'Laravel', 'Python', 'NestJS', 'FastAPI', 'Node.js'] },
-    { title: 'Frontend', icon: '🎨', technologies: ['Angular', 'React', 'TypeScript', 'Tailwind CSS', 'PrimeReact', 'Web Components'] },
+    { title: 'Backend — Producción', icon: '⚙️', technologies: ['.NET Core', '.NET 8', 'ASP.NET', 'Laravel', 'Python'] },
+    { title: 'Frontend — Producción', icon: '🎨', technologies: ['Angular', 'TypeScript', 'Tailwind CSS', 'PrimeReact'] },
+    { title: 'Conocimiento Práctico', icon: '🔬', technologies: ['Node.js', 'NestJS', 'FastAPI', 'React'] },
     { title: 'Bases de Datos', icon: '🗄️', technologies: ['SQL Server', 'PostgreSQL', 'Oracle', 'Entity Framework Core'] },
     { title: 'Cloud & DevOps', icon: '☁️', technologies: ['Azure', 'Azure DevOps', 'CI/CD', 'GitLab', 'GitHub', 'Azure Functions'] },
-    { title: 'Testing & QA', icon: '🧪', technologies: ['Playwright', 'JMeter', 'E2E Testing', 'Load Testing'] },
-    { title: 'Arquitectura', icon: '🏗️', technologies: ['Hexagonal', 'DDD', 'SOLID', 'REST APIs', 'Keycloak', 'Scrum'] },
+    { title: 'Testing & Herramientas', icon: '🧪', technologies: ['Playwright', 'JMeter', 'Keycloak', 'Git', 'Scrum', 'Power Automate'] },
   ] satisfies TechCategory[],
   [
     { title: 'Impacto en Producción', icon: '🔥', description: 'Resolución de incidencias críticas financieras de larga data en plataformas internacionales con miles de usuarios activos.' },

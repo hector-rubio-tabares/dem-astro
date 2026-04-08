@@ -86,6 +86,11 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": {
+              "exclude": ["@mf/shared"]
+            }
+          },
           "configurations": {
             "production": {
               "buildTarget": "portfolio-angular-mf:build:production"

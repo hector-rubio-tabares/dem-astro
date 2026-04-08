@@ -94,27 +94,15 @@
 }
 
 .mfe-badge.react {
-  background-color: #e6f7ff;
+  background-color: var(--color-mfe-react-bg);
   border-color: var(--color-mfe-react-border);
-  color: #005a9e;
-}
-
-[data-theme="dark"] .mfe-badge.react {
-  background-color: rgba(20, 184, 255, 0.15);
-  border-color: var(--color-mfe-react-primary);
-  color: #4dc3ff;
+  color: var(--color-mfe-react-primary);
 }
 
 .mfe-badge.angular {
-  background-color: #fff4e6;
+  background-color: var(--color-mfe-angular-bg);
   border-color: var(--color-mfe-angular-border);
-  color: #a04f00;
-}
-
-[data-theme="dark"] .mfe-badge.angular {
-  background-color: rgba(255, 140, 42, 0.15);
-  border-color: var(--color-mfe-angular-primary);
-  color: #ffaa5a;
+  color: var(--color-mfe-angular-primary);
 }
 
 #react-root,

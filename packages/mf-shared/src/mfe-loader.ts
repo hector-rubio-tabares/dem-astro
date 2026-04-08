@@ -1,6 +1,6 @@
 import { loadRemoteModule } from './remote-module-loader';
 
-export type MFEType = 'projects' | 'projects-full' | 'about' | 'angular-demo' | 'react-demo';
+export type MFEType = 'projects' | 'projects-full' | 'about' | 'contact' | 'angular-demo' | 'react-demo';
 
 export interface MFEConfig {
   readonly name: string;
@@ -38,6 +38,12 @@ const MFE_CATALOG: Record<MFEType, MFEConfig> = {
     type: 'mount-function',
     server: 'react',
     mountFunctionName: 'mountAbout',
+  },
+  contact: {
+    name: 'Contact (React)',
+    type: 'mount-function',
+    server: 'react',
+    mountFunctionName: 'mountContact',
   },
   'angular-demo': {
     name: 'Angular Demo',

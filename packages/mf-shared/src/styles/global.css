@@ -94,7 +94,7 @@ code {
   gap: var(--spacing-2);
   padding: var(--spacing-3) var(--spacing-6);
   border: none;
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--border-radius-full);
   font-family: var(--font-family-sans);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
@@ -148,7 +148,7 @@ code {
 .btn-secondary {
   background-color: var(--color-button-secondary-bg);
   color: var(--color-button-secondary-text);
-  border: 2px solid var(--color-button-secondary-border, var(--color-border-primary));
+  border: 1px solid var(--color-button-secondary-border, var(--color-border-primary));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -163,13 +163,11 @@ code {
 .btn-sm {
   padding: var(--spacing-2) var(--spacing-4);
   font-size: var(--font-size-sm);
-  border-radius: var(--border-radius-md);
 }
 
 .btn-lg {
   padding: var(--spacing-4) var(--spacing-8);
   font-size: var(--font-size-lg);
-  border-radius: var(--border-radius-xl);
 }
 
 .card {

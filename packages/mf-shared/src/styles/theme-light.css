@@ -7,14 +7,14 @@
   /* ═══════════════════════════════════════════════════════════════════════════
    * SURFACE HIERARCHY - Light Mode (Soft, professional)
    * ═══════════════════════════════════════════════════════════════════════════ */
-  --surface-lowest: #f5f7fa;        /* Sunken effect (soft gray) */
-  --surface-low: #edf1f7;           /* Secondary background (light blue-gray) */
-  --surface-base: #ffffff;          /* Primary content area (pure white) */
-  --surface-high: #ffffff;          /* Elevated interactive blocks */
-  --surface-highest: #ffffff;       /* Floating nav/modals */
-  --surface-dim: #e5e9f0;           /* Dimmed surface */
-  --surface-bright: #ffffff;        /* Brightest surface */
-  --surface-container: #ffffff;     /* Container alias */
+  --surface-lowest: #edf1f7;
+  --surface-low: #f0f4f8;
+  --surface-base: #ffffff;
+  --surface-high: #f5f7fa;
+  --surface-highest: #edf1f7;
+  --surface-dim: #e5e9f0;
+  --surface-bright: #ffffff;
+  --surface-container: #f5f7fa;
 
   /* TEXT COLORS (High contrast for readability) */
   --text-primary: #1a202c;          /* Almost black (softer than pure black) */
@@ -49,9 +49,38 @@
   --color-border-focus: #0ea5e9;                /* Bright cyan for focus */
 
   /* LINKS - Usa cyan signature adaptado a light */
-  --color-link: #0891b2;                        /* Cyan oscuro (legible) */
-  --color-link-hover: #0e7490;                  /* Cyan más oscuro */
-  --color-link-visited: #7c3aed;                /* Violet (consistente con dark) */
+  --color-link: #0891b2;
+  --color-link-hover: #0e7490;
+  --color-link-visited: #7c3aed;
+
+  /* PRIMARY CYAN OVERRIDE - neon #06d6e0 no tiene contraste en blanco */
+  --color-primary-cyan: #0891b2;
+  --color-primary-cyan-dark: #ffffff;
+  --color-primary-cyan-rgb: 8, 145, 178;
+
+  /* GRADIENT SIGNATURE override - cyan neon desaparece en fondo blanco */
+  --gradient-signature: linear-gradient(135deg, #0e7490 0%, #6d28d9 100%);
+  --gradient-signature-vertical: linear-gradient(180deg, #0e7490 0%, #6d28d9 100%);
+
+  /* GLASS - fondo oscuro heredado de :root no funciona en light */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(12px);
+
+  /* BORDER SUBTLE */
+  --color-border-subtle: rgba(0, 0, 0, 0.07);
+
+  /* SHADOWS CON COLOR - adaptar al cyan claro de light */
+  --shadow-cyan: 0 8px 16px rgba(8, 145, 178, 0.18);
+  --shadow-cyan-lg: 0 12px 24px rgba(8, 145, 178, 0.25);
+  --shadow-cyan-subtle: 0 4px 8px rgba(8, 145, 178, 0.12);
+  --shadow-violet: 0 8px 16px rgba(109, 40, 217, 0.15);
+  --shadow-violet-lg: 0 12px 24px rgba(109, 40, 217, 0.2);
+  --shadow-glow-primary: 0 0 12px rgba(8, 145, 178, 0.2);
+  --shadow-glow-secondary: 0 0 16px rgba(109, 40, 217, 0.2);
+  --shadow-ambient-cyan: 0 8px 32px rgba(8, 145, 178, 0.06);
+  --drop-shadow-cyan: drop-shadow(0 2px 4px rgba(8, 145, 178, 0.2));
+  --drop-shadow-cyan-glow: drop-shadow(0 0 6px rgba(8, 145, 178, 0.15));
 
   /* ESTADOS INTERACTIVOS */
   --color-hover-overlay: rgba(0, 0, 0, 0.04);

@@ -87,10 +87,20 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
 
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: title,
-      description,
+      '@type': 'Person',
+      name: 'Hector David Rubio Tabares',
+      jobTitle: 'Software Engineer Fullstack',
       url: siteOrigin,
+      sameAs: [
+        'https://www.linkedin.com/in/hector-rubio-dev/',
+        'https://github.com/HectorRubioTaba',
+      ],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Manizales',
+        addressCountry: 'CO',
+      },
+      knowsAbout: ['.NET', 'Angular', 'React', 'Azure DevOps', 'Keycloak', 'Micro-Frontend Architecture'],
     })} />
 
     <ClientRouter />
@@ -176,6 +186,7 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
   
   <body>
     {showBootScreen && <BootScreen />}
+    <div aria-live="polite" aria-atomic="true" class="visually-hidden" id="boot-announce"></div>
     <MainNav currentPath={Astro.url.pathname} hideAuthLinks={requiresAuth} transition:persist />
 
     <main class="main-content" aria-label="Contenido principal">
@@ -189,6 +200,19 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
     <footer class="site-footer" transition:persist>
       <div class="container">
         <p>&copy; {new Date().getFullYear()} Hector David Rubio Tabares. Manizales, Colombia.</p>
+        <nav class="footer-social" aria-label="Contacto y redes sociales">
+          <a href="https://www.linkedin.com/in/hector-rubio-dev/" target="_blank" rel="noopener noreferrer" class="footer-social-link">
+            LinkedIn
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/HectorRubioTaba" target="_blank" rel="noopener noreferrer" class="footer-social-link">
+            GitHub
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href="mailto:hector26rubio@gmail.com" class="footer-social-link">
+            hector26rubio@gmail.com
+          </a>
+        </nav>
         <p class="footer-tech">
           <span class="mfe-badge react">React 19</span>
           <span class="mfe-badge angular">Angular 21</span>

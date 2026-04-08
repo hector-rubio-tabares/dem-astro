@@ -25,20 +25,234 @@ import MFESlot from '../components/MFESlot.astro';
 
   <section aria-labelledby="projects-catalog-heading">
     <h2 id="projects-catalog-heading" class="visually-hidden">Catálogo de Proyectos</h2>
-    
-          <MFESlot
-    mfe="projects"
-    strategy="load"
-    label="Cargando proyectos..."
-    minHeight={20}
-  />
+
     <MFESlot
       mfe="projects-full"
       strategy="load"
       label="Cargando catálogo de proyectos..."
       minHeight={24}
     />
+  </section>
 
+  <section class="projects-static" aria-label="Resumen de proyectos destacados">
+    <h2 class="section-title">Proyectos Destacados</h2>
+    <p class="section-subtitle">
+      Casos de estudio con impacto real en producción — disponibles mientras carga el catálogo interactivo.
+    </p>
+    <ul class="projects-grid" role="list">
+      <li class="project-card glass">
+        <div class="project-card-header">
+          <span class="project-tag">Fintech · .NET · Angular</span>
+          <span class="project-status">Producción</span>
+        </div>
+        <h3 class="project-title">Integración 3D Secure v2 — Nuvei</h3>
+        <p class="project-description">
+          Backend completo (REST + Webhooks) para autenticación de pagos 3DS v2 en plataforma
+          internacional con miles de tarjetahabientes. Redujo chargebacks y cumplió normativa PCI-DSS.
+        </p>
+        <ul class="project-tech" aria-label="Tecnologías">
+          <li>.NET</li><li>Angular</li><li>Nuvei API</li><li>Umbraco</li>
+        </ul>
+        <p class="project-role"><strong>Rol:</strong> Responsable único del módulo de pagos backend + integración frontend.</p>
+      </li>
 
+      <li class="project-card glass">
+        <div class="project-card-header">
+          <span class="project-tag">Auth · Angular · Keycloak</span>
+          <span class="project-status">Producción</span>
+        </div>
+        <h3 class="project-title">SSO Empresarial con Keycloak</h3>
+        <p class="project-description">
+          Autenticación single sign-on para 5.000+ usuarios en Angular: tokens JWT, refresh silencioso,
+          sesiones multi-pestaña con BroadcastChannel y flujo completo de login/logout.
+        </p>
+        <ul class="project-tech" aria-label="Tecnologías">
+          <li>Keycloak</li><li>Angular</li><li>JWT</li><li>BroadcastChannel</li>
+        </ul>
+        <p class="project-role"><strong>Rol:</strong> Diseño e implementación del módulo de auth completo.</p>
+      </li>
+
+      <li class="project-card glass">
+        <div class="project-card-header">
+          <span class="project-tag">DevOps · Azure · CI/CD</span>
+          <span class="project-status">Producción</span>
+        </div>
+        <h3 class="project-title">Migración CI/CD Azure DevOps</h3>
+        <p class="project-description">
+          Migración de pipelines, paquetes NPM y artefactos entre organizaciones Azure DevOps sin
+          downtime. Automatización E2E con Playwright y pruebas de carga con JMeter.
+        </p>
+        <ul class="project-tech" aria-label="Tecnologías">
+          <li>Azure DevOps</li><li>Playwright</li><li>JMeter</li><li>YAML Pipelines</li>
+        </ul>
+        <p class="project-role"><strong>Rol:</strong> Planificación y ejecución completa de la migración.</p>
+      </li>
+
+      <li class="project-card glass">
+        <div class="project-card-header">
+          <span class="project-tag">Arquitectura · MFE · Astro</span>
+          <span class="project-status">Este portafolio</span>
+        </div>
+        <h3 class="project-title">Portafolio Micro-Frontend</h3>
+        <p class="project-description">
+          Arquitectura micro-frontend con Astro 6 como shell SSR, React 19 y Angular 21 como MFEs
+          independientes comunicados via EventBus tipado. Module Federation con estrategias de carga diferida.
+        </p>
+        <ul class="project-tech" aria-label="Tecnologías">
+          <li>Astro 6</li><li>React 19</li><li>Angular 21</li><li>Module Federation</li>
+        </ul>
+        <p class="project-role">
+          <a href="/MODULE_FEDERATION.md" class="project-link">Ver documentación arquitectónica ↗</a>
+        </p>
+      </li>
+
+      <li class="project-card glass">
+        <div class="project-card-header">
+          <span class="project-tag">Laravel · PostgreSQL · EPUB</span>
+          <span class="project-status">Producción</span>
+        </div>
+        <h3 class="project-title">Biblioteca Digital — Confa / Cajasan</h3>
+        <p class="project-description">
+          Plataformas de bibliotecas digitales con lector EPUB extendido (subrayado, anotaciones,
+          búsqueda, lectura por voz). Optimización avanzada de queries PostgreSQL y migración de datos legados.
+        </p>
+        <ul class="project-tech" aria-label="Tecnologías">
+          <li>Laravel</li><li>PostgreSQL</li><li>EPUB Bibi</li><li>JavaScript</li>
+        </ul>
+        <p class="project-role"><strong>Rol:</strong> Desarrollo fullstack + extensión del lector EPUB.</p>
+      </li>
+    </ul>
   </section>
 </BaseLayout>
+
+<style>
+  .projects-static {
+    margin-block-start: var(--spacing-16);
+    padding-inline: var(--spacing-4);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: var(--text-headline-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-3);
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .section-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-10);
+    font-size: 1rem;
+  }
+
+  .projects-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--spacing-6);
+  }
+
+  .project-card {
+    padding: var(--spacing-6);
+    border-radius: var(--border-radius-2xl);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .project-card:hover {
+    border-color: rgba(var(--color-primary-cyan-rgb), 0.3);
+    box-shadow: var(--shadow-cyan);
+  }
+
+  .project-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .project-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-primary-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .project-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px var(--spacing-2);
+    border-radius: var(--border-radius-full);
+    background: rgba(var(--color-primary-cyan-rgb), 0.1);
+    color: var(--color-primary-cyan);
+    border: 1px solid rgba(var(--color-primary-cyan-rgb), 0.2);
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .project-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  .project-tech {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .project-tech li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 2px var(--spacing-2);
+    border-radius: var(--border-radius-sm);
+    background: rgba(var(--color-secondary-violet-rgb), 0.1);
+    color: var(--color-secondary-violet);
+    border: 1px solid rgba(var(--color-secondary-violet-rgb), 0.2);
+  }
+
+  .project-role {
+    font-size: 0.8rem;
+    color: var(--text-tertiary, var(--text-secondary));
+    margin: 0;
+  }
+
+  .project-link {
+    color: var(--color-primary-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  .project-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

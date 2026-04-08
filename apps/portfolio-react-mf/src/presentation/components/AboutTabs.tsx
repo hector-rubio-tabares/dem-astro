@@ -13,18 +13,23 @@ const TABS: { id: ActiveTab; icon: string; label: string }[] = [
 
 export function AboutTabs({ activeTab, onTabChange }: AboutTabsProps) {
   return (
-    <nav className="tab-nav glass">
+    <div role="tablist" aria-label="Secciones de about" className="tab-nav glass">
       {TABS.map(tab => (
         <button
           key={tab.id}
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-selected={activeTab === tab.id}
+          aria-controls={`panel-${tab.id}`}
           className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
           onClick={() => onTabChange(tab.id)}
+          tabIndex={activeTab === tab.id ? 0 : -1}
         >
-          <span>{tab.icon}</span>
+          <span aria-hidden="true">{tab.icon}</span>
           <span className="label-md">{tab.label}</span>
         </button>
       ))}
-    </nav>
+    </div>
   );
 }
 

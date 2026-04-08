@@ -75,8 +75,11 @@
   --color-focus-ring: var(--color-primary-cyan);
   
   /* Active link con accent cyan */
-  --color-link-active-bg: var(--surface-high);      /* Usa surface predefinido */
+  --color-link-active-bg: var(--surface-high);
   --color-link-active-shadow: rgba(6, 182, 212, 0.4);
+
+  /* BORDER SUBTLE */
+  --color-border-subtle: rgba(255, 255, 255, 0.07);
 
   /* ═══════════════════════════════════════════════════════════════════════════
    * BUTTONS - Signature gradient for primary CTAs

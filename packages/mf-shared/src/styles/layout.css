@@ -139,6 +139,29 @@
   margin-top: var(--spacing-4);
 }
 
+.footer-social {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.footer-social-link {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary, var(--text-secondary));
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-social-link:hover,
+.footer-social-link:focus-visible {
+  color: var(--color-primary-cyan);
+  outline: none;
+}
+
 .auth-gate {
   display: flex;
   align-items: center;

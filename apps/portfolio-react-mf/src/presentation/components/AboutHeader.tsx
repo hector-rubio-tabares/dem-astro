@@ -1,10 +1,10 @@
 import type { PortfolioStat } from '../../domain/entities';
 
-interface AboutHeroProps {
+interface AboutHeaderProps {
   stats: readonly PortfolioStat[];
 }
 
-export function AboutHeader({ stats }: AboutHeroProps) {
+export function AboutHeader({ stats }: AboutHeaderProps) {
   return (
     <div className="about-hero">
       <div className="hero-content">
