@@ -30,40 +30,40 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
 ---
 
 <!DOCTYPE html>
-<script is:inline>
-  (function() {
-    function applyTheme() {
-      try {
-        const saved = localStorage.getItem('mfe-theme');
-        document.documentElement.setAttribute('data-theme', saved || 'dark');
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    }
-    function cleanupBootScreen() {
-      try {
-        if (sessionStorage.getItem('boot-completed')) {
-          var bs = document.getElementById('mfe-loading-screen');
-          if (bs) bs.remove();
-        }
-      } catch (e) {}
-    }
-    applyTheme();
-    document.addEventListener('astro:after-swap', applyTheme);
-    document.addEventListener('astro:after-swap', cleanupBootScreen);
-    document.addEventListener('astro:before-swap', function(swapEvent) {
-      try { sessionStorage.setItem('boot-completed', '1'); } catch (err) {}
-      document.querySelectorAll('head style[data-vite-dev-id]').forEach(function(el) {
-        var vid = el.getAttribute('data-vite-dev-id');
-        if (vid && !swapEvent.newDocument.head.querySelector('[data-vite-dev-id="' + vid + '"]')) {
-          swapEvent.newDocument.head.appendChild(el.cloneNode(true));
-        }
-      });
-    });
-  })();
-</script>
 <html lang="es" data-theme="dark">
   <head>
+    <script is:inline>
+      (function() {
+        function applyTheme() {
+          try {
+            var saved = localStorage.getItem('mfe-theme');
+            document.documentElement.setAttribute('data-theme', saved || 'dark');
+          } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        }
+        function cleanupBootScreen() {
+          try {
+            if (sessionStorage.getItem('boot-completed')) {
+              var bs = document.getElementById('mfe-loading-screen');
+              if (bs) bs.remove();
+            }
+          } catch (e) {}
+        }
+        applyTheme();
+        document.addEventListener('astro:after-swap', applyTheme);
+        document.addEventListener('astro:after-swap', cleanupBootScreen);
+        document.addEventListener('astro:before-swap', function(swapEvent) {
+          try { sessionStorage.setItem('boot-completed', '1'); } catch (err) {}
+          document.querySelectorAll('head style[data-vite-dev-id]').forEach(function(el) {
+            var vid = el.getAttribute('data-vite-dev-id');
+            if (vid && !swapEvent.newDocument.head.querySelector('[data-vite-dev-id="' + vid + '"]')) {
+              swapEvent.newDocument.head.appendChild(el.cloneNode(true));
+            }
+          });
+        });
+      })();
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
@@ -85,7 +85,7 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageAbsolute} />
 
-    <script type="application/ld+json" set:html={JSON.stringify({
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: 'Hector David Rubio Tabares',
@@ -115,73 +115,9 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" /></noscript>
 
-    <script is:inline>
-      if (typeof window !== 'undefined' && !window.__MFE_CONTEXT_INITIALIZED__) {
-        window.__MFE_CONTEXT_INITIALIZED__ = true;
-
-        try {
-          let channel = null;
-          try {
-            channel = new BroadcastChannel('mfe-broadcast-channel');
-          } catch (error) {
-          }
-
-          class SimpleEventBus {
-            constructor() { this.handlers = new Map(); }
-            on(event, handler) {
-              const current = this.handlers.get(event) || new Set();
-              current.add(handler);
-              this.handlers.set(event, current);
-              return () => current.delete(handler);
-            }
-            emit(event, payload) {
-              const handlers = this.handlers.get(event);
-              if (handlers) handlers.forEach(h => h(payload));
-            }
-            off(event, handler) {
-              const handlers = this.handlers.get(event);
-              if (handlers) handlers.delete(handler);
-            }
-          }
-
-          class SimpleMicrofrontendContext {
-            constructor(bus, tabId, channel) {
-              this.bus = bus;
-              this.tabId = tabId;
-              this.channel = channel;
-            }
-            getBus() { return this.bus; }
-            getTabId() { return this.tabId; }
-            getChannel() { return this.channel; }
-            static initialize(config) {
-              if (this.instance) return;
-              this.instance = new this(config.bus, config.tabId, config.channel);
-            }
-            static getInstance() {
-              if (!this.instance) throw new Error('[MFContext] Not initialized');
-              return this.instance;
-            }
-          }
-          SimpleMicrofrontendContext.instance = null;
-
-          const tabId = crypto.randomUUID();
-          const sharedBus = new SimpleEventBus();
-          SimpleMicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
-
-          window.__MICROFRONTEND_CONTEXT__ = SimpleMicrofrontendContext;
-          window.__SHARED_BUS__ = sharedBus;
-          window.__TAB_ID__ = tabId;
-          window.__BROADCAST_CHANNEL__ = channel;
-          window.__MFE_CONTEXT_READY__ = true;
-
-          window.dispatchEvent(new CustomEvent('mfe:context:ready', {
-            detail: { tabId, bus: sharedBus }
-          }));
-        } catch (error) {}
-      }
-    </script>
   </head>
   
   <body>
@@ -223,6 +159,34 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteOrigin}${o
 
     <script>
       import '../scripts/layout-client-hexagonal';
+    </script>
+
+    <script is:inline>
+      if (typeof window !== 'undefined' && !window.__MFE_CONTEXT_INITIALIZED__) {
+        window.__MFE_CONTEXT_INITIALIZED__ = true;
+        try {
+          var channel = null;
+          try { channel = new BroadcastChannel('mfe-broadcast-channel'); } catch (e) {}
+          function SimpleEventBus() { this.handlers = new Map(); }
+          SimpleEventBus.prototype.on = function(ev, h) {
+            var s = this.handlers.get(ev) || new Set(); s.add(h); this.handlers.set(ev, s);
+            return function() { s.delete(h); };
+          };
+          SimpleEventBus.prototype.emit = function(ev, p) {
+            var s = this.handlers.get(ev); if (s) s.forEach(function(h) { h(p); });
+          };
+          SimpleEventBus.prototype.off = function(ev, h) {
+            var s = this.handlers.get(ev); if (s) s.delete(h);
+          };
+          var tabId = crypto.randomUUID();
+          var sharedBus = new SimpleEventBus();
+          window.__SHARED_BUS__ = sharedBus;
+          window.__TAB_ID__ = tabId;
+          window.__BROADCAST_CHANNEL__ = channel;
+          window.__MFE_CONTEXT_READY__ = true;
+          window.dispatchEvent(new CustomEvent('mfe:context:ready', { detail: { tabId: tabId, bus: sharedBus } }));
+        } catch (e) {}
+      }
     </script>
   </body>
 </html>

@@ -2,6 +2,7 @@ import { MFEConfig } from '../core/entities/MFEConfig';
 import { MFERegistry } from '../core/services/MFERegistry';
 import { ModuleFederationLoader } from '../infrastructure/adapters/ModuleFederationLoader';
 import { DOMLoadingUI } from '../infrastructure/adapters/DOMLoadingUI';
+import { ConsoleLogger } from '../infrastructure/adapters/ConsoleLogger';
 import { InitializeMFEsUseCase } from '../application/use-cases/InitializeMFEsUseCase';
 import { MicrofrontendContext, EventBus, MF_CONFIG, type MicroFrontendEvents } from '@mf/shared';
 import { DEFAULT_MODULE_TIMEOUT_MS } from './mf-runtime';
@@ -19,8 +20,7 @@ const ALLOWED_REMOTE_ORIGINS = new Set<string>(
 let initializationPromise: Promise<void> | null = null;
 
 function ensureContextInitialized(): void {
-  const w = window as unknown as Record<string, unknown>;
-  if (w.__MFE_CONTEXT_READY__) return;
+  if (window.__MFE_CONTEXT_READY__) return;
 
   let channel: BroadcastChannel | null = null;
   try { channel = new BroadcastChannel(MF_CONFIG.BROADCAST_CHANNEL_NAME); } catch { }
@@ -29,10 +29,10 @@ function ensureContextInitialized(): void {
   const tabId     = crypto.randomUUID();
   MicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
 
-  w.__SHARED_BUS__        = sharedBus;
-  w.__TAB_ID__            = tabId;
-  w.__BROADCAST_CHANNEL__ = channel;
-  w.__MFE_CONTEXT_READY__ = true;
+  window.__SHARED_BUS__        = sharedBus;
+  window.__TAB_ID__            = tabId;
+  window.__BROADCAST_CHANNEL__ = channel ?? undefined;
+  window.__MFE_CONTEXT_READY__ = true;
 }
 
 export async function initializeMicrofrontendsHexagonal(): Promise<void> {
@@ -45,7 +45,8 @@ export async function initializeMicrofrontendsHexagonal(): Promise<void> {
       const registry    = new MFERegistry();
       const loader      = new ModuleFederationLoader(ALLOWED_REMOTE_ORIGINS);
       const loadingUI   = new DOMLoadingUI();
-      const initUseCase = new InitializeMFEsUseCase(loader, registry, loadingUI);
+      const logger      = new ConsoleLogger();
+      const initUseCase = new InitializeMFEsUseCase(loader, registry, loadingUI, logger);
 
       const mfeConfigs = [
         new MFEConfig('react',   'react',   REACT_URL,   '.mf-slot[data-mf="react"]',   true,  MODULE_TIMEOUT_MS),
@@ -54,7 +55,7 @@ export async function initializeMicrofrontendsHexagonal(): Promise<void> {
 
       await initUseCase.execute(mfeConfigs);
 
-      (window as unknown as Record<string, unknown>).__MFE_REGISTRY__ = registry;
+      window.__MFE_REGISTRY__ = registry;
     } catch (error) {
       initializationPromise = null;
       throw error;
@@ -73,5 +74,5 @@ export function getTabId(): string {
 }
 
 export function getMFERegistry(): MFERegistry | null {
-  return (window as unknown as Record<string, unknown>).__MFE_REGISTRY__ as MFERegistry | null;
+  return (window).__MFE_REGISTRY__ as MFERegistry | null;
 }

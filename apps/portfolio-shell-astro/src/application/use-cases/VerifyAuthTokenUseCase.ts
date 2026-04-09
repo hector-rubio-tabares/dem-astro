@@ -67,7 +67,7 @@ export class VerifyAuthTokenUseCase {
     try {
       // TODO: En producción, usar JWT (jsonwebtoken o jose)
       // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
+
       // Para demo: simple JSON Base64
       const decoded = JSON.parse(
         Buffer.from(token, 'base64').toString('utf-8')
@@ -79,7 +79,8 @@ export class VerifyAuthTokenUseCase {
       }
 
       return User.create(decoded.username, decoded.roles);
-    } catch {
+    } catch (error) {
+      this.logger.debug('[VerifyAuthTokenUseCase] Token parse failed', error);
       return null;
     }
   }

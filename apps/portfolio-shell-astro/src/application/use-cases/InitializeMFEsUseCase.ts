@@ -6,16 +6,18 @@
 import type { MFEConfig } from '../../core/entities/MFEConfig';
 import type { MFERegistry } from '../../core/services/MFERegistry';
 import type { IMFELoader, ILoadingUI } from '../ports/IMFELoader';
+import type { ILogger } from '../ports/ILogger';
 
 export class InitializeMFEsUseCase {
   constructor(
     private readonly loader: IMFELoader,
     private readonly registry: MFERegistry,
-    private readonly loadingUI: ILoadingUI
+    private readonly loadingUI: ILoadingUI,
+    private readonly logger: ILogger
   ) {}
 
   async execute(configs: MFEConfig[]): Promise<void> {
-    console.log('[InitializeMFEs] Iniciando carga de MFEs...');
+    this.logger.info('[InitializeMFEs] Iniciando carga de MFEs...');
 
     // 1. Registrar configuraciones
     configs.forEach(config => this.registry.registerConfig(config));
@@ -75,10 +77,10 @@ export class InitializeMFEsUseCase {
     const failures = allResults.filter(r => r.status === 'rejected');
 
     if (failures.length > 0) {
-      console.warn(`[InitializeMFEs] ${failures.length} MFE(s) fallaron al cargar`);
+      this.logger.warn(`[InitializeMFEs] ${failures.length} MFE(s) fallaron al cargar`);
       failures.forEach(failure => {
         if (failure.status === 'rejected') {
-          console.error('[InitializeMFEs]', failure.reason);
+          this.logger.error('[InitializeMFEs]', failure.reason);
         }
       });
     }
@@ -86,6 +88,6 @@ export class InitializeMFEsUseCase {
     // 7. Ocultar UI inmediatamente (sin setTimeout)
     this.loadingUI.hide();
 
-    console.log('[InitializeMFEs] Inicialización completa');
+    this.logger.info('[InitializeMFEs] Inicialización completa');
   }
 }

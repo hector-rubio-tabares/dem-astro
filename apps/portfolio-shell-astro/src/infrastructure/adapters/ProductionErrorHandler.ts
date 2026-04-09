@@ -142,8 +142,8 @@ export class ProductionErrorHandler implements IErrorHandler {
 
   private sendToMonitoring(error: Error, context?: Record<string, unknown>): void {
     // Integración con Sentry (si está disponible)
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.captureException(error, {
+    if (typeof window !== 'undefined' && window.Sentry) {
+      window.Sentry.captureException(error, {
         extra: context,
         tags: {
           errorType: error.name,

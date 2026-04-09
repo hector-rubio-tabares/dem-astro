@@ -1,4 +1,5 @@
 ---
+const isDev = !import.meta.env.PROD;
 ---
 <div id="auth-gate" class="auth-gate">
   <div class="card auth-card">
@@ -11,9 +12,10 @@
         class="input"
         placeholder="Contraseña"
         autocomplete="current-password"
+        autofocus
       />
       <button id="auth-submit" class="btn-primary">Acceder</button>
     </div>
-    <p class="auth-hint">Para esta demo, usa: <code>admin123</code></p>
+    {isDev && <p class="auth-hint">Para esta demo, usa: <code>admin123</code></p>}
   </div>
 </div>

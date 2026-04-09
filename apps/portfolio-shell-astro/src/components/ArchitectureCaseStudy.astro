@@ -1,0 +1,149 @@
+<section class="architecture-case-study" aria-labelledby="mfe-case-study-heading">
+  <div class="case-study-header">
+    <span class="case-study-prefix">06 // ARCHITECTURE_CASE_STUDY</span>
+    <h2 id="mfe-case-study-heading" class="case-study-title">
+      Este portafolio <span class="title-gradient">es</span> el proyecto
+    </h2>
+    <p class="case-study-description">
+      Arquitectura micro-frontend con Module Federation — un diferenciador raro que pocos portfolios
+      tienen. Tres frameworks independientes comunicados en tiempo real sin acoplamiento directo.
+    </p>
+  </div>
+  <ul class="case-study-grid" role="list">
+    <li class="case-study-card glass">
+      <span class="case-study-card-icon" aria-hidden="true">🐚</span>
+      <h3>Shell Astro 6 (SSR)</h3>
+      <p>Orquestador con middleware de autenticación, carga diferida de MFEs por estrategia (load / visible / idle) y View Transitions API.</p>
+    </li>
+    <li class="case-study-card glass">
+      <span class="case-study-card-icon" aria-hidden="true">⚛️</span>
+      <h3>React 19 MFE</h3>
+      <p>Vista pública montada con Vite + @originjs/vite-plugin-federation. Arquitectura hexagonal con ports, use-cases y adapters. React 19 hooks + Suspense.</p>
+    </li>
+    <li class="case-study-card glass">
+      <span class="case-study-card-icon" aria-hidden="true">🔺</span>
+      <h3>Angular 21 MFE</h3>
+      <p>Panel admin expuesto como Custom Element via @angular-architects/native-federation. Signals, zoneless change detection y OnPush estricto.</p>
+    </li>
+    <li class="case-study-card glass">
+      <span class="case-study-card-icon" aria-hidden="true">📡</span>
+      <h3>EventBus Compartido</h3>
+      <p>Comunicación entre MFEs sin imports directos via <code>window.__SHARED_BUS__</code>. Multi-tab sync con BroadcastChannel. Contratos tipados en @mf/shared.</p>
+    </li>
+  </ul>
+  <div class="case-study-cta">
+    <a href="/proyectos" class="btn-primary">Ver todos los proyectos</a>
+    <a href="https://github.com/HectorRubioTaba" target="_blank" rel="noopener noreferrer" class="btn-secondary">Ver código fuente ↗</a>
+  </div>
+</section>
+
+<style>
+  .architecture-case-study {
+    padding-inline: var(--spacing-4);
+  }
+
+  .case-study-prefix {
+    display: block;
+    font-family: var(--font-family-mono);
+    font-size: 0.75rem;
+    color: var(--color-primary-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-3);
+  }
+
+  .case-study-header {
+    text-align: center;
+    margin-bottom: var(--spacing-10);
+  }
+
+  .case-study-title {
+    font-family: var(--font-display);
+    font-size: var(--font-size-display-sm);
+    font-weight: 700;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .title-gradient {
+    background: var(--gradient-signature);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .case-study-description {
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin-inline: auto;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .case-study-grid {
+    list-style: none;
+    padding: 0;
+    margin-block: 0 var(--spacing-10);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-5);
+    max-width: 1100px;
+  }
+
+  .case-study-card {
+    padding: var(--spacing-6);
+    border-radius: var(--border-radius-2xl);
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .case-study-card:hover {
+    border-color: rgba(var(--color-primary-cyan-rgb), 0.3);
+    box-shadow: var(--shadow-cyan);
+  }
+
+  .case-study-card-icon {
+    font-size: 1.5rem;
+  }
+
+  .case-study-card h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .case-study-card p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .case-study-card code {
+    font-family: var(--font-family-mono);
+    font-size: 0.75rem;
+    color: var(--color-primary-cyan);
+    background: rgba(var(--color-primary-cyan-rgb), 0.08);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  .case-study-cta {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-4);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .case-study-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

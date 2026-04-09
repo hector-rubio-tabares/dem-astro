@@ -6,7 +6,7 @@ import {
 } from '@mf/shared';
 
 type MountableModule = {
-  mount?: (container: HTMLElement, context?: Record<string, unknown>) => void
+  mount: (container: HTMLElement, context?: Record<string, unknown>) => void
 }
 
 export const DEFAULT_MODULE_TIMEOUT_MS = DEFAULT_TIMEOUT_MS;
@@ -46,5 +46,5 @@ export async function importRemoteWithTimeout<T = unknown>(
 
 export function ensureMountContract(module: MountableModule, container: HTMLElement) {
   assertMountContract(module as Record<string, unknown>);
-  module.mount!(container)
+  module.mount(container)
 }

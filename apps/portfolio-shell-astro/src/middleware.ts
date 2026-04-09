@@ -19,7 +19,6 @@ const PROTECTED_ROUTES = [
 function buildCspOrigins(): string {
   const reactUrl   = import.meta.env.PUBLIC_REACT_MF_URL   ?? '';
   const angularUrl = import.meta.env.PUBLIC_ANGULAR_MF_URL ?? '';
-  const apiUrl     = import.meta.env.PUBLIC_API_BASE_URL   ?? '';
   const origins = new Set<string>();
   for (const raw of [reactUrl, angularUrl]) {
     try {
@@ -32,7 +31,6 @@ function buildCspOrigins(): string {
       }
     } catch { }
   }
-  try { if (apiUrl) origins.add(new URL(apiUrl).origin); } catch { }
   return Array.from(origins).join(' ');
 }
 
@@ -43,6 +41,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  ...(IS_PRODUCTION ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' } : {}),
   'Content-Security-Policy': [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline' blob: ${MFE_ORIGINS}`,
@@ -86,8 +85,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return redirect(`/login?returnUrl=${encodeURIComponent(pathname)}`);
   }
 
-  (context.locals as Record<string, unknown>).user = authResult.user;
-  (context.locals as Record<string, unknown>).isAuthenticated = true;
+  context.locals.user = authResult.user;
+  context.locals.isAuthenticated = true;
 
   logger.info(`[Middleware ${ENV_MODE}] Acceso permitido`, {
     pathname,

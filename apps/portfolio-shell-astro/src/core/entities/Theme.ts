@@ -33,10 +33,6 @@ export class Theme {
     return this.mode === 'dark';
   }
 
-  getIcon(): string {
-    return this.mode === 'dark' ? '🌙' : '☀️';
-  }
-
   equals(other: Theme): boolean {
     return this.mode === other.mode;
   }

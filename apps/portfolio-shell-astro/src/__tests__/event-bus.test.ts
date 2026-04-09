@@ -78,7 +78,7 @@ describe('EventBus', () => {
       })
 
       bus.on('test-event', throwingHandler)
-      
+
       expect(() => {
         bus.emit('test-event', { message: 'test' })
       }).not.toThrow()

@@ -33,7 +33,7 @@ function isActive(path: string): boolean {
           </a>
         </li>
         <li>
-          <a href="/admin" id="admin-link" aria-disabled="true" class:list={['nav-link', { active: isActive('/admin') }]}>
+          <a href="/admin" id="admin-link" aria-disabled="true" tabindex="-1" class:list={['nav-link', { active: isActive('/admin') }]}>
             Admin
           </a>
         </li>
@@ -120,6 +120,8 @@ function isActive(path: string): boolean {
   const initializeThemeUseCase = new InitializeThemeUseCase(themeRepository);
   const toggleThemeUseCase = new ToggleThemeUseCase(themeRepository);
 
+  const THEME_ICON: Record<string, string> = { dark: '🌙', light: '☀️' };
+
   function initializeTheme(): void {
     try {
       const theme = initializeThemeUseCase.execute();
@@ -128,7 +130,7 @@ function isActive(path: string): boolean {
 
       const themeIcon = document.querySelector('.theme-icon');
       if (themeIcon) {
-        themeIcon.textContent = theme.getIcon();
+        themeIcon.textContent = THEME_ICON[theme.getMode()] ?? '☀️';
       }
 
       logger.info('[MainNav] Tema inicializado', { mode: theme.getMode() });
@@ -153,7 +155,7 @@ function isActive(path: string): boolean {
 
         const themeIcon = themeToggle.querySelector('.theme-icon');
         if (themeIcon) {
-          themeIcon.textContent = newTheme.getIcon();
+          themeIcon.textContent = THEME_ICON[newTheme.getMode()] ?? '☀️';
         }
 
         logger.info('[MainNav] Tema cambiado', { mode: newTheme.getMode() });
@@ -165,11 +167,22 @@ function isActive(path: string): boolean {
 
   function updateAuthNavigation(): void {
     const loginLink = document.getElementById('login-link') as HTMLAnchorElement;
-    
+    const adminLink = document.getElementById('admin-link') as HTMLAnchorElement;
+
     if (!loginLink) return;
 
     const isAuthenticated = authService.isAuthenticated();
-    
+
+    if (adminLink) {
+      if (isAuthenticated) {
+        adminLink.removeAttribute('aria-disabled');
+        adminLink.removeAttribute('tabindex');
+      } else {
+        adminLink.setAttribute('aria-disabled', 'true');
+        adminLink.setAttribute('tabindex', '-1');
+      }
+    }
+
     if (isAuthenticated) {
       loginLink.textContent = 'Logout';
       loginLink.className = 'btn-secondary btn-sm';

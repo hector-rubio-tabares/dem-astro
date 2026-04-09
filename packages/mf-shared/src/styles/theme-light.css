@@ -68,7 +68,7 @@
   --glass-blur: blur(12px);
 
   /* BORDER SUBTLE */
-  --color-border-subtle: rgba(0, 0, 0, 0.07);
+  --color-border-subtle: rgba(0, 0, 0, 0.12);
 
   /* SHADOWS CON COLOR - adaptar al cyan claro de light */
   --shadow-cyan: 0 8px 16px rgba(8, 145, 178, 0.18);
@@ -95,6 +95,8 @@
   --color-button-primary-bg: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%); /* Cyan-Violet */
   --color-button-primary-bg-hover: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
   --color-button-primary-text: #ffffff;
+  --color-button-primary-shadow: rgba(8, 145, 178, 0.25);
+  --color-button-primary-shadow-hover: rgba(8, 145, 178, 0.35);
 
   --color-button-secondary-bg: transparent;
   --color-button-secondary-bg-hover: var(--surface-low);

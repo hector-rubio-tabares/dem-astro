@@ -204,7 +204,7 @@ import '@mf/shared/styles/loading.css';
       function animateMainTo(target) {
         return new Promise(resolve => {
           const from = mainCurrent;
-          const duration = Math.max(1, Math.abs(target - from) * 30);
+          const duration = Math.max(1, Math.abs(target - from) * 4);
           const start = performance.now();
           const tick = now => {
             const progress = Math.min((now - start) / duration, 1);
@@ -283,32 +283,32 @@ import '@mf/shared/styles/loading.css';
         let removed = false;
         const cleanup = () => { if (!removed) { removed = true; screen.remove(); } };
         screen.addEventListener('transitionend', cleanup, { once: true });
-        setTimeout(cleanup, 800);
+        setTimeout(cleanup, 350);
         screen.classList.add('hidden');
       }
 
       async function runBootSequence() {
         scheduleLog();
 
-        await delay(300);
-        animateBar('bar-astro', 'pct-astro', 100, 900);
+        await delay(30);
+        animateBar('bar-astro', 'pct-astro', 100, 80);
         animateMainTo(33);
 
-        await delay(1000);
-        animateBar('bar-react', 'pct-react', 100, 1200).then(() => {
+        await delay(80);
+        animateBar('bar-react', 'pct-react', 100, 100).then(() => {
           const el = document.getElementById('status-react');
           if (el) el.textContent = 'DONE';
         });
         animateMainTo(66);
 
-        await delay(1300);
-        animateBar('bar-angular', 'pct-angular', 100, 1200).then(() => {
+        await delay(100);
+        animateBar('bar-angular', 'pct-angular', 100, 100).then(() => {
           const el = document.getElementById('status-angular');
           if (el) el.textContent = 'DONE';
         });
         await animateMainTo(99);
 
-        await delay(800);
+        await delay(60);
         hideSelf();
       }
 

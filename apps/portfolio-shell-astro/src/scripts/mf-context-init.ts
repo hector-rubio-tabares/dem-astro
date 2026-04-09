@@ -26,8 +26,8 @@ export function initializeContext(): void {
     const tabId = crypto.randomUUID();
     MicrofrontendContext.initialize({ bus: sharedBus, tabId, channel });
     isContextInitialized = true;
-    (window as unknown as Record<string, unknown>).__MFE_CONTEXT_READY__ = true;
-    (window as unknown as Record<string, unknown>).__MFE_TAB_ID__ = tabId;
+    window.__MFE_CONTEXT_READY__ = true;
+    window.__MFE_TAB_ID__ = tabId;
   } catch (error) {
     throw error;
   }
@@ -39,16 +39,13 @@ export function isInitialized(): boolean {
 
 export function waitForContext(timeoutMs: number = 3000): Promise<void> {
   return new Promise((resolve, reject) => {
-    const win = window as unknown as Record<string, unknown>;
-
-    if (win.__SHARED_BUS__ && win.__MFE_CONTEXT_READY__) {
+    if (window.__SHARED_BUS__ && window.__MFE_CONTEXT_READY__) {
       resolve();
       return;
     }
 
     const handleContextReady = (_event: Event) => {
       clearTimeout(timeoutId);
-      window.removeEventListener('mfe:context:ready', handleContextReady);
       resolve();
     };
     const timeoutId = setTimeout(() => {

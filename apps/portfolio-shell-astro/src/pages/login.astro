@@ -44,13 +44,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             <button type="submit" class="btn-primary"> Iniciar Sesión </button>
           </div>
 
-          <div id="error-message" class="error-message hidden"></div>
+          <div id="error-message" class="error-message hidden" role="alert" aria-live="polite"></div>
 
-          <p class="help-text">
-            <strong>Demo:</strong> Usuario: <code>admin</code> / Contraseña: <code
-              >admin123</code
-            >
-          </p>
+          {!import.meta.env.PROD && (
+            <p class="help-text">
+              <strong>Demo:</strong> Usuario: <code>admin</code> / Contraseña: <code>admin123</code>
+            </p>
+          )}
         </form>
 
         <div class="login-features">
@@ -167,46 +167,55 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   const loginUseCase = new LoginUseCase(authService, errorHandler, logger);
   const checkAuthUseCase = new CheckAuthenticationUseCase(authService);
 
-  const loginForm = document.getElementById("login-form") as HTMLFormElement;
-  const errorMessage = document.getElementById(
-    "error-message",
-  ) as HTMLDivElement;
-  const usernameInput = document.getElementById("username") as HTMLInputElement;
-  const passwordInput = document.getElementById("password") as HTMLInputElement;
+  const loginForm = document.getElementById("login-form") as HTMLFormElement | null;
+  const errorMessage = document.getElementById("error-message") as HTMLDivElement | null;
+  const usernameInput = document.getElementById("username") as HTMLInputElement | null;
+  const passwordInput = document.getElementById("password") as HTMLInputElement | null;
+  const submitBtn = loginForm?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+  if (!loginForm || !errorMessage || !usernameInput || !passwordInput || !submitBtn) {
+    logger.error('[Login] Required form elements not found');
+  }
 
   // Obtener returnUrl desde query params (enviado por middleware)
   const urlParams = new URLSearchParams(window.location.search);
   const returnUrl = urlParams.get("returnUrl") || "/admin";
 
   function showError(message: string) {
-    errorMessage.textContent = message;
-    errorMessage.classList.remove("hidden");
+    errorMessage?.classList.remove("hidden");
+    if (errorMessage) errorMessage.textContent = message;
   }
 
   function hideError() {
-    errorMessage.classList.add("hidden");
+    errorMessage?.classList.add("hidden");
   }
 
   async function handleLogin(event: Event) {
     event.preventDefault();
+    if (!usernameInput || !passwordInput || !submitBtn) return;
     hideError();
+
+    submitBtn.setAttribute("aria-busy", "true");
+    submitBtn.disabled = true;
 
     const username = usernameInput.value.trim();
     const password = passwordInput.value;
 
-    // Ejecutar use case de login
-    const result = await loginUseCase.execute({ username, password });
+    try {
+      const result = await loginUseCase.execute({ username, password });
 
-    if (result.success) {
-      // Login exitoso → redirigir a la ruta original (o admin por defecto)
-      logger.info("[Login] Login exitoso, redirigiendo", { returnUrl });
-
-      // ✅ Redirect inmediato (cookies son síncronas)
-      window.location.href = returnUrl;
-    } else {
-      // Login fallido → mostrar error
+      if (result.success) {
+        logger.info("[Login] Login exitoso, redirigiendo", { returnUrl });
+        window.location.href = returnUrl;
+        return; // don't re-enable — page will navigate away
+      }
       showError(result.error || "Error desconocido");
+    } catch {
+      showError("Error inesperado. Intenta de nuevo.");
     }
+
+    submitBtn.setAttribute("aria-busy", "false");
+    submitBtn.disabled = false;
   }
 
   // Verificar si ya está autenticado

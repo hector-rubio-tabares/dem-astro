@@ -168,8 +168,9 @@ export class SessionStorageAuthService implements IAuthService {
     const cookieToken = this.generateCookieToken(token);
 
     // Cookie con seguridad básica (SameSite, max-age)
-    // TODO: En producción agregar Secure (HTTPS) y HttpOnly (backend)
-    document.cookie = `auth-token=${cookieToken}; path=/; SameSite=Lax; max-age=86400`;
+    // NOTE: HttpOnly debe setearse desde el backend — no es posible desde JS
+    const secure = location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `auth-token=${cookieToken}; path=/; SameSite=Strict; max-age=86400${secure}`;
   }
 
   /**

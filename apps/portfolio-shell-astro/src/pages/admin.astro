@@ -202,7 +202,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .config-item strong {
     color: var(--color-text-primary);
-    margin-right: var(--spacing-2);
+    margin-inline-end: var(--spacing-2);
   }
 
   .config-item code {
@@ -232,13 +232,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
   import { initializeMicrofrontendsHexagonal, getEventBus, getTabId } from '../scripts/mf-init-hexagonal';
-  
+
   // HEXAGONAL ARCHITECTURE
   import { SessionStorageAuthService } from '../infrastructure/adapters/SessionStorageAuthService';
+  import { ConsoleLogger } from '../infrastructure/adapters/ConsoleLogger';
   import { CheckAuthenticationUseCase } from '../application/use-cases/CheckAuthenticationUseCase';
   import { LogoutUseCase } from '../application/use-cases/LogoutUseCase';
 
   // Dependency Injection
+  const logger = new ConsoleLogger();
   const authService = new SessionStorageAuthService();
   const checkAuthUseCase = new CheckAuthenticationUseCase(authService);
   const logoutUseCase = new LogoutUseCase(authService);
@@ -251,12 +253,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     
     if (!result.isAuthenticated && result.requiresRedirect) {
       // No autenticado → redirigir a login
-      console.warn('[Admin] No autenticado, redirigiendo a /login');
+      logger.warn('[Admin] No autenticado, redirigiendo a /login');
       window.location.href = result.redirectUrl || '/login';
       return false;
     }
-    
-    console.log('[Admin] ✅ Usuario autenticado:', result.user?.getUsername());
+
+    logger.info('[Admin] Usuario autenticado', { username: result.user?.getUsername() });
     return true;
   }
 
@@ -302,18 +304,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       // Monitorear mensajes del bus
       const messageLog = document.getElementById('message-log');
-      const messages: Array<{time: string, event: string, data: any}> = [];
+      const messages: Array<{time: string, event: string, data: Record<string, unknown>}> = [];
 
       bus.on('click-count', (payload) => {
-        logMessage('click-count', payload);
+        logMessage('click-count', payload as Record<string, unknown>);
       });
 
-      function logMessage(event: string, data: any) {
+      function logMessage(event: string, data: Record<string, unknown>) {
         const time = new Date().toLocaleTimeString();
-        messages.unshift({ time, event, data });
-        
-        // Mantener solo los últimos 10
-        if (messages.length > 10) messages.pop();
+        messages.push({ time, event, data });
+        if (messages.length > 10) messages.shift();
 
         renderMessages();
       }
@@ -351,7 +351,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       renderMessages();
 
     }).catch((error) => {
-      console.error('[Admin] ❌ Error inicializando MFEs:', error);
+      logger.error('[Admin] Error inicializando MFEs', error);
       updateStatus('react-status', 'error', '✗ Error');
       updateStatus('angular-status', 'error', '✗ Error');
     });

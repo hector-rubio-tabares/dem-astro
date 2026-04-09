@@ -11,9 +11,6 @@ export class LogoutUseCase {
   ) {}
 
   execute(): void {
-    // Cerrar sesión a través del servicio
     this.authService.logout();
-
-    console.log('[LogoutUseCase] Sesión cerrada correctamente');
   }
 }

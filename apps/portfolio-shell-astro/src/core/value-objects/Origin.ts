@@ -41,7 +41,6 @@ export class Origin {
         try {
           return new Origin(url);
         } catch {
-          console.warn(`[Origin] Invalid URL skipped: ${url}`);
           return null;
         }
       })
